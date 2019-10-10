@@ -2,11 +2,11 @@
 
 :+1: Thanks for taking the time to contribute to Swift Inspector! :+1:
 
-This document explains some of the guidelines around contributing to this project as well as how this project is structured, so you can jump start!
+This document explains some of the guidelines around contributing to this project as well as how this project is structured, so you can jump in!
 
 ## Alignment first
 
-We ask you that if you have an idea for a new feature you [open an issue](https://git.musta.ch/francisco-diaz/SwiftInspector/issues/new) to discuss or reach out to [#native-infra](https://airbnb.slack.com/app_redirect?channel=native-infra) to align first.
+We ask you that if you have an idea for a new feature you [open an issue](https://git.musta.ch/francisco-diaz/SwiftInspector/issues/new) to discuss or reach out to [francisco-diaz](https://git.musta.ch/francisco-diaz) to align first.
 
 ## Submitting your changes
 
@@ -26,27 +26,11 @@ Contains the main executable for this command line tool. This contains the entry
 
 #### SwiftInspectorKit
 
-Is the *"core"* or *"backend"* of this project. In here is where the magic happens. You should put any file that's related to reading o rewriting Swift code in here.
+Is the *"core"* or *"backend"* of this project. In here is where the magic happens. You should put any file that's related to reading or rewriting Swift code in here.
 
 ### Adding a new Command
 
-To add a new command create a `YourCommand.swift` file inside the `Commands` folder in `SwiftInspector`. 
-
-`YourCommand.swift` should look something like this;
-
-```swift
-final class YourCommand: CommandProtocol {
-  typealias Options = NoOptions
-
-  let verb = "your-command"
-  let function = "Description of your command"
-
-  func run(_ options: Options) -> Result<(), YourErrorType> {
-    // New functionality here
-    return ()
-  }
-}
-```
+To add a new command create a `YourCommand.swift` file inside the `Commands` folder in `SwiftInspector`. Your command should delegate to `SwiftInspectorKit` for all the logic related to reading/rewriting Swift code.
 
 ### Adding new functionality
 
