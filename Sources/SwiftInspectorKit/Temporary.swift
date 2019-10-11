@@ -15,13 +15,12 @@ struct Temporary {
     let temporaryFileURL =
       temporaryDirectoryURL.appendingPathComponent(fileName)
 
-    let data = content.data(using: .utf8)! // Can't fail
+    let data = Data(content.utf8)
     try data.write(to: temporaryFileURL,
                    options: .atomic)
     
     return temporaryFileURL
   }
-
 
   /// Removes a file in the specified location
   ///
