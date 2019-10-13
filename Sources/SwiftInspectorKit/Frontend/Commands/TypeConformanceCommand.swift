@@ -6,12 +6,12 @@ import Foundation
 
 /// A type that represents a CLI command to check for conformance of a specific type
 public final class TypeConformanceCommand: CommandProtocol {
+  public init() { }
+
   /// The verb that's used in the command line to invoke this command
   public let verb: String = "type-conformance"
   /// A description of the usage of this command
   public let function: String = "Finds information related to the conformance to a type name"
-
-  public init() { }
 
   /// Runs the command
   ///
@@ -30,17 +30,14 @@ public struct TypeConformanceOptions: OptionsProtocol {
 
   /// Evaluates the arguments passed through the CommandMode and converts them into a valid TypeConformanceOptions
   ///
-  /// - Parameter m: The CommandMode that contains the command line arguments
+  /// - Parameter m: The `CommandMode` that's used to parse the command line arguments into a strongly typed `TypeConformanceOptions`
   /// - Returns: A valid TypeConformanceOptions or an error
   public static func evaluate(_ m: CommandMode) -> Result<TypeConformanceOptions, CommandantError<Error>> {
     let result: Result<TypeConformanceOptions, CommandantError<Error>> = create
       <*> m <| Option(key: "type-name", defaultValue: "", usage: "the name of the type")
       <*> m <| Option(key: "path", defaultValue: "", usage: "the path to the Swift file to inspect")
 
-    switch result {
-    case .success(let options): return validate(options)
-    case .failure(let error): return .failure(error)
-    }
+    return result.flatMap { return validate($0) }
   }
 
   private static func create(_ typeName: String) -> (String) -> TypeConformanceOptions {
