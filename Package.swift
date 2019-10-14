@@ -21,7 +21,7 @@ let package = Package(
   targets: [
     .target(
       name: "SwiftInspector",
-      dependencies: ["SwiftInspectorKit"]),
+      dependencies: ["SwiftInspectorKit", "Commandant"]),
     .testTarget(
       name: "SwiftInspectorTests",
       dependencies: [
@@ -31,7 +31,7 @@ let package = Package(
     ]),
     .target(
       name: "SwiftInspectorKit",
-      dependencies: ["SwiftSyntax", "Commandant"]),
+      dependencies: ["SwiftSyntax"]),
     .testTarget(
       name: "SwiftInspectorKitTests",
       dependencies: [
