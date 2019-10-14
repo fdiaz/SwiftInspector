@@ -5,26 +5,26 @@ import Commandant
 import Foundation
 
 /// A type that represents a CLI command to check for conformance of a specific type
-public final class TypeConformanceCommand: CommandProtocol {
-  public init() { }
+final class TypeConformanceCommand: CommandProtocol {
+  init() { }
 
   /// The verb that's used in the command line to invoke this command
-  public let verb: String = "type-conformance"
+  let verb: String = "type-conformance"
   /// A description of the usage of this command
-  public let function: String = "Finds information related to the conformance to a type name"
+  let function: String = "Finds information related to the conformance to a type name"
 
   /// Runs the command
   ///
   /// - Parameter options: The available options for this command
   /// - Returns: An Result with an error
-  public func run(_ options: TypeConformanceOptions) -> Result<(), Error> {
+  func run(_ options: TypeConformanceOptions) -> Result<(), Error> {
     return .success(())
   }
 
 }
 
 /// A type that represents parameters that can be passed to the TypeConformanceCommand command
-public struct TypeConformanceOptions: OptionsProtocol {
+struct TypeConformanceOptions: OptionsProtocol {
   fileprivate let typeName: String
   fileprivate let path: String
 
@@ -32,7 +32,7 @@ public struct TypeConformanceOptions: OptionsProtocol {
   ///
   /// - Parameter m: The `CommandMode` that's used to parse the command line arguments into a strongly typed `TypeConformanceOptions`
   /// - Returns: A valid TypeConformanceOptions or an error
-  public static func evaluate(_ m: CommandMode) -> Result<TypeConformanceOptions, CommandantError<Error>> {
+  static func evaluate(_ m: CommandMode) -> Result<TypeConformanceOptions, CommandantError<Error>> {
     let result: Result<TypeConformanceOptions, CommandantError<Error>> = create
       <*> m <| Option(key: "type-name", defaultValue: "", usage: "the name of the type")
       <*> m <| Option(key: "path", defaultValue: "", usage: "the path to the Swift file to inspect")
