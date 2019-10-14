@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
   name: "SwiftInspector",
   platforms: [
-    .macOS(.v10_11)
+    .macOS(.v10_13)
   ],
   products: [
     .executable(name: "SwiftInspector", targets: ["SwiftInspector"]),
