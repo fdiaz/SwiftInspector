@@ -28,7 +28,7 @@ struct TestTask {
     let errorData = standardErrorPipe.fileHandleForReading.readDataToEndOfFile()
     let errorString = String(decoding: errorData, as: UTF8.self)
 
-    return TaskStatus(status: process.terminationStatus, stdOutputString: outputString, stdErrorString: errorString)
+    return TaskStatus(exitStatus: process.terminationStatus, stdOutputString: outputString, stdErrorString: errorString)
   }
 
   // Locates the Products directory in Derived Data where the executable should be
@@ -44,11 +44,24 @@ struct TestTask {
   }
 }
 
-struct TaskStatus {
-  let status: Int32
-  let stdOutputString: String?
-  let stdErrorString: String?
+enum TaskStatus: Equatable {
+  init(exitStatus: Int32, stdOutputString: String?, stdErrorString: String?) {
+    if exitStatus == 0 {
+      self = .success(message: stdOutputString)
+    } else {
+      self = .failure(message: stdErrorString, exitStatus: exitStatus)
+    }
+  }
 
-  var didSucceed: Bool { return status == 0 }
+  case success(message: String?)
+  case failure(message: String?, exitStatus: Int32)
+
+  var didSucceed: Bool {
+    switch self {
+    case .success(_): return true
+    case .failure(_, _): return false
+    }
+  }
+
   var didFail: Bool { return !didSucceed }
 }
