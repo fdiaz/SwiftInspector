@@ -22,6 +22,13 @@ let package = Package(
     .target(
       name: "SwiftInspector",
       dependencies: ["SwiftInspectorKit"]),
+    .testTarget(
+      name: "SwiftInspectorTests",
+      dependencies: [
+        "SwiftInspector",
+        "Nimble",
+        "Quick",
+    ]),
     .target(
       name: "SwiftInspectorKit",
       dependencies: ["SwiftSyntax", "Commandant"]),
@@ -31,6 +38,6 @@ let package = Package(
         "SwiftInspectorKit",
         "Nimble",
         "Quick",
-      ]),
+    ]),
   ]
 )
