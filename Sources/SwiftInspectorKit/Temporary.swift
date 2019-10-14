@@ -22,16 +22,16 @@ struct Temporary {
     return temporaryFileURL
   }
 
-  /// Creates a folder iniside a temporary directory
+  /// Creates a folder inside a temporary directory
   ///
   /// - Parameter name: The name of the directory
   /// - Returns: The file URL where the directory was created
   static func makeFolder(name: String = UUID().uuidString) throws -> URL {
-    let temporaryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-    let pathURL = temporaryURL.appendingPathComponent(name, isDirectory: true)
-    try FileManager.default.createDirectory(at: pathURL, withIntermediateDirectories: true)
+    let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+    let folderURL = temporaryDirectoryURL.appendingPathComponent(name, isDirectory: true)
+    try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
 
-    return pathURL
+    return folderURL
   }
 
   /// Removes an item (file or directory) in the specified location

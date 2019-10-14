@@ -39,16 +39,6 @@ final class TemporarySpec: QuickSpec {
       }
     }
 
-    describe("cleanFolder") {
-      it("deletes all files from a directory") {
-        guard let folderURL = try? Temporary.makeFolder(name: "abc") else {
-          return fail("Something went wrong when creating a temporary folder. This shouldn't fail.")
-        }
-
-        expect(FileManager.default.fileExists(atPath: folderURL.path)) == true
-      }
-    }
-
     describe("removeItem") {
       it("deletes a existing file") {
         guard let savedURL = try? Temporary.makeSwiftFile(content: "abc") else {
