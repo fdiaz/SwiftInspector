@@ -9,7 +9,7 @@ import Quick
 
 final class TemporarySpec: QuickSpec {
   override func spec() {
-    describe("makeSwiftFile") {
+    describe("makeSwiftFile(content:name:)") {
       it("creates a file") {
         guard let savedURL = try? Temporary.makeSwiftFile(content: "abc") else {
           return fail("Something went wrong when creating a temporary file. This shouldn't fail.")
@@ -27,9 +27,17 @@ final class TemporarySpec: QuickSpec {
         let savedContent = try? String(contentsOf: savedURL, encoding: .utf8)
         expect(savedContent) == "protocol Some { }"
       }
+
+      it("uses the correct filename") {
+        guard let savedURL = try? Temporary.makeSwiftFile(content: "", name: "SomeName") else {
+          return fail("Something went wrong when creating a temporary file. This shouldn't fail.")
+        }
+
+        expect(savedURL.lastPathComponent) == "SomeName.swift"
+      }
     }
 
-    describe("makeFolder") {
+    describe("makeFolder(name:)") {
       it("creates a directory") {
         guard let folderURL = try? Temporary.makeFolder(name: "abc") else {
           return fail("Something went wrong when creating a temporary folder. This shouldn't fail.")
@@ -39,7 +47,7 @@ final class TemporarySpec: QuickSpec {
       }
     }
 
-    describe("removeItem") {
+    describe("removeItem(at:)") {
       it("deletes a existing file") {
         guard let savedURL = try? Temporary.makeSwiftFile(content: "abc") else {
           return fail("Something went wrong when creating a temporary file. This shouldn't fail.")

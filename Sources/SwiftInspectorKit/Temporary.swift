@@ -7,11 +7,12 @@ struct Temporary {
   /// Creates a Swift file in a temporary directory
   ///
   /// - Parameter content: A String representing the contents of the Swift file
+  /// - Parameter name: The name of the Swift file
   /// - Returns: The file URL where the created file is stored
-  static func makeSwiftFile(content: String) throws -> URL {
+  static func makeSwiftFile(content: String, name: String = UUID().uuidString) throws -> URL {
     let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(),
                                     isDirectory: true)
-    let fileName = UUID().uuidString + ".swift"
+    let fileName = "\(name).swift"
     let temporaryFileURL =
       temporaryDirectoryURL.appendingPathComponent(fileName)
 
