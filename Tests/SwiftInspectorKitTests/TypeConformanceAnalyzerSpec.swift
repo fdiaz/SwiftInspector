@@ -30,8 +30,8 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
 
           self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "AFile")
 
-          let sut = TypeConformanceAnalyzer(typeName: "Some", fileURL: self.fileURL)
-          let result = try? sut.analyze()
+          let sut = TypeConformanceAnalyzer(typeName: "Some")
+          let result = try? sut.analyze(fileURL: self.fileURL)
 
           expect(result?.fileName) == "AFile.swift"
         }
@@ -46,8 +46,8 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
 
             self.fileURL = try? Temporary.makeSwiftFile(content: content)
 
-            let sut = TypeConformanceAnalyzer(typeName: "Some", fileURL: self.fileURL)
-            let result = try? sut.analyze()
+            let sut = TypeConformanceAnalyzer(typeName: "Some")
+            let result = try? sut.analyze(fileURL: self.fileURL)
 
             expect(result?.doesConform) == true
           }
@@ -65,8 +65,8 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
 
               self.fileURL = try? Temporary.makeSwiftFile(content: content)
 
-              let sut = TypeConformanceAnalyzer(typeName: "Bar", fileURL: self.fileURL)
-              let result = try? sut.analyze()
+              let sut = TypeConformanceAnalyzer(typeName: "Bar")
+              let result = try? sut.analyze(fileURL: self.fileURL)
 
               expect(result?.doesConform) == true
             }
@@ -85,8 +85,8 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
 
               self.fileURL = try? Temporary.makeSwiftFile(content: content)
 
-              let sut = TypeConformanceAnalyzer(typeName: "B", fileURL: self.fileURL)
-              let result = try? sut.analyze()
+              let sut = TypeConformanceAnalyzer(typeName: "B")
+              let result = try? sut.analyze(fileURL: self.fileURL)
 
               expect(result?.doesConform) == true
             }
@@ -105,8 +105,8 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
 
           self.fileURL = try? Temporary.makeSwiftFile(content: content)
 
-          let sut = TypeConformanceAnalyzer(typeName: "Some", fileURL: self.fileURL)
-          let result = try? sut.analyze()
+          let sut = TypeConformanceAnalyzer(typeName: "Some")
+          let result = try? sut.analyze(fileURL: self.fileURL)
 
           expect(result?.doesConform) == true
         }
@@ -122,8 +122,8 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
 
           self.fileURL = try? Temporary.makeSwiftFile(content: content)
 
-          let sut = TypeConformanceAnalyzer(typeName: "AnotherType", fileURL: self.fileURL)
-          let result = try? sut.analyze()
+          let sut = TypeConformanceAnalyzer(typeName: "AnotherType")
+          let result = try? sut.analyze(fileURL: self.fileURL)
 
           expect(result?.doesConform) == false
         }

@@ -7,20 +7,16 @@ import SwiftSyntax
 public final class TypeConformanceAnalyzer {
 
   /// - Parameter typeName: The name of the type we're looking a type to conform to
-  /// - Parameter fileURL: The fileURL where the Swift file is located
-  public init(typeName: String, fileURL: URL) {
+  public init(typeName: String) {
     self.typeName = typeName
-    self.fileURL = fileURL
   }
 
   /// Analyzes if the Swift file contains conformances to the typeName provided
-  public func analyze() throws -> TypeConformance {
-    let sourceFile: SourceFileSyntax = try SyntaxTreeParser.parse(fileURL)
-    return try analyze(syntax: sourceFile)
-  }
-
-  private func analyze(syntax: SourceFileSyntax) throws -> TypeConformance {
+  /// - Parameter fileURL: The fileURL where the Swift file is located
+  public func analyze(fileURL: URL) throws -> TypeConformance {
     var doesConform = false
+
+    let syntax: SourceFileSyntax = try SyntaxTreeParser.parse(fileURL)
     let reader = TypeConformanceSyntaxReader()
     reader.onConformance = { node in
       doesConform = doesConform || self.isSyntaxNode(node, ofType: self.typeName)
@@ -37,7 +33,6 @@ public final class TypeConformanceAnalyzer {
   }
 
   private let typeName: String
-  private let fileURL: URL
 }
 
 public struct TypeConformance {
@@ -46,7 +41,7 @@ public struct TypeConformance {
   let doesConform: Bool
 }
 
-private class TypeConformanceSyntaxReader: SyntaxRewriter {
+private final class TypeConformanceSyntaxReader: SyntaxRewriter {
   var onConformance: (InheritedTypeSyntax) -> Void = { _ in }
 
   override func visit(_ node: InheritedTypeSyntax) -> Syntax {
