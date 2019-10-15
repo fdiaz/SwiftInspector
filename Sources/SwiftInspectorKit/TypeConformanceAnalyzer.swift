@@ -26,12 +26,14 @@ public final class TypeConformanceAnalyzer {
     return TypeConformance(typeName: typeName, fileName: fileURL.lastPathComponent, doesConform: doesConform)
   }
 
+  // MARK: Private
+
   private func isSyntaxNode(_ node: InheritedTypeSyntax, ofType typeName: String) -> Bool {
     // Remove leading and trailing whitespace trivia
     let syntaxTypeName = String(describing: node.typeName).trimmingCharacters(in: .whitespaces)
     return (syntaxTypeName == self.typeName)
   }
-
+  
   private let typeName: String
 }
 
