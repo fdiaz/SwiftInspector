@@ -22,11 +22,11 @@ SwiftInspector is divided into two main parts:
 
 #### SwiftInspector
 
-Contains the main executable for this command line tool. This contains the entry point `main.swift` file and the scaffolding around managing commands and options for these commands. We can think of this as the *"frontend"* of this project.
+Contains the main executable for this command line tool. This contains the entry point `main.swift` file and the scaffolding around managing commands and options for these commands. We can think of this as the *frontend* of this project.
 
 #### SwiftInspectorKit
 
-Is the *"core"* or *"backend"* of this project. In here is where the magic happens. You should put any file that's related to analyzing Swift code in here.
+Is the *core* or *backend* of this project. In here is where the magic happens. You should put any file that's related to analyzing Swift code in here.
 
 ### Adding a new Command
 
