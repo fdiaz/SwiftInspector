@@ -22,17 +22,16 @@ SwiftInspector is divided into two main parts:
 
 #### SwiftInspector
 
-Contains the main executable for this command line tool. It contains the entry point `main.swift` file.
-
+Contains the main executable for this command line tool. This contains the entry point `main.swift` file and the scaffolding around managing commands and options for these commands. We can think of this as the *frontend* of this project.
 
 #### SwiftInspectorKit
 
-It’s divided into **Frontend** and **Core**.
-
-- **Frontend**: The scaffolding around managing commands and options for these commands. This is what the end user interacts with.
-- **Core**: In here is where the magic happens. Any file that's related to analyzing Swift code should go in here.
-
+Is the *core* or *backend* of this project. In here is where the magic happens. You should put any file that's related to analyzing Swift code in here.
 
 ### Adding a new Command
 
-To add a new command create a `YourCommand.swift` file inside the `Frontent/Commands` folder in `SwiftInspectorKiit`. Your command should delegate to files under `Core/` for all the logic related to analyzing Swift code.
+To add a new command create a `YourCommand.swift` file inside the `Commands` folder in `SwiftInspector`. Your command should delegate to `SwiftInspectorKit` for all the logic related to analyzing Swift code.
+
+### Adding new functionality
+
+Since we want to separate the commands from the core functionality, you should abstract your core functionality in a class that lives in the `Core` folder in `SwiftInspectorKit`.
