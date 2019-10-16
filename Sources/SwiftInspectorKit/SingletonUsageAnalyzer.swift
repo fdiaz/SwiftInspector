@@ -14,17 +14,30 @@ public final class SingletonUsageAnalyzer {
   /// Analyzes if the Swift file contains the singleton specified
   /// - Parameter fileURL: The fileURL where the Swift file is located
   public func analyze(fileURL: URL) throws -> SingletonUsage {
-    var doesContain = false
+    var isUsed = false
     let syntax: SourceFileSyntax = try SyntaxParser.parse(fileURL)
     let reader = SingletonUsageReader() { node in
-      print(node)
+      isUsed = isUsed || self.isSyntaxNode(node, ofType: self.singleton)
     }
     let _ = reader.visit(syntax)
 
-    return SingletonUsage(singleton: self.singleton, fileName: fileURL.lastPathComponent, doesContain: doesContain)
+    return SingletonUsage(singleton: self.singleton, fileName: fileURL.lastPathComponent, isUsed: isUsed)
   }
 
   // MARK: Private
+  private func isSyntaxNode(_ node: MemberAccessExprSyntax, ofType singleton: Singleton) -> Bool {
+    // A MemberAccessExprSyntax contains a base, a dot and a name.
+    // The base in this case will be the type of the singleton, while the name is the property
+
+    let baseNode = node.base as? IdentifierExprSyntax
+    let nameText = node.name.text
+    guard let baseText = baseNode?.identifier.text else {
+      return false
+    }
+
+    return baseText == singleton.typeName && nameText == singleton.propertyName
+  }
+
   private let singleton: Singleton
 }
 
@@ -36,7 +49,7 @@ public struct Singleton: Equatable {
 public struct SingletonUsage: Equatable {
   let singleton: Singleton
   let fileName: String
-  let doesContain: Bool
+  let isUsed: Bool
 }
 
 // TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)

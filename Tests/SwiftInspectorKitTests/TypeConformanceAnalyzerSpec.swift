@@ -8,7 +8,7 @@ import Foundation
 @testable import SwiftInspectorKit
 
 final class TypeConformanceAnalyzerSpec: QuickSpec {
-  var fileURL: URL!
+  private var fileURL: URL!
 
   override func spec() {
     afterEach {
