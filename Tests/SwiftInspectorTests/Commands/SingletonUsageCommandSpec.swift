@@ -60,7 +60,7 @@ final class SingletonUsageCommanddSpec: QuickSpec {
       
       context("with all arguments") {
         it("succeeds") {
-          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "SomeType", "--variable-name", "shared", "--path", "/abc"])
+          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "SomeType", "--property-name", "shared", "--path", "/abc"])
           expect(result?.didSucceed) == true
         }
       }
