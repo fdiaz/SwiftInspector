@@ -16,7 +16,7 @@ public final class TypeConformanceAnalyzer {
   public func analyze(fileURL: URL) throws -> TypeConformance {
     var doesConform = false
 
-    let syntax: SourceFileSyntax = try SyntaxTreeParser.parse(fileURL)
+    let syntax: SourceFileSyntax = try SyntaxParser.parse(fileURL)
     let reader = TypeConformanceSyntaxReader()
     reader.onConformance = { node in
       doesConform = doesConform || self.isSyntaxNode(node, ofType: self.typeName)
