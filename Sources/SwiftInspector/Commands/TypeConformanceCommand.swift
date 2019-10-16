@@ -47,6 +47,7 @@ struct TypeConformanceOptions: OptionsProtocol {
   private static func validate(_ options: TypeConformanceOptions) -> Result<TypeConformanceOptions, CommandantError<Error>> {
     guard !options.typeName.isEmpty else { return .failure(.usageError(description: "type-name can't be empty")) }
     guard !options.path.isEmpty else { return .failure(.usageError(description: "path can't be empty")) }
+    guard FileManager.default.fileExists(atPath: options.path) else { return .failure(.usageError(description: "path \(options.path) does not exist")) }
 
     return .success(options)
   }
