@@ -4,6 +4,7 @@
 import Foundation
 import Nimble
 import Quick
+@testable import SwiftInspectorKit
 
 final class TypeConformanceCommandSpec: QuickSpec {
 
@@ -45,10 +46,21 @@ final class TypeConformanceCommandSpec: QuickSpec {
       }
 
       context("with all arguments") {
-        it("succeeds") {
-          let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "SomeType", "--path", "/abc"])
-          expect(result?.didSucceed) == true
+        context("when path doesn't exist") {
+          it("fails") {
+            let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "SomeType", "--path", "/abc"])
+            expect(result?.didSucceed) == false
+          }
         }
+
+        context("when path exists") {
+          it("succeeds") {
+            let fileURL = try? Temporary.makeSwiftFile(content: "")
+            let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "SomeType", "--path", fileURL?.path ?? ""])
+            expect(result?.didSucceed) == true
+          }
+        }
+
       }
 
     }

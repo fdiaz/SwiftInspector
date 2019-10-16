@@ -3,6 +3,7 @@
 
 import Commandant
 import Foundation
+import SwiftInspectorKit
 
 /// A type that represents a CLI command to check for conformance of a specific type
 final class TypeConformanceCommand: CommandProtocol {
@@ -18,7 +19,14 @@ final class TypeConformanceCommand: CommandProtocol {
   /// - Parameter options: The available options for this command
   /// - Returns: An Result with an error
   func run(_ options: TypeConformanceOptions) -> Result<(), Error> {
-    return .success(())
+    let analyzer = TypeConformanceAnalyzer(typeName: options.typeName)
+
+    return Result {
+      let fileURL = URL(fileURLWithPath: options.path)
+      let results = try analyzer.analyze(fileURL: fileURL)
+      print(results) // Print to standard output
+      return ()
+    }
   }
 
 }
@@ -47,6 +55,7 @@ struct TypeConformanceOptions: OptionsProtocol {
   private static func validate(_ options: TypeConformanceOptions) -> Result<TypeConformanceOptions, CommandantError<Error>> {
     guard !options.typeName.isEmpty else { return .failure(.usageError(description: "type-name can't be empty")) }
     guard !options.path.isEmpty else { return .failure(.usageError(description: "path can't be empty")) }
+    guard FileManager.default.fileExists(atPath: options.path) else { return .failure(.usageError(description: "path \(options.path) does not exist")) }
 
     return .success(options)
   }
