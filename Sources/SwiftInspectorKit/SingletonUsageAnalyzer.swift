@@ -42,8 +42,13 @@ public final class SingletonUsageAnalyzer {
 }
 
 public struct Singleton: Equatable {
-  let typeName: String
-  let memberName: String
+  public init(typeName: String, memberName: String) {
+    self.typeName = typeName
+    self.memberName = memberName
+  }
+
+  public let typeName: String
+  public let memberName: String
 }
 
 public struct SingletonUsage: Equatable {

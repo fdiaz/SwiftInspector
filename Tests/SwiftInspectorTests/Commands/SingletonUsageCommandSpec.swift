@@ -4,6 +4,7 @@
 import Foundation
 import Nimble
 import Quick
+@testable import SwiftInspectorKit
 
 final class SingletonUsageCommanddSpec: QuickSpec {
   
@@ -59,9 +60,19 @@ final class SingletonUsageCommanddSpec: QuickSpec {
       }
       
       context("with all arguments") {
-        it("succeeds") {
-          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "SomeType", "--member-name", "shared", "--path", "/abc"])
-          expect(result?.didSucceed) == true
+        context("when path doesn't exist") {
+          it("fails") {
+            let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "SomeType", "--member-name", "shared", "--path", "/abc"])
+            expect(result?.didFail) == true
+          }
+        }
+
+        context("when path exists") {
+          it("succeeds") {
+            let fileURL = try? Temporary.makeSwiftFile(content: "")
+            let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "SomeType", "--member-name", "shared", "--path", fileURL?.path ?? ""])
+            expect(result?.didSucceed) == true
+          }
         }
       }
       
