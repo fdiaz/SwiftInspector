@@ -17,8 +17,7 @@ public final class TypeConformanceAnalyzer {
     var doesConform = false
 
     let syntax: SourceFileSyntax = try SyntaxParser.parse(fileURL)
-    let reader = TypeConformanceSyntaxReader()
-    reader.onConformance = { node in
+    let reader = TypeConformanceSyntaxReader() { node in
       doesConform = doesConform || self.isSyntaxNode(node, ofType: self.typeName)
     }
     let _ = reader.visit(syntax)
@@ -37,17 +36,21 @@ public final class TypeConformanceAnalyzer {
   private let typeName: String
 }
 
-public struct TypeConformance {
+public struct TypeConformance: Equatable {
   let typeName: String
   let fileName: String
   let doesConform: Bool
 }
 
 private final class TypeConformanceSyntaxReader: SyntaxRewriter {
-  var onConformance: (InheritedTypeSyntax) -> Void = { _ in }
+  init(onNodeVisit: @escaping (InheritedTypeSyntax) -> Void) {
+    self.onNodeVisit = onNodeVisit
+  }
 
   override func visit(_ node: InheritedTypeSyntax) -> Syntax {
-    onConformance(node)
+    onNodeVisit(node)
     return super.visit(node)
   }
+
+  private let onNodeVisit: (InheritedTypeSyntax) -> Void
 }
