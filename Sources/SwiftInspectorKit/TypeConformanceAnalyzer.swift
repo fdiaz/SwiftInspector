@@ -43,6 +43,7 @@ public struct TypeConformance {
   let doesConform: Bool
 }
 
+// TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
 private final class TypeConformanceSyntaxReader: SyntaxRewriter {
   var onConformance: (InheritedTypeSyntax) -> Void = { _ in }
 
