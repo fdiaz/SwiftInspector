@@ -3,6 +3,7 @@
 
 import Commandant
 import Foundation
+import SwiftInspectorKit
 
 /// A type that represents a CLI command to check for usage of a singleton
 final class SingletonUsageCommand: CommandProtocol {
@@ -18,7 +19,15 @@ final class SingletonUsageCommand: CommandProtocol {
   /// - Parameter options: The available options for this command
   /// - Returns: An Result with an error
   func run(_ options: SingletonUsageOptions) -> Result<(), Error> {
-    return .success(())
+    let singleton = Singleton(typeName: options.typeName, memberName: options.memberName)
+    let analyzer = SingletonUsageAnalyzer(singleton: singleton)
+
+    return Result {
+      let fileURL = URL(fileURLWithPath: options.path)
+      let results = try analyzer.analyze(fileURL: fileURL)
+      print(results) // Print to standard output
+      return ()
+    }
   }
 
 }
@@ -50,6 +59,7 @@ struct SingletonUsageOptions: OptionsProtocol {
     guard !options.typeName.isEmpty else { return .failure(.usageError(description: "type-name can't be empty")) }
     guard !options.memberName.isEmpty else { return .failure(.usageError(description: "member-name can't be empty")) }
     guard !options.path.isEmpty else { return .failure(.usageError(description: "path can't be empty")) }
+    guard FileManager.default.fileExists(atPath: options.path) else { return .failure(.usageError(description: "path \(options.path) does not exist")) }
 
     return .success(options)
   }
