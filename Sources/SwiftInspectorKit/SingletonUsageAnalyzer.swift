@@ -16,10 +16,10 @@ public final class SingletonUsageAnalyzer {
   public func analyze(fileURL: URL) throws -> SingletonUsage {
     var isUsed = false
     let syntax: SourceFileSyntax = try SyntaxParser.parse(fileURL)
-    let reader = SingletonUsageReader() { node in
+    let reader = SingletonUsageReader() { [unowned self] node in
       isUsed = isUsed || self.isSyntaxNode(node, ofType: self.singleton)
     }
-    let _ = reader.visit(syntax)
+    _ = reader.visit(syntax)
 
     return SingletonUsage(singleton: self.singleton, fileName: fileURL.lastPathComponent, isUsed: isUsed)
   }

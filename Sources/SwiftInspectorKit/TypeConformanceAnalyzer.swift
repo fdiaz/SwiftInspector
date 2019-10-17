@@ -17,10 +17,10 @@ public final class TypeConformanceAnalyzer {
     var doesConform = false
 
     let syntax: SourceFileSyntax = try SyntaxParser.parse(fileURL)
-    let reader = TypeConformanceSyntaxReader() { node in
+    let reader = TypeConformanceSyntaxReader() { [unowned self] node in
       doesConform = doesConform || self.isSyntaxNode(node, ofType: self.typeName)
     }
-    let _ = reader.visit(syntax)
+    _ = reader.visit(syntax)
 
     return TypeConformance(typeName: typeName, fileName: fileURL.lastPathComponent, doesConform: doesConform)
   }

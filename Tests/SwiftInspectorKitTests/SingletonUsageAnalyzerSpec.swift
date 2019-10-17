@@ -47,7 +47,7 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
       }
     }
 
-    context("when accessing a method in a static property") {
+    context("when accessing a method on a static property") {
       it("marks the singleton as used") {
         let content = "DeprecatedTrebuchetManagingFactory.current!.isLaunched(.someTrebuchet)"
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
