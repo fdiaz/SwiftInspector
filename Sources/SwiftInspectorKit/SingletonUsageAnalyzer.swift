@@ -6,7 +6,7 @@ import SwiftSyntax
 
 public final class SingletonUsageAnalyzer {
 
-  /// - Parameter singleton: The type and property names of the singleton we're looking
+  /// - Parameter singleton: The type and member names of the singleton we're looking
   public init(singleton: Singleton) {
     self.singleton = singleton
   }
@@ -27,7 +27,7 @@ public final class SingletonUsageAnalyzer {
   // MARK: Private
   private func isSyntaxNode(_ node: MemberAccessExprSyntax, ofType singleton: Singleton) -> Bool {
     // A MemberAccessExprSyntax contains a base, a dot and a name.
-    // The base in this case will be the type of the singleton, while the name is the property
+    // The base in this case will be the type of the singleton, while the name is the member
 
     let baseNode = node.base as? IdentifierExprSyntax
     let nameText = node.name.text
@@ -35,7 +35,7 @@ public final class SingletonUsageAnalyzer {
       return false
     }
 
-    return baseText == singleton.typeName && nameText == singleton.propertyName
+    return baseText == singleton.typeName && nameText == singleton.memberName
   }
 
   private let singleton: Singleton
@@ -43,7 +43,7 @@ public final class SingletonUsageAnalyzer {
 
 public struct Singleton: Equatable {
   let typeName: String
-  let propertyName: String
+  let memberName: String
 }
 
 public struct SingletonUsage: Equatable {

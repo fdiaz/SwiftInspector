@@ -24,7 +24,7 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
           let content = "AirbnbDeepLinkRouter.shared"
           self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-          let singleton = Singleton(typeName: "AirbnbDeepLinkRouter", propertyName: "shared")
+          let singleton = Singleton(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
           let sut = SingletonUsageAnalyzer(singleton: singleton)
           let result = try? sut.analyze(fileURL: self.fileURL)
 
@@ -54,7 +54,7 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
             let content = "AirbnbDeepLinkRouter.shared"
             self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-            let singleton = Singleton(typeName: "SomeOtherType", propertyName: "shared")
+            let singleton = Singleton(typeName: "SomeOtherType", memberName: "shared")
             let sut = SingletonUsageAnalyzer(singleton: singleton)
             let result = try? sut.analyze(fileURL: self.fileURL)
 
@@ -70,7 +70,7 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         let content = "DeprecatedTrebuchetManagingFactory.current!.isLaunched(.someTrebuchet)"
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "DeprecatedTrebuchetManagingFactory", propertyName: "current")
+        let singleton = Singleton(typeName: "DeprecatedTrebuchetManagingFactory", memberName: "current")
         let sut = SingletonUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
@@ -83,7 +83,7 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         let content = "BBExperimentManager.sharedInstance()"
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "BBExperimentManager", propertyName: "sharedInstance")
+        let singleton = Singleton(typeName: "BBExperimentManager", memberName: "sharedInstance")
         let sut = SingletonUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
@@ -102,7 +102,7 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         """
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "DeprecatedTrebuchetManagingFactory", propertyName: "current")
+        let singleton = Singleton(typeName: "DeprecatedTrebuchetManagingFactory", memberName: "current")
         let sut = SingletonUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
@@ -110,7 +110,7 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
       }
     }
 
-    context("when the singleton is used in a property") {
+    context("when the singleton is used in a member") {
       it("marks the singleton as used") {
         let content = """
         public class SomeClass {
@@ -119,7 +119,7 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         """
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "AirbnbDeepLinkRouter", propertyName: "shared")
+        let singleton = Singleton(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
         let sut = SingletonUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
@@ -141,7 +141,7 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         """
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "UIApplication", propertyName: "shared")
+        let singleton = Singleton(typeName: "UIApplication", memberName: "shared")
         let sut = SingletonUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
@@ -163,7 +163,7 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         """
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "EventContext", propertyName: "shared")
+        let singleton = Singleton(typeName: "EventContext", memberName: "shared")
         let sut = SingletonUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
