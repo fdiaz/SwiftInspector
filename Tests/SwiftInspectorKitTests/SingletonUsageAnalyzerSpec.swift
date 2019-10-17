@@ -31,6 +31,24 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
           expect(result) == SingletonUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
         }
 
+        context("and the singleton is divided in multiple lines") {
+          it("marks the singleton as used") {
+            let content = """
+            final class Some {
+              let router = AirbnbDeepLinkRouter
+                           .shared
+            }
+            """
+            self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+
+            let singleton = Singleton(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
+            let sut = SingletonUsageAnalyzer(singleton: singleton)
+            let result = try? sut.analyze(fileURL: self.fileURL)
+
+            expect(result) == SingletonUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
+          }
+        }
+
         context("when the type name is not present") {
           it("marks the singleton as not used") {
             let content = "AirbnbDeepLinkRouter.shared"
