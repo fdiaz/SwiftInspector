@@ -30,16 +30,16 @@ final class SingletonUsageCommanddSpec: QuickSpec {
         }
       }
       
-      context("with no --variable-name argument") {
+      context("with no --member-name argument") {
         it("fails") {
           let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "Some", "--path", "/abc"])
           expect(result?.didFail) == true
         }
       }
       
-      context("with an empty --variable-name argument") {
+      context("with an empty --member-name argument") {
         it("fails") {
-          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "Some", "--variable-name", "shared", "", "/abc"])
+          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "Some", "--member-name", "shared", "", "/abc"])
           expect(result?.didFail) == true
         }
       }
@@ -60,7 +60,7 @@ final class SingletonUsageCommanddSpec: QuickSpec {
       
       context("with all arguments") {
         it("succeeds") {
-          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "SomeType", "--property-name", "shared", "--path", "/abc"])
+          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "SomeType", "--member-name", "shared", "--path", "/abc"])
           expect(result?.didSucceed) == true
         }
       }
