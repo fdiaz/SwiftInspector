@@ -4,7 +4,7 @@
 import Foundation
 import SwiftSyntax
 
-public final class TypeConformanceAnalyzer {
+public final class TypeConformanceAnalyzer: Analyzer {
 
   /// - Parameter typeName: The name of the type we're looking a type to conform to
   public init(typeName: String) {
@@ -36,7 +36,7 @@ public final class TypeConformanceAnalyzer {
   private let typeName: String
 }
 
-public struct TypeConformance: Equatable {
+public struct TypeConformance: Encodable, Equatable {
   let typeName: String
   let fileName: String
   let doesConform: Bool

@@ -4,7 +4,7 @@
 import Foundation
 import SwiftSyntax
 
-public final class SingletonUsageAnalyzer {
+public final class SingletonUsageAnalyzer: Analyzer {
 
   /// - Parameter singleton: The type and member names of the singleton we're looking
   public init(singleton: Singleton) {
@@ -41,7 +41,7 @@ public final class SingletonUsageAnalyzer {
   private let singleton: Singleton
 }
 
-public struct Singleton: Equatable {
+public struct Singleton: Encodable, Equatable {
   public init(typeName: String, memberName: String) {
     self.typeName = typeName
     self.memberName = memberName
@@ -51,7 +51,7 @@ public struct Singleton: Equatable {
   public let memberName: String
 }
 
-public struct SingletonUsage: Equatable {
+public struct SingletonUsage: Encodable, Equatable {
   let singleton: Singleton
   let fileName: String
   let isUsed: Bool
