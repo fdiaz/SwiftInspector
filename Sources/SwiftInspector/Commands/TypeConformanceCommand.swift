@@ -23,7 +23,7 @@ final class TypeConformanceCommand: CommandProtocol {
 
     return Result {
       let fileURL = URL(fileURLWithPath: options.path)
-      let results = try analyzer.analyze(fileURL: fileURL)
+      let results: RawJSON = try analyzer.analyze(fileURL: fileURL)
       print(results) // Print to standard output
       return ()
     }
