@@ -51,8 +51,12 @@ struct TypeConformanceOptions: OptionsProtocol {
     return result.flatMap { return validate($0) }
   }
 
-  private static func create(_ typeName: String) -> (String) -> TypeConformanceOptions {
-    let typeNamesArray: [String] = typeName
+  private static func create(_ commaSeparatedTypeNames: String) -> (String) -> TypeConformanceOptions {
+    // We allow the following patterns:
+    // - A single type "SomeType"
+    // - A list of types, comma separated: "SomeType,AnotherType"
+    // - A list of types, comma separated with empty space "SomeType, AnotherType"
+    let typeNamesArray: [String] = commaSeparatedTypeNames
       .replacingOccurrences(of: " ", with: "")
       .split(separator: ",")
       .map { String($0) }

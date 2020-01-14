@@ -13,9 +13,11 @@ public final class CachedSyntaxTree {
   /// Returns a memoized `SourceFileSyntax` tree if it exists, otherwise calculates, memoizes, and returns the syntax tree of the file URL
   /// 
   /// - Parameter fileURL: The location of the Swift file to parse
+  ///
+  /// - Warning: This method is not thread-safe
   func syntaxTree(for fileURL: URL) throws -> SourceFileSyntax {
     guard let syntax = cachedSyntax[fileURL] else {
-      return try cacheSyntaxTree(at: fileURL)
+      return try memoizeSyntaxTree(at: fileURL)
     }
     return syntax
   }
@@ -23,7 +25,7 @@ public final class CachedSyntaxTree {
   /// It reads the `SourceFileSyntax` at the file URL location and parses it into a `SourceFileSyntax, then it caches the result in memory
   /// 
   /// - Parameter fileURL: The location of the Swift file to parse
-  private func memoizeSyntaxTree(representingFileAt url: URL) throws -> SourceFileSyntax {
+  private func memoizeSyntaxTree(at fileURL: URL) throws -> SourceFileSyntax {
     let cached =  try SyntaxParser.parse(fileURL)
     cachedSyntax[fileURL] = cached
     return cached
