@@ -10,72 +10,101 @@ final class SingletonUsageCommanddSpec: QuickSpec {
   
   override func spec() {
     describe("run") {
-      context("with no arguments") {
-        it("fails") {
-          let result = try? TestTask.run(withArguments: ["singleton"])
-          expect(result?.didFail) == true
-        }
+      var fileURL: URL!
+
+      beforeEach {
+        fileURL = try? Temporary.makeSwiftFile(content: "")
       }
-      
-      context("with no --type-name argument") {
-        it("fails") {
-          let result = try? TestTask.run(withArguments: ["singleton", "--path", "."])
-          expect(result?.didFail) == true
-        }
+
+      afterEach {
+        try? Temporary.removeItem(at: fileURL)
       }
-      
-      context("with an empty --type-name argument") {
-        it("fails") {
-          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "", "--path", "/abc"])
-          expect(result?.didFail) == true
-        }
-      }
-      
-      context("with no --member-name argument") {
-        it("fails") {
-          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "Some", "--path", "/abc"])
-          expect(result?.didFail) == true
-        }
-      }
-      
-      context("with an empty --member-name argument") {
-        it("fails") {
-          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "Some", "--member-name", "shared", "", "/abc"])
-          expect(result?.didFail) == true
-        }
-      }
-      
-      context("with no --path argument") {
-        it("fails") {
-          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "SomeType"])
-          expect(result?.didFail) == true
-        }
-      }
-      
-      context("with an empty --path argument") {
-        it("fails") {
-          let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "SomeType", "--path", ""])
-          expect(result?.didFail) == true
-        }
-      }
-      
-      context("with all arguments") {
-        context("when path doesn't exist") {
+
+      context("when missing arguments") {
+
+        context("with no arguments") {
           it("fails") {
-            let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "SomeType", "--member-name", "shared", "--path", "/abc"])
+            let result = try? TestTask.run(withArguments: ["singleton"])
             expect(result?.didFail) == true
           }
         }
 
-        context("when path exists") {
-          it("succeeds") {
-            let fileURL = try? Temporary.makeSwiftFile(content: "")
-            let result = try? TestTask.run(withArguments: ["singleton", "--type-name", "SomeType", "--member-name", "shared", "--path", fileURL?.path ?? ""])
-            expect(result?.didSucceed) == true
+        context("with no --singleton argument") {
+          it("fails") {
+            let result = try? TestTask.run(withArguments: ["singleton", "--path", fileURL.path])
+            expect(result?.didFail) == true
           }
+        }
+
+        context("with no --path argument") {
+          it("fails") {
+            let result = try? TestTask.run(withArguments: ["singleton", "--singleton", "SomeType.shared"])
+            expect(result?.didFail) == true
+          }
+        }
+
+      }
+
+      context("with an empty --path argument") {
+        it("fails") {
+          let result = try? TestSingletonTask.run(singleton: "SomeType.shared", path: "")
+          expect(result?.didFail) == true
+        }
+      }
+      
+      context("with an empty --singleton argument") {
+        it("fails") {
+          let result = try? TestSingletonTask.run(singleton: "", path: fileURL.path)
+          expect(result?.didFail) == true
+        }
+      }
+
+      context("with a type only --singleton argument") {
+        it("fails") {
+          let result = try? TestSingletonTask.run(singleton: "SomeType", path: fileURL.path)
+          expect(result?.didFail) == true
+        }
+      }
+
+      context("with a member only --singleton argument") {
+        it("fails") {
+          let result = try? TestSingletonTask.run(singleton: ".shared", path: fileURL.path)
+          expect(result?.didFail) == true
+        }
+      }
+
+      context("with multiple comma separated --singleton argument") {
+        it("succeeds with spaces in between") {
+          let result = try? TestSingletonTask.run(singleton: "SomeA.shared, SomeB.shared, SomeC.shared", path: fileURL.path)
+          expect(result?.didSucceed) == true
+        }
+
+        it("succeeds with no spaces in between") {
+          let result = try? TestSingletonTask.run(singleton: "SomeA.shared,SomeB.shared,SomeB.shared", path: fileURL.path)
+          expect(result?.didSucceed) == true
+        }
+      }
+
+      context("when path doesn't exist") {
+        it("fails") {
+          let result = try? TestSingletonTask.run(singleton: "SomeType.shared", path: "/abc")
+          expect(result?.didFail) == true
+        }
+      }
+
+      context("when path exists") {
+        it("succeeds") {
+          let result = try? TestSingletonTask.run(singleton: "SomeType.shared", path: fileURL.path)
+          expect(result?.didSucceed) == true
         }
       }
       
     }
+  }
+}
+
+private struct TestSingletonTask {
+  fileprivate static func run(singleton: String, path: String) throws -> TaskStatus {
+    try TestTask.run(withArguments: ["singleton", "--singleton", singleton, "--path", path])
   }
 }
