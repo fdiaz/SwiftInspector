@@ -7,7 +7,7 @@ import SwiftSyntax
 public final class SingletonUsageAnalyzer: Analyzer {
 
   /// - Parameter singleton: The type and member names of the singleton we're looking
-  /// - Parameter cachedSyntaxTree: The cached syntax tree to return the AST tree from
+  /// - Parameter cachedSyntaxTree: The cached syntax tree from which to return the AST tree
   public init(singleton: Singleton, cachedSyntaxTree: CachedSyntaxTree = .init()) {
     self.singleton = singleton
     self.cachedSyntaxTree = cachedSyntaxTree
