@@ -7,8 +7,10 @@ import SwiftSyntax
 public final class TypeConformanceAnalyzer: Analyzer {
 
   /// - Parameter typeName: The name of the type we're looking a type to conform to
-  public init(typeName: String) {
+  /// - Parameter cachedSyntaxTree: The cached syntax tree to return the AST tree from
+  public init(typeName: String, cachedSyntaxTree: CachedSyntaxTree = .init()) {
     self.typeName = typeName
+    self.cachedSyntaxTree = cachedSyntaxTree
   }
 
   /// Analyzes if the Swift file contains conformances to the typeName provided
@@ -16,7 +18,7 @@ public final class TypeConformanceAnalyzer: Analyzer {
   public func analyze(fileURL: URL) throws -> TypeConformance {
     var doesConform = false
 
-    let syntax: SourceFileSyntax = try SyntaxParser.parse(fileURL)
+    let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
     let reader = TypeConformanceSyntaxReader() { [unowned self] node in
       doesConform = doesConform || self.isSyntaxNode(node, ofType: self.typeName)
     }
@@ -34,6 +36,7 @@ public final class TypeConformanceAnalyzer: Analyzer {
   }
   
   private let typeName: String
+  private let cachedSyntaxTree: CachedSyntaxTree
 }
 
 public struct TypeConformance: Encodable, Equatable {

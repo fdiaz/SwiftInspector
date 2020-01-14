@@ -7,15 +7,17 @@ import SwiftSyntax
 public final class SingletonUsageAnalyzer: Analyzer {
 
   /// - Parameter singleton: The type and member names of the singleton we're looking
-  public init(singleton: Singleton) {
+  /// - Parameter cachedSyntaxTree: The cached syntax tree to return the AST tree from
+  public init(singleton: Singleton, cachedSyntaxTree: CachedSyntaxTree = .init()) {
     self.singleton = singleton
+    self.cachedSyntaxTree = cachedSyntaxTree
   }
 
   /// Analyzes if the Swift file contains the singleton specified
   /// - Parameter fileURL: The fileURL where the Swift file is located
   public func analyze(fileURL: URL) throws -> SingletonUsage {
     var isUsed = false
-    let syntax: SourceFileSyntax = try SyntaxParser.parse(fileURL)
+    let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
     let reader = SingletonUsageReader() { [unowned self] node in
       isUsed = isUsed || self.isSyntaxNode(node, ofType: self.singleton)
     }
@@ -39,6 +41,7 @@ public final class SingletonUsageAnalyzer: Analyzer {
   }
 
   private let singleton: Singleton
+  private let cachedSyntaxTree: CachedSyntaxTree
 }
 
 public struct Singleton: Encodable, Equatable {
