@@ -17,30 +17,30 @@ final class TypeConformanceCommandSpec: QuickSpec {
         }
       }
 
-      context("with no --type-name argument") {
+      context("with no --type-names argument") {
         it("fails") {
           let result = try? TestTask.run(withArguments: ["type-conformance", "--path", "."])
           expect(result?.didFail) == true
         }
       }
 
-      context("with an empty --type-name argument") {
+      context("with an empty --type-names argument") {
         it("fails") {
-          let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "", "--path", "/abc"])
+          let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "", "--path", "/abc"])
           expect(result?.didFail) == true
         }
       }
 
       context("with no --path argument") {
         it("fails") {
-          let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "SomeType"])
+          let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType"])
           expect(result?.didFail) == true
         }
       }
 
       context("with an empty --path argument") {
         it("fails") {
-          let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "SomeType", "--path", ""])
+          let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType", "--path", ""])
           expect(result?.didFail) == true
         }
       }
@@ -48,17 +48,43 @@ final class TypeConformanceCommandSpec: QuickSpec {
       context("with all arguments") {
         context("when path doesn't exist") {
           it("fails") {
-            let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "SomeType", "--path", "/abc"])
+            let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType", "--path", "/abc"])
             expect(result?.didSucceed) == false
           }
         }
 
         context("when path exists") {
-          it("succeeds") {
-            let fileURL = try? Temporary.makeSwiftFile(content: "")
-            let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "SomeType", "--path", fileURL?.path ?? ""])
-            expect(result?.didSucceed) == true
+          var fileURL: URL!
+          var path: String!
+
+          beforeEach {
+            fileURL = try? Temporary.makeSwiftFile(content: "")
+            path = fileURL?.path ?? ""
           }
+
+          afterEach {
+            try? Temporary.removeItem(at: fileURL)
+          }
+
+          context("when type conformance contains multiple types") {
+            it("succeeds with comma separated") {
+              let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType,AnotherType,AThirdType", "--path", path])
+              expect(result?.didSucceed) == true
+            }
+
+            it("succeeds with spaces") {
+              let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType, AnotherType, AThirdType", "--path", path])
+              expect(result?.didSucceed) == true
+            }
+          }
+
+          context("when type conformance contains one type") {
+            it("succeeds") {
+              let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType", "--path", path])
+              expect(result?.didSucceed) == true
+            }
+          }
+
         }
 
       }
