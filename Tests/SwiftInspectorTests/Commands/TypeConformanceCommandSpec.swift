@@ -54,11 +54,37 @@ final class TypeConformanceCommandSpec: QuickSpec {
         }
 
         context("when path exists") {
-          it("succeeds") {
-            let fileURL = try? Temporary.makeSwiftFile(content: "")
-            let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "SomeType", "--path", fileURL?.path ?? ""])
-            expect(result?.didSucceed) == true
+          var fileURL: URL!
+          var path: String!
+
+          beforeEach {
+            fileURL = try? Temporary.makeSwiftFile(content: "")
+            path = fileURL?.path ?? ""
           }
+
+          afterEach {
+            try? Temporary.removeItem(at: fileURL)
+          }
+
+          context("when type conformance contains multiple types") {
+            it("succeeds with comma separated") {
+              let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "SomeType,AnotherType,AThirdType", "--path", path])
+              expect(result?.didSucceed) == true
+            }
+
+            it("succeeds with spaces") {
+              let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "SomeType, AnotherType, AThirdType", "--path", path])
+              expect(result?.didSucceed) == true
+            }
+          }
+
+          context("when type conformance contains one type") {
+            it("succeeds") {
+              let result = try? TestTask.run(withArguments: ["type-conformance", "--type-name", "SomeType", "--path", path])
+              expect(result?.didSucceed) == true
+            }
+          }
+
         }
 
       }

@@ -21,7 +21,7 @@ public final class CachedSyntaxTree {
   }
 
   /// It reads the `SourceFileSyntax` at the file URL location and parses it into a `SourceFileSyntax, then it caches the result in memory
-  /// ``
+  /// 
   /// - Parameter fileURL: The location of the Swift file to parse
   func cacheSyntaxTree(at fileURL: URL) throws -> SourceFileSyntax {
     let cached =  try SyntaxParser.parse(fileURL)
