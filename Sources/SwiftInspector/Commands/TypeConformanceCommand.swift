@@ -45,7 +45,7 @@ struct TypeConformanceOptions: OptionsProtocol {
   /// - Returns: A valid TypeConformanceOptions or an error
   static func evaluate(_ m: CommandMode) -> Result<TypeConformanceOptions, CommandantError<Error>> {
     let result: Result<TypeConformanceOptions, CommandantError<Error>> = create
-      <*> m <| Option(key: "type-name", defaultValue: "", usage: "the name of the type(s) to find conformance to, comma separated")
+      <*> m <| Option(key: "type-names", defaultValue: "", usage: "the name of the type(s) to find conformance to, comma separated")
       <*> m <| Option(key: "path", defaultValue: "", usage: "the path to the Swift file to inspect")
 
     return result.flatMap { return validate($0) }
@@ -64,7 +64,7 @@ struct TypeConformanceOptions: OptionsProtocol {
   }
 
   private static func validate(_ options: TypeConformanceOptions) -> Result<TypeConformanceOptions, CommandantError<Error>> {
-    guard !options.typeNames.isEmpty else { return .failure(.usageError(description: "Please provide at least a single --type-name")) }
+    guard !options.typeNames.isEmpty else { return .failure(.usageError(description: "Please provide at least a single --type-names")) }
     guard !options.path.isEmpty else { return .failure(.usageError(description: "Please provide a --path")) }
     guard FileManager.default.fileExists(atPath: options.path) else { return .failure(.usageError(description: "The provided --path \(options.path) does not exist")) }
 
