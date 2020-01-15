@@ -4,32 +4,32 @@
 import Foundation
 import SwiftSyntax
 
-public final class SingletonUsageAnalyzer: Analyzer {
+public final class StaticUsageAnalyzer: Analyzer {
 
-  /// - Parameter singleton: The type and member names of the singleton we're looking
+  /// - Parameter staticMember: The type and member names of the static member we're looking
   /// - Parameter cachedSyntaxTree: The cached syntax tree from which to return the AST tree
-  public init(singleton: Singleton, cachedSyntaxTree: CachedSyntaxTree = .init()) {
-    self.singleton = singleton
+  public init(staticMember: StaticMember, cachedSyntaxTree: CachedSyntaxTree = .init()) {
+    self.staticMember = staticMember
     self.cachedSyntaxTree = cachedSyntaxTree
   }
 
-  /// Analyzes if the Swift file contains the singleton specified
+  /// Analyzes if the Swift file contains the static member specified
   /// - Parameter fileURL: The fileURL where the Swift file is located
-  public func analyze(fileURL: URL) throws -> SingletonUsage {
+  public func analyze(fileURL: URL) throws -> StaticUsage {
     var isUsed = false
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
-    let reader = SingletonUsageReader() { [unowned self] node in
-      isUsed = isUsed || self.isSyntaxNode(node, ofType: self.singleton)
+    let reader = StaticUsageReader() { [unowned self] node in
+      isUsed = isUsed || self.isSyntaxNode(node, ofType: self.staticMember)
     }
     _ = reader.visit(syntax)
 
-    return SingletonUsage(singleton: self.singleton, fileName: fileURL.lastPathComponent, isUsed: isUsed)
+    return StaticUsage(staticMember: self.staticMember, fileName: fileURL.lastPathComponent, isUsed: isUsed)
   }
 
   // MARK: Private
-  private func isSyntaxNode(_ node: MemberAccessExprSyntax, ofType singleton: Singleton) -> Bool {
+  private func isSyntaxNode(_ node: MemberAccessExprSyntax, ofType staticMember: StaticMember) -> Bool {
     // A MemberAccessExprSyntax contains a base, a dot and a name.
-    // The base in this case will be the type of the singleton, while the name is the member
+    // The base in this case will be the type of the staticMember, while the name is the member
 
     let baseNode = node.base as? IdentifierExprSyntax
     let nameText = node.name.text
@@ -37,14 +37,14 @@ public final class SingletonUsageAnalyzer: Analyzer {
       return false
     }
 
-    return baseText == singleton.typeName && nameText == singleton.memberName
+    return baseText == staticMember.typeName && nameText == staticMember.memberName
   }
 
-  private let singleton: Singleton
+  private let staticMember: StaticMember
   private let cachedSyntaxTree: CachedSyntaxTree
 }
 
-public struct Singleton: Encodable, Equatable {
+public struct StaticMember: Encodable, Equatable {
   public init(typeName: String, memberName: String) {
     self.typeName = typeName
     self.memberName = memberName
@@ -54,14 +54,14 @@ public struct Singleton: Encodable, Equatable {
   public let memberName: String
 }
 
-public struct SingletonUsage: Encodable, Equatable {
-  let singleton: Singleton
+public struct StaticUsage: Encodable, Equatable {
+  let staticMember: StaticMember
   let fileName: String
   let isUsed: Bool
 }
 
 // TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
-private final class SingletonUsageReader: SyntaxRewriter {
+private final class StaticUsageReader: SyntaxRewriter {
   init(onNodeVisit: @escaping (MemberAccessExprSyntax) -> Void) {
     self.onNodeVisit = onNodeVisit
   }

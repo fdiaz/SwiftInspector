@@ -4,7 +4,7 @@ import SwiftInspectorKit
 
 let registry = CommandRegistry<Error>()
 registry.register(TypeConformanceCommand())
-registry.register(SingletonUsageCommand())
+registry.register(StaticUsageCommand())
 
 let helpCommand = HelpCommand(registry: registry)
 registry.register(helpCommand)

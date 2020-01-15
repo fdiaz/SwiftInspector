@@ -6,7 +6,7 @@ import Nimble
 import Quick
 @testable import SwiftInspectorKit
 
-final class SingletonUsageCommanddSpec: QuickSpec {
+final class StaticUsageCommandSpec: QuickSpec {
   
   override func spec() {
     describe("run") {
@@ -24,21 +24,21 @@ final class SingletonUsageCommanddSpec: QuickSpec {
 
         context("with no arguments") {
           it("fails") {
-            let result = try? TestTask.run(withArguments: ["singleton"])
+            let result = try? TestTask.run(withArguments: ["static-usage"])
             expect(result?.didFail) == true
           }
         }
 
-        context("with no --singleton argument") {
+        context("with no --statics argument") {
           it("fails") {
-            let result = try? TestTask.run(withArguments: ["singleton", "--path", fileURL.path])
+            let result = try? TestTask.run(withArguments: ["static-usage", "--path", fileURL.path])
             expect(result?.didFail) == true
           }
         }
 
         context("with no --path argument") {
           it("fails") {
-            let result = try? TestTask.run(withArguments: ["singleton", "--singleton", "SomeType.shared"])
+            let result = try? TestTask.run(withArguments: ["static-usage", "--statics", "SomeType.shared"])
             expect(result?.didFail) == true
           }
         }
@@ -47,54 +47,54 @@ final class SingletonUsageCommanddSpec: QuickSpec {
 
       context("with an empty --path argument") {
         it("fails") {
-          let result = try? TestSingletonTask.run(singleton: "SomeType.shared", path: "")
+          let result = try? TestStaticUsageTask.run(statics: "SomeType.shared", path: "")
           expect(result?.didFail) == true
         }
       }
       
-      context("with an empty --singleton argument") {
+      context("with an empty --statics argument") {
         it("fails") {
-          let result = try? TestSingletonTask.run(singleton: "", path: fileURL.path)
+          let result = try? TestStaticUsageTask.run(statics: "", path: fileURL.path)
           expect(result?.didFail) == true
         }
       }
 
-      context("with a type only --singleton argument") {
+      context("with a type only --statics argument") {
         it("fails") {
-          let result = try? TestSingletonTask.run(singleton: "SomeType", path: fileURL.path)
+          let result = try? TestStaticUsageTask.run(statics: "SomeType", path: fileURL.path)
           expect(result?.didFail) == true
         }
       }
 
-      context("with a member only --singleton argument") {
+      context("with a member only --statics argument") {
         it("fails") {
-          let result = try? TestSingletonTask.run(singleton: ".shared", path: fileURL.path)
+          let result = try? TestStaticUsageTask.run(statics: ".shared", path: fileURL.path)
           expect(result?.didFail) == true
         }
       }
 
-      context("with multiple comma separated --singleton argument") {
+      context("with multiple comma separated --statics argument") {
         it("succeeds with spaces in between") {
-          let result = try? TestSingletonTask.run(singleton: "SomeA.shared, SomeB.shared, SomeC.shared", path: fileURL.path)
+          let result = try? TestStaticUsageTask.run(statics: "SomeA.shared, SomeB.shared, SomeC.shared", path: fileURL.path)
           expect(result?.didSucceed) == true
         }
 
         it("succeeds with no spaces in between") {
-          let result = try? TestSingletonTask.run(singleton: "SomeA.shared,SomeB.shared,SomeB.shared", path: fileURL.path)
+          let result = try? TestStaticUsageTask.run(statics: "SomeA.shared,SomeB.shared,SomeB.shared", path: fileURL.path)
           expect(result?.didSucceed) == true
         }
       }
 
       context("when path doesn't exist") {
         it("fails") {
-          let result = try? TestSingletonTask.run(singleton: "SomeType.shared", path: "/abc")
+          let result = try? TestStaticUsageTask.run(statics: "SomeType.shared", path: "/abc")
           expect(result?.didFail) == true
         }
       }
 
       context("when path exists") {
         it("succeeds") {
-          let result = try? TestSingletonTask.run(singleton: "SomeType.shared", path: fileURL.path)
+          let result = try? TestStaticUsageTask.run(statics: "SomeType.shared", path: fileURL.path)
           expect(result?.didSucceed) == true
         }
       }
@@ -103,8 +103,8 @@ final class SingletonUsageCommanddSpec: QuickSpec {
   }
 }
 
-private struct TestSingletonTask {
-  fileprivate static func run(singleton: String, path: String) throws -> TaskStatus {
-    try TestTask.run(withArguments: ["singleton", "--singleton", singleton, "--path", path])
+private struct TestStaticUsageTask {
+  fileprivate static func run(statics: String, path: String) throws -> TaskStatus {
+    try TestTask.run(withArguments: ["static-usage", "--statics", statics, "--path", path])
   }
 }
