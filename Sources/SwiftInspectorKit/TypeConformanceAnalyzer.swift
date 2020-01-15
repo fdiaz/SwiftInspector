@@ -39,7 +39,11 @@ public final class TypeConformanceAnalyzer: Analyzer {
   private let cachedSyntaxTree: CachedSyntaxTree
 }
 
-public struct TypeConformance: Encodable, Equatable {
+public struct TypeConformance: Equatable, StandardOutputConvertible {
+  public var standardOutput: String {
+    "\(fileName) \(typeName) \(doesConform)"
+  }
+
   let typeName: String
   let fileName: String
   let doesConform: Bool

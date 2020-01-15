@@ -3,11 +3,17 @@
 
 import Foundation
 
+/// A type that can represent how it's output to stdout
+public protocol StandardOutputConvertible {
+  /// A textual representation of the output
+  var standardOutput: String { get }
+}
+
 /// A protocol that defines how to analyze a Swift file from an URL and converts it into a generic output
 public protocol Analyzer {
-  associatedtype Output: Encodable
+  associatedtype Output: StandardOutputConvertible
 
-  /// Analyzes a Swift file and returns an Encodable output
+  /// Analyzes a Swift file and returns an StandardOutputConvertible output
   /// - Parameter fileURL: The fileURL where the Swift file is located
   func analyze(fileURL: URL) throws -> Output
 
@@ -18,8 +24,7 @@ public protocol Analyzer {
 
 public extension Analyzer {
   func analyze(fileURL: URL) throws -> String {
-    let encodable: Output = try analyze(fileURL: fileURL)
-    let jsonData = try JSONEncoder().encode(encodable)
-    return String(decoding: jsonData, as: UTF8.self)
+    let output: Output = try analyze(fileURL: fileURL)
+    return output.standardOutput
   }
 }

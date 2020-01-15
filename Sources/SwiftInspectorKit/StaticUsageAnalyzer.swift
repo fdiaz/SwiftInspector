@@ -44,7 +44,7 @@ public final class StaticUsageAnalyzer: Analyzer {
   private let cachedSyntaxTree: CachedSyntaxTree
 }
 
-public struct StaticMember: Encodable, Equatable {
+public struct StaticMember: Equatable {
   public init(typeName: String, memberName: String) {
     self.typeName = typeName
     self.memberName = memberName
@@ -54,7 +54,11 @@ public struct StaticMember: Encodable, Equatable {
   public let memberName: String
 }
 
-public struct StaticUsage: Encodable, Equatable {
+public struct StaticUsage: Equatable, StandardOutputConvertible {
+  public var standardOutput: String {
+    "\(fileName) \(staticMember.typeName).\(staticMember.memberName) \(isUsed)"
+  }
+
   let staticMember: StaticMember
   let fileName: String
   let isUsed: Bool
