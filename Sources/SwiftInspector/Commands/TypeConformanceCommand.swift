@@ -52,6 +52,8 @@ struct TypeConformanceOptions: OptionsProtocol {
   }
 
   private static func create(_ commaSeparatedTypeNames: String) -> (String) -> TypeConformanceOptions {
+    // Represents an array of String in the form ["TypeA", "TypeB"]
+    //
     // We allow the following patterns:
     // - A single type "SomeType"
     // - A list of types, comma separated: "SomeType,AnotherType"

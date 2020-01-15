@@ -45,7 +45,7 @@ struct SingletonUsageOptions: OptionsProtocol {
   /// - Returns: A valid SingletonUsageOptions or an error
   static func evaluate(_ m: CommandMode) -> Result<SingletonUsageOptions, CommandantError<Error>> {
     let result: Result<SingletonUsageOptions, CommandantError<Error>> = create
-      <*> m <| Option(key: "singleton", defaultValue: "", usage: "the name of the singleton e.g. Type.member")
+      <*> m <| Option(key: "singleton", defaultValue: "", usage: "the name of the singleton e.g. Type.member. You can pass multiple values, comma separated")
       <*> m <| Option(key: "path", defaultValue: "", usage: "the path to the Swift file to inspect")
 
     return result.flatMap { return validate($0) }
@@ -53,6 +53,11 @@ struct SingletonUsageOptions: OptionsProtocol {
 
   private static func create(_ singletonName: String) -> (String) -> SingletonUsageOptions {
     // Represents an array of singletons in the form ["TypeA.nameA", "TypeB.nameB"]
+    //
+    // We allow the following patterns as user input:
+    // - A single value "SomeType.shared"
+    // - A list of values, comma separated: "SomeType.shared,AnotherType.shared"
+    // - A list of values, comma separated with empty space "SomeType.shared, AnotherType.shared"
     let rawSingletonsArray: [String] = singletonName
     .replacingOccurrences(of: " ", with: "")
     .split(separator: ",")
