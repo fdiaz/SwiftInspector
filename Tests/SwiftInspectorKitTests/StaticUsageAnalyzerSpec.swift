@@ -7,7 +7,7 @@ import Foundation
 
 @testable import SwiftInspectorKit
 
-final class SingletonUsageAnalyzerSpec: QuickSpec {
+final class StaticUsageAnalyzerSpec: QuickSpec {
   private var fileURL: URL!
 
   override func spec() {
@@ -24,11 +24,11 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
           let content = "AirbnbDeepLinkRouter.shared"
           self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-          let singleton = Singleton(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
-          let sut = SingletonUsageAnalyzer(singleton: singleton)
+          let singleton = StaticMember(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
+          let sut = StaticUsageAnalyzer(singleton: singleton)
           let result = try? sut.analyze(fileURL: self.fileURL)
 
-          expect(result) == SingletonUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
+          expect(result) == StaticUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
         }
 
         context("and the singleton is divided in multiple lines") {
@@ -41,11 +41,11 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
             """
             self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-            let singleton = Singleton(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
-            let sut = SingletonUsageAnalyzer(singleton: singleton)
+            let singleton = StaticMember(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
+            let sut = StaticUsageAnalyzer(singleton: singleton)
             let result = try? sut.analyze(fileURL: self.fileURL)
 
-            expect(result) == SingletonUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
+            expect(result) == StaticUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
           }
         }
 
@@ -54,11 +54,11 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
             let content = "AirbnbDeepLinkRouter.shared"
             self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-            let singleton = Singleton(typeName: "SomeOtherType", memberName: "shared")
-            let sut = SingletonUsageAnalyzer(singleton: singleton)
+            let singleton = StaticMember(typeName: "SomeOtherType", memberName: "shared")
+            let sut = StaticUsageAnalyzer(singleton: singleton)
             let result = try? sut.analyze(fileURL: self.fileURL)
 
-            expect(result) == SingletonUsage(singleton: singleton, fileName: "ABC.swift", isUsed: false)
+            expect(result) == StaticUsage(singleton: singleton, fileName: "ABC.swift", isUsed: false)
           }
         }
 
@@ -70,11 +70,11 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         let content = "DeprecatedTrebuchetManagingFactory.current!.isLaunched(.someTrebuchet)"
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "DeprecatedTrebuchetManagingFactory", memberName: "current")
-        let sut = SingletonUsageAnalyzer(singleton: singleton)
+        let singleton = StaticMember(typeName: "DeprecatedTrebuchetManagingFactory", memberName: "current")
+        let sut = StaticUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
-        expect(result) == SingletonUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
+        expect(result) == StaticUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
       }
     }
 
@@ -83,11 +83,11 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         let content = "BBExperimentManager.sharedInstance()"
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "BBExperimentManager", memberName: "sharedInstance")
-        let sut = SingletonUsageAnalyzer(singleton: singleton)
+        let singleton = StaticMember(typeName: "BBExperimentManager", memberName: "sharedInstance")
+        let sut = StaticUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
-        expect(result) == SingletonUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
+        expect(result) == StaticUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
       }
     }
 
@@ -102,11 +102,11 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         """
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "DeprecatedTrebuchetManagingFactory", memberName: "current")
-        let sut = SingletonUsageAnalyzer(singleton: singleton)
+        let singleton = StaticMember(typeName: "DeprecatedTrebuchetManagingFactory", memberName: "current")
+        let sut = StaticUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
-        expect(result) == SingletonUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
+        expect(result) == StaticUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
       }
     }
 
@@ -119,11 +119,11 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         """
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
-        let sut = SingletonUsageAnalyzer(singleton: singleton)
+        let singleton = StaticMember(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
+        let sut = StaticUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
-        expect(result) == SingletonUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
+        expect(result) == StaticUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
       }
     }
 
@@ -141,11 +141,11 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         """
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "UIApplication", memberName: "shared")
-        let sut = SingletonUsageAnalyzer(singleton: singleton)
+        let singleton = StaticMember(typeName: "UIApplication", memberName: "shared")
+        let sut = StaticUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
-        expect(result) == SingletonUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
+        expect(result) == StaticUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
       }
     }
 
@@ -163,11 +163,11 @@ final class SingletonUsageAnalyzerSpec: QuickSpec {
         """
         self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
 
-        let singleton = Singleton(typeName: "EventContext", memberName: "shared")
-        let sut = SingletonUsageAnalyzer(singleton: singleton)
+        let singleton = StaticMember(typeName: "EventContext", memberName: "shared")
+        let sut = StaticUsageAnalyzer(singleton: singleton)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
-        expect(result) == SingletonUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
+        expect(result) == StaticUsage(singleton: singleton, fileName: "ABC.swift", isUsed: true)
       }
     }
 
