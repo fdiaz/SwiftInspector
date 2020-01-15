@@ -25,7 +25,7 @@ final class StaticUsageCommand: CommandProtocol {
       for staticMember in options.staticMembers {
         let analyzer = StaticUsageAnalyzer(staticMember: staticMember, cachedSyntaxTree: cachedSyntaxTree)
         let fileURL = URL(fileURLWithPath: options.path)
-        let results: RawJSON = try analyzer.analyze(fileURL: fileURL)
+        let results: String = try analyzer.analyze(fileURL: fileURL)
         print(results) // Print to standard output
       }
       return ()

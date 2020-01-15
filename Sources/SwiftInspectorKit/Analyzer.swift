@@ -3,8 +3,6 @@
 
 import Foundation
 
-public typealias RawJSON = String
-
 /// A protocol that defines how to analyze a Swift file from an URL and converts it into a generic output
 public protocol Analyzer {
   associatedtype Output: Encodable
@@ -13,13 +11,13 @@ public protocol Analyzer {
   /// - Parameter fileURL: The fileURL where the Swift file is located
   func analyze(fileURL: URL) throws -> Output
 
-  /// Analyzes a Swift file and returns a RawJSON
+  /// Analyzes a Swift file and returns a String
   /// - Parameter fileURL: The fileURL where the Swift file is located
-  func analyze(fileURL: URL) throws -> RawJSON
+  func analyze(fileURL: URL) throws -> String
 }
 
 public extension Analyzer {
-  func analyze(fileURL: URL) throws -> RawJSON {
+  func analyze(fileURL: URL) throws -> String {
     let encodable: Output = try analyze(fileURL: fileURL)
     let jsonData = try JSONEncoder().encode(encodable)
     return String(decoding: jsonData, as: UTF8.self)
