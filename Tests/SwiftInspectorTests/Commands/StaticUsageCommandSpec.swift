@@ -74,12 +74,7 @@ final class StaticUsageCommandSpec: QuickSpec {
       }
 
       context("with multiple comma separated --statics argument") {
-        it("succeeds with spaces in between") {
-          let result = try? TestStaticUsageTask.run(statics: "SomeA.shared, SomeB.shared, SomeC.shared", path: fileURL.path)
-          expect(result?.didSucceed) == true
-        }
-
-        it("succeeds with no spaces in between") {
+        it("succeeds") {
           let result = try? TestStaticUsageTask.run(statics: "SomeA.shared,SomeB.shared,SomeB.shared", path: fileURL.path)
           expect(result?.didSucceed) == true
         }

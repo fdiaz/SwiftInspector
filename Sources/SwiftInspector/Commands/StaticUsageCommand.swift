@@ -57,9 +57,7 @@ struct StaticUsageOptions: OptionsProtocol {
     // We allow the following patterns as user input:
     // - A single value "SomeType.shared"
     // - A list of values, comma separated: "SomeType.shared,AnotherType.shared"
-    // - A list of values, comma separated with empty space "SomeType.shared, AnotherType.shared"
     let rawStaticsArray: [String] = staticMemberName
-    .replacingOccurrences(of: " ", with: "")
     .split(separator: ",")
     .map { String($0) }
 

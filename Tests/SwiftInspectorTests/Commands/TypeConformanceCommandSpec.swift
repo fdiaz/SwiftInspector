@@ -67,13 +67,8 @@ final class TypeConformanceCommandSpec: QuickSpec {
           }
 
           context("when type conformance contains multiple types") {
-            it("succeeds with comma separated") {
+            it("succeeds") {
               let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType,AnotherType,AThirdType", "--path", path])
-              expect(result?.didSucceed) == true
-            }
-
-            it("succeeds with spaces") {
-              let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType, AnotherType, AThirdType", "--path", path])
               expect(result?.didSucceed) == true
             }
           }
