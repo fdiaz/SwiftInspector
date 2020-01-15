@@ -24,7 +24,7 @@ public final class TypeConformanceAnalyzer: Analyzer {
     }
     _ = reader.visit(syntax)
 
-    return TypeConformance(typeName: typeName, fileName: fileURL.lastPathComponent, doesConform: doesConform)
+    return TypeConformance(typeName: typeName, filePath: fileURL.path, doesConform: doesConform)
   }
 
   // MARK: Private
@@ -41,11 +41,11 @@ public final class TypeConformanceAnalyzer: Analyzer {
 
 public struct TypeConformance: Equatable, StandardOutputConvertible {
   public var standardOutput: String {
-    "\(fileName) \(typeName) \(doesConform)"
+    "\(filePath) \(typeName) \(doesConform)"
   }
 
   let typeName: String
-  let fileName: String
+  let filePath: String
   let doesConform: Bool
 }
 

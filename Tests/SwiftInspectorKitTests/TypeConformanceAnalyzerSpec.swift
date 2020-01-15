@@ -33,7 +33,7 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
           let sut = TypeConformanceAnalyzer(typeName: "Some")
           let result = try? sut.analyze(fileURL: self.fileURL)
 
-          expect(result?.fileName) == "AFile.swift"
+          expect(result?.lastPathComponent) == "AFile.swift"
         }
 
         context("with only one conformance") {
