@@ -25,7 +25,7 @@ final class TypeConformanceCommand: CommandProtocol {
       for typeName in options.typeNames {
         let analyzer = TypeConformanceAnalyzer(typeName: typeName, cachedSyntaxTree: cachedSyntaxTree)
         let fileURL = URL(fileURLWithPath: options.path)
-        let results: RawJSON = try analyzer.analyze(fileURL: fileURL)
+        let results: String = try analyzer.analyze(fileURL: fileURL)
         print(results) // Print to standard output
       }
       return ()

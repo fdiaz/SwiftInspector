@@ -23,7 +23,7 @@ public final class StaticUsageAnalyzer: Analyzer {
     }
     _ = reader.visit(syntax)
 
-    return StaticUsage(staticMember: self.staticMember, fileName: fileURL.lastPathComponent, isUsed: isUsed)
+    return StaticUsage(staticMember: self.staticMember, filePath: fileURL.path, isUsed: isUsed)
   }
 
   // MARK: Private
@@ -44,7 +44,7 @@ public final class StaticUsageAnalyzer: Analyzer {
   private let cachedSyntaxTree: CachedSyntaxTree
 }
 
-public struct StaticMember: Encodable, Equatable {
+public struct StaticMember: Equatable {
   public init(typeName: String, memberName: String) {
     self.typeName = typeName
     self.memberName = memberName
@@ -54,9 +54,13 @@ public struct StaticMember: Encodable, Equatable {
   public let memberName: String
 }
 
-public struct StaticUsage: Encodable, Equatable {
+public struct StaticUsage: Equatable, StandardOutputConvertible {
+  public var standardOutput: String {
+    "\(filePath) \(staticMember.typeName).\(staticMember.memberName) \(isUsed)"
+  }
+
   let staticMember: StaticMember
-  let fileName: String
+  let filePath: String
   let isUsed: Bool
 }
 
