@@ -3,7 +3,7 @@
 
 import Foundation
 
-/// A type that can represent how it's output to stdout
+/// A type that can represent how it is output to stdout
 public protocol StandardOutputConvertible {
   /// A textual representation of the output
   var standardOutput: String { get }
