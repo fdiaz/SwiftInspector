@@ -12,51 +12,35 @@ final class TypeConformanceCommand: ParsableCommand {
     abstract: "Finds information related to the conformance to a type name"
   )
 
-  @Option(name: .customLong("type-names"))
-  var typeNameString: String
+  @Option(name: .customLong("type-names"), parsing: .upToNextOption)
+  var typeNames: [String]
 
   @Option()
   var path: String
 
   /// Runs the command
   func run() throws {
-    let options = TypeConformanceOptions(typeNameString: typeNameString, path: path)
-    try options.validate()
-
     let cachedSyntaxTree = CachedSyntaxTree()
 
-    for typeName in options.typeNames {
+    for typeName in typeNames {
       let analyzer = TypeConformanceAnalyzer(typeName: typeName, cachedSyntaxTree: cachedSyntaxTree)
-      let fileURL = URL(fileURLWithPath: options.path)
+      let fileURL = URL(fileURLWithPath: path)
       let results: String = try analyzer.analyze(fileURL: fileURL)
       print(results) // Print to standard output
     }
   }
 
-}
-
-/// A type that represents parameters that can be passed to the TypeConformanceCommand command
-struct TypeConformanceOptions {
-  fileprivate let typeNames: [String]
-  fileprivate let path: String
-
-  init(typeNameString: String, path: String) {
-    typeNames = typeNameString
-    .split(separator: ",")
-    .map { String($0) }
-
-    self.path = path
-  }
-
+  /// Validates if the arguments of this command are valid
   func validate() throws {
     guard !typeNames.isEmpty else {
-      throw ValidationError.emptyArgument(argumentName: "--type-names")
+      throw InspectorError.emptyArgument(argumentName: "--type-names")
     }
     guard !path.isEmpty else {
-      throw ValidationError.emptyArgument(argumentName: "--path")
+      throw InspectorError.emptyArgument(argumentName: "--path")
     }
     guard FileManager.default.fileExists(atPath: path) else {
-      throw ValidationError.invalidArgument(argumentName: "--path", value: path)
+      throw InspectorError.invalidArgument(argumentName: "--path", value: path)
     }
   }
+
 }
