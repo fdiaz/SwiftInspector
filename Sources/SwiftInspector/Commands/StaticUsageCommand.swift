@@ -40,7 +40,7 @@ struct StaticUsageOptions {
   fileprivate let staticMembers: [StaticMember]
   fileprivate let path: String
 
-  /// - Parameter statics: Represents an array of static members in the form `["TypeA.nameA", "TypeB.nameB"]`
+  /// - Parameter statics: Represents a list of static members.
   ///                      We allow a single value `SomeType.shared` or a list of values,
   ///                      comma separated: `SomeType.shared,AnotherType.shared`
   /// - Parameter path: The path to the Swift file to inspect
