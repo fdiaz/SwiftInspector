@@ -1,65 +1,53 @@
 // Created by Francisco Diaz on 10/15/19.
 // Copyright © 2019 Airbnb Inc. All rights reserved.
 
-import Commandant
+import ArgumentParser
 import Foundation
 import SwiftInspectorKit
 
-/// A type that represents a CLI command to check for usage of a static member of a type
-final class StaticUsageCommand: CommandProtocol {
-  init() { }
+final class StaticUsageCommand: ParsableCommand {
 
-  /// The verb that's used in the command line to invoke this command
-  let verb: String = "static-usage"
-  /// A description of the usage of this command
-  let function: String = "Finds information related to the usage of a static member of a type"
+  static var configuration = CommandConfiguration(
+    commandName: "static-usage",
+    abstract: "Finds information related to the usage of a static member of a type"
+  )
+
+  @Option()
+  var statics: String
+
+  @Option()
+  var path: String
 
   /// Runs the command
-  ///
-  /// - Parameter options: The available options for this command
-  /// - Returns: An Result with an error
-  func run(_ options: StaticUsageOptions) -> Result<(), Error> {
+  func run() throws {
+    let options = StaticUsageOptions(statics: statics, path: path)
+    try options.validate()
+
     let cachedSyntaxTree = CachedSyntaxTree()
 
-    return Result {
-      for staticMember in options.staticMembers {
-        let analyzer = StaticUsageAnalyzer(staticMember: staticMember, cachedSyntaxTree: cachedSyntaxTree)
-        let fileURL = URL(fileURLWithPath: options.path)
-        let results: String = try analyzer.analyze(fileURL: fileURL)
-        print(results) // Print to standard output
-      }
-      return ()
+    for staticMember in options.staticMembers {
+      let analyzer = StaticUsageAnalyzer(staticMember: staticMember, cachedSyntaxTree: cachedSyntaxTree)
+      let fileURL = URL(fileURLWithPath: options.path)
+      let results: String = try analyzer.analyze(fileURL: fileURL)
+      print(results) // Print to standard output
     }
   }
 
 }
 
 /// A type that represents parameters that can be passed to the StaticUsageCommand command
-struct StaticUsageOptions: OptionsProtocol {
+struct StaticUsageOptions {
   fileprivate let staticMembers: [StaticMember]
   fileprivate let path: String
 
-  /// Evaluates the arguments passed through the CommandMode and converts them into a valid StaticUsageOptions
-  ///
-  /// - Parameter m: The `CommandMode` that's used to parse the command line arguments into a strongly typed `StaticUsageOptions`
-  /// - Returns: A valid StaticUsageOptions or an error
-  static func evaluate(_ m: CommandMode) -> Result<StaticUsageOptions, CommandantError<Error>> {
-    let result: Result<StaticUsageOptions, CommandantError<Error>> = create
-      <*> m <| Option(key: "statics", defaultValue: "", usage: "the name of the static members e.g. Type.member. You can pass multiple values, comma separated")
-      <*> m <| Option(key: "path", defaultValue: "", usage: "the path to the Swift file to inspect")
-
-    return result.flatMap { return validate($0) }
-  }
-
-  private static func create(_ staticMemberName: String) -> (String) -> StaticUsageOptions {
-    // Represents an array of static members in the form ["TypeA.nameA", "TypeB.nameB"]
-    //
-    // We allow the following patterns as user input:
-    // - A single value "SomeType.shared"
-    // - A list of values, comma separated: "SomeType.shared,AnotherType.shared"
-    let rawStaticsArray: [String] = staticMemberName
-    .split(separator: ",")
-    .map { String($0) }
+  /// - Parameter statics: Represents a list of static members.
+  ///                      We allow a single value `SomeType.shared` or a list of values,
+  ///                      comma separated: `SomeType.shared,AnotherType.shared`
+  /// - Parameter path: The path to the Swift file to inspect
+  init(statics: String, path: String) {
+    let rawStaticsArray: [String] = statics
+      .split(separator: ",")
+      .map { String($0) }
 
     let staticMembers: [StaticMember] = rawStaticsArray.reduce(into: []) { (result, value) in
       let splitted = value.split(separator: ".").map { String($0) }
@@ -68,14 +56,20 @@ struct StaticUsageOptions: OptionsProtocol {
       result.append(StaticMember(typeName: splitted.first!, memberName: splitted.last!))
     }
 
-    return { path in StaticUsageOptions(staticMembers: staticMembers, path: path) }
+    self.staticMembers = staticMembers
+    self.path = path
   }
 
-  private static func validate(_ options: StaticUsageOptions) -> Result<StaticUsageOptions, CommandantError<Error>> {
-    guard !options.staticMembers.isEmpty else { return .failure(.usageError(description: "Please provide a --statics argument")) }
-    guard !options.path.isEmpty else { return .failure(.usageError(description: "Please provide a --path")) }
-    guard FileManager.default.fileExists(atPath: options.path) else { return .failure(.usageError(description: "The provided --path \(options.path) does not exist")) }
-
-    return .success(options)
+  /// Validates if the arguments of this command are valid
+  func validate() throws {
+    guard !staticMembers.isEmpty else {
+      throw ValidationError.emptyArgument(argumentName: "--statics")
+    }
+    guard !path.isEmpty else {
+      throw ValidationError.emptyArgument(argumentName: "--path")
+    }
+    guard FileManager.default.fileExists(atPath: path) else {
+      throw ValidationError.invalidArgument(argumentName: "--path", value: "options.path")
+    }
   }
 }

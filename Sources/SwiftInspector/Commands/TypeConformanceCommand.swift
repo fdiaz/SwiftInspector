@@ -1,73 +1,62 @@
 // Created by Francisco Diaz on 10/11/19.
 // Copyright © 2019 Airbnb Inc. All rights reserved.
 
-import Commandant
+import ArgumentParser
 import Foundation
 import SwiftInspectorKit
 
-/// A type that represents a CLI command to check for conformance of a specific type
-final class TypeConformanceCommand: CommandProtocol {
-  init() { }
+final class TypeConformanceCommand: ParsableCommand {
 
-  /// The verb that's used in the command line to invoke this command
-  let verb: String = "type-conformance"
-  /// A description of the usage of this command
-  let function: String = "Finds information related to the conformance to a type name"
+  static var configuration = CommandConfiguration(
+    commandName: "type-conformance",
+    abstract: "Finds information related to the conformance to a type name"
+  )
+
+  @Option(name: .customLong("type-names"))
+  var typeNameString: String
+
+  @Option()
+  var path: String
 
   /// Runs the command
-  ///
-  /// - Parameter options: The available options for this command
-  /// - Returns: An Result with an error
-  func run(_ options: TypeConformanceOptions) -> Result<(), Error> {
+  func run() throws {
+    let options = TypeConformanceOptions(typeNameString: typeNameString, path: path)
+    try options.validate()
+
     let cachedSyntaxTree = CachedSyntaxTree()
 
-    return Result {
-      for typeName in options.typeNames {
-        let analyzer = TypeConformanceAnalyzer(typeName: typeName, cachedSyntaxTree: cachedSyntaxTree)
-        let fileURL = URL(fileURLWithPath: options.path)
-        let results: String = try analyzer.analyze(fileURL: fileURL)
-        print(results) // Print to standard output
-      }
-      return ()
+    for typeName in options.typeNames {
+      let analyzer = TypeConformanceAnalyzer(typeName: typeName, cachedSyntaxTree: cachedSyntaxTree)
+      let fileURL = URL(fileURLWithPath: options.path)
+      let results: String = try analyzer.analyze(fileURL: fileURL)
+      print(results) // Print to standard output
     }
   }
 
 }
 
 /// A type that represents parameters that can be passed to the TypeConformanceCommand command
-struct TypeConformanceOptions: OptionsProtocol {
+struct TypeConformanceOptions {
   fileprivate let typeNames: [String]
   fileprivate let path: String
 
-  /// Evaluates the arguments passed through the CommandMode and converts them into a valid TypeConformanceOptions
-  ///
-  /// - Parameter m: The `CommandMode` that's used to parse the command line arguments into a strongly typed `TypeConformanceOptions`
-  /// - Returns: A valid TypeConformanceOptions or an error
-  static func evaluate(_ m: CommandMode) -> Result<TypeConformanceOptions, CommandantError<Error>> {
-    let result: Result<TypeConformanceOptions, CommandantError<Error>> = create
-      <*> m <| Option(key: "type-names", defaultValue: "", usage: "the name of the type(s) to find conformance to, comma separated")
-      <*> m <| Option(key: "path", defaultValue: "", usage: "the path to the Swift file to inspect")
+  init(typeNameString: String, path: String) {
+    typeNames = typeNameString
+    .split(separator: ",")
+    .map { String($0) }
 
-    return result.flatMap { return validate($0) }
+    self.path = path
   }
 
-  private static func create(_ commaSeparatedTypeNames: String) -> (String) -> TypeConformanceOptions {
-    // Represents an array of String in the form ["TypeA", "TypeB"]
-    //
-    // We allow the following patterns:
-    // - A single type "SomeType"
-    // - A list of types, comma separated: "SomeType,AnotherType"
-    let typeNamesArray: [String] = commaSeparatedTypeNames
-      .split(separator: ",")
-      .map { String($0) }
-    return { TypeConformanceOptions(typeNames: typeNamesArray, path: $0) }
-  }
-
-  private static func validate(_ options: TypeConformanceOptions) -> Result<TypeConformanceOptions, CommandantError<Error>> {
-    guard !options.typeNames.isEmpty else { return .failure(.usageError(description: "Please provide at least a single --type-names")) }
-    guard !options.path.isEmpty else { return .failure(.usageError(description: "Please provide a --path")) }
-    guard FileManager.default.fileExists(atPath: options.path) else { return .failure(.usageError(description: "The provided --path \(options.path) does not exist")) }
-
-    return .success(options)
+  func validate() throws {
+    guard !typeNames.isEmpty else {
+      throw ValidationError.emptyArgument(argumentName: "--type-names")
+    }
+    guard !path.isEmpty else {
+      throw ValidationError.emptyArgument(argumentName: "--path")
+    }
+    guard FileManager.default.fileExists(atPath: path) else {
+      throw ValidationError.invalidArgument(argumentName: "--path", value: path)
+    }
   }
 }
