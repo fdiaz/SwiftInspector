@@ -15,7 +15,13 @@ final class ImportsCommand: ParsableCommand {
   var path: String
 
   /// Runs the command
-  func run() throws {}
+  func run() throws {
+    let cachedSyntaxTree = CachedSyntaxTree()
+    let analyzer = ImportsAnalyzer(cachedSyntaxTree: cachedSyntaxTree)
+    let fileURL = URL(fileURLWithPath: path)
+    let results: String = try analyzer.analyze(fileURL: fileURL)
+    print(results) // Print to standard output
+  }
 
     /// Validates if the arguments of this command are valid
   func validate() throws {
