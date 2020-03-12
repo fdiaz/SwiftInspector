@@ -73,9 +73,14 @@ final class StaticUsageCommandSpec: QuickSpec {
         }
       }
 
-      context("with multiple comma separated --statics argument") {
-        it("succeeds") {
-          let result = try? TestStaticUsageTask.run(statics: "SomeA.shared,SomeB.shared,SomeB.shared", path: fileURL.path)
+      context("with multiple separated --statics argument") {
+        it("succeeds passing multiple --statics") {
+          let result = try? TestTask.run(withArguments: ["static-usage", "--statics", "A.some", "--statics", "B.some", "--path", fileURL.path])
+          expect(result?.didSucceed) == true
+        }
+
+        it("succeeds passing one --statics") {
+          let result = try? TestTask.run(withArguments: ["static-usage", "--statics", "A.some", "B.some", "--path", fileURL.path])
           expect(result?.didSucceed) == true
         }
       }

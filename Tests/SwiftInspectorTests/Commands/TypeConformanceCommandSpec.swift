@@ -68,7 +68,7 @@ final class TypeConformanceCommandSpec: QuickSpec {
 
           context("when type conformance contains multiple types") {
             it("succeeds") {
-              let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType,AnotherType,AThirdType", "--path", path])
+              let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType", "AnotherType", "AThirdType", "--path", path])
               expect(result?.didSucceed) == true
             }
           }

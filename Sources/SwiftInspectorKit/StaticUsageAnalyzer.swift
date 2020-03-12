@@ -44,7 +44,7 @@ public final class StaticUsageAnalyzer: Analyzer {
   private let cachedSyntaxTree: CachedSyntaxTree
 }
 
-public struct StaticMember: Equatable {
+public struct StaticMember: Codable, Equatable {
   public init(typeName: String, memberName: String) {
     self.typeName = typeName
     self.memberName = memberName
