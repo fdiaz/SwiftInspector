@@ -61,6 +61,23 @@ final class ImportsAnalyzerSpec: QuickSpec {
 
       }
 
+      context("with an  import statement with an attribute") {
+        var sut: [ImportStatement]? = []
+        beforeEach {
+          let content = """
+                        @_export import SomeModule
+
+                        public final class Some {}
+                        """
+          self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+          sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
+        }
+
+        it("returns the appropriate attribute name") {
+          expect(sut?.first?.attribute) == "_export"
+        }
+      }
+
       context("with an import statement with a submodule") {
         var sut: [ImportStatement]? = []
         beforeEach {
