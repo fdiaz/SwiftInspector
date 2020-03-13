@@ -12,15 +12,6 @@ final class InspectorCommandSpec: QuickSpec {
 
   override func spec() {
     describe("run") {
-      var fileURL: URL!
-
-      beforeEach {
-        fileURL = try? Temporary.makeSwiftFile(content: "")
-      }
-
-      afterEach {
-        try? Temporary.removeItem(at: fileURL)
-      }
 
       context("with no arguments") {
         it("fails") {
@@ -44,9 +35,24 @@ final class InspectorCommandSpec: QuickSpec {
       }
 
       context("when path exists") {
+        var fileURL: URL!
+
+        beforeEach {
+          fileURL = try? Temporary.makeSwiftFile(content: "import Foundation")
+        }
+
+        afterEach {
+          try? Temporary.removeItem(at: fileURL)
+        }
+
         it("succeeds") {
           let result = try? TestStaticUsageTask.run(path: fileURL.path)
           expect(result?.didSucceed) == true
+        }
+
+        it("outputs to standard output") {
+          let result = try? TestStaticUsageTask.run(path: fileURL.path)
+          expect(result?.outputMessage).to(contain("Foundation"))
         }
       }
 

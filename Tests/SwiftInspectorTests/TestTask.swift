@@ -64,4 +64,18 @@ enum TaskStatus: Equatable {
   }
 
   var didFail: Bool { return !didSucceed }
+
+  var outputMessage: String? {
+    switch self {
+    case .success(let message): return message
+    case .failure(_, _): return nil
+    }
+  }
+
+  var errorMessage: String? {
+    switch self {
+    case .success(_): return nil
+    case .failure(let message, _): return message
+    }
+  }
 }
