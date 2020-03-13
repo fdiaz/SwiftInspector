@@ -97,6 +97,12 @@ final class StaticUsageCommandSpec: QuickSpec {
           let result = try? TestStaticUsageTask.run(statics: "SomeType.shared", path: fileURL.path)
           expect(result?.didSucceed) == true
         }
+
+        it("outputs to standard output") {
+          fileURL = try? Temporary.makeSwiftFile(content: "SomeType.shared")
+          let result = try? TestStaticUsageTask.run(statics: "SomeType.shared", path: fileURL.path)
+          expect(result?.outputMessage).to(contain("SomeType.shared true"))
+        }
       }
       
     }

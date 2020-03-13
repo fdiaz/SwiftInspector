@@ -9,6 +9,13 @@ public protocol StandardOutputConvertible {
   var standardOutput: String { get }
 }
 
+extension Array: StandardOutputConvertible where Element: StandardOutputConvertible {
+  // Defaults to a new line per output
+  public var standardOutput: String {
+    return self.map { $0.standardOutput }.joined(separator: "\n")
+  }
+}
+
 /// A protocol that defines how to analyze a Swift file from an URL and converts it into a generic output
 public protocol Analyzer {
   associatedtype Output: StandardOutputConvertible

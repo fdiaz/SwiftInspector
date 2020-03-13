@@ -7,5 +7,9 @@ struct InspectorCommand: ParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "SwiftInspector",
     abstract: "A command line tool to help inspect usage of classes, protocols, properties, etc in a Swift codebase.",
-    subcommands: [StaticUsageCommand.self, TypeConformanceCommand.self])
+    subcommands: [
+      ImportsCommand.self,
+      StaticUsageCommand.self,
+      TypeConformanceCommand.self,
+  ])
 }
