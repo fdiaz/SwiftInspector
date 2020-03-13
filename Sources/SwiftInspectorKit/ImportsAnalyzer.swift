@@ -11,7 +11,7 @@ public final class ImportsAnalyzer: Analyzer {
     self.cachedSyntaxTree = cachedSyntaxTree
   }
 
-  /// Analyzes if the Swift file contains conformances to the typeName provided
+  /// Analyzes the imports of the Swift file
   /// - Parameter fileURL: The fileURL where the Swift file is located
   public func analyze(fileURL: URL) throws -> [ImportStatement] {
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
@@ -37,7 +37,12 @@ public final class ImportsAnalyzer: Analyzer {
   }
 
   /// Finds the type of an import
-  /// e.g `import class UIKit.UIViewController` returns class
+  ///
+  /// - Parameter syntaxNode: The Swift Syntax import declaration node
+  ///
+  /// - Returns: A string representing the kind of the import
+  ///            e.g `import class UIKit.UIViewController` returns class
+  ///            while `import UIKit` and `import UIKit.UIViewController` return an empty String
   private func findImportKind(from syntaxNode: ImportDeclSyntax) -> String {
     for token in syntaxNode.tokens {
       switch token.tokenKind {
@@ -60,8 +65,12 @@ public final class ImportsAnalyzer: Analyzer {
   }
 
   /// Finds the module and submodule of an import
-  /// e.g `import class UIKit.UIViewController` returns ("UIKit", "UIViewController")
-  private func findModule(from syntaxNode: ImportDeclSyntax) -> (String, String) {
+  ///
+  /// - Parameter syntaxNode: The Swift Syntax import declaration node
+  ///
+  /// - Returns: A String tuple representing the main module and submodule of the import.
+  ///            e.g `import class UIKit.UIViewController` returns ("UIKit", "UIViewController")
+  private func findModule(from syntaxNode: ImportDeclSyntax) -> (main: String, submodule: String) {
     var moduleIdentifier: String = ""
     var submoduleIdentifier: String = ""
 
