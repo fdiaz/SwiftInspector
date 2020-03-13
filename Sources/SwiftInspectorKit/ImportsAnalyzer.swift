@@ -30,10 +30,11 @@ public final class ImportsAnalyzer: Analyzer {
   private let cachedSyntaxTree: CachedSyntaxTree
 
   private func importStatement(from syntaxNode: ImportDeclSyntax) -> ImportStatement {
+    let attribute = findAttribute(from: syntaxNode)
     let (main, submodule) = findModule(from: syntaxNode)
     let kind = findImportKind(from: syntaxNode)
 
-    return ImportStatement(kind: kind, mainModule: main, submodule: submodule)
+    return ImportStatement(attribute: attribute, kind: kind, mainModule: main, submodule: submodule)
   }
 
   /// Finds the type of an import
@@ -94,6 +95,18 @@ public final class ImportsAnalyzer: Analyzer {
     return (moduleIdentifier, submoduleIdentifier)
   }
 
+  private func findAttribute(from syntaxNode: ImportDeclSyntax) -> String {
+    for child in syntaxNode.children {
+      guard let attributeList = child as? AttributeListSyntax else {
+        continue
+      }
+
+      // This AttributeList is of the form ["@", "attribute"]
+      // So we grab the last token
+      return attributeList.lastToken?.text ?? ""
+    }
+    return ""
+  }
 }
 
 // TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
@@ -113,6 +126,7 @@ private final class ImportSyntaxReader: SyntaxRewriter {
 public struct ImportStatement: StandardOutputConvertible {
   public var standardOutput: String { mainModule }
 
+  public var attribute: String = ""
   public var kind: String = ""
   public let mainModule: String
   public var submodule: String = ""
