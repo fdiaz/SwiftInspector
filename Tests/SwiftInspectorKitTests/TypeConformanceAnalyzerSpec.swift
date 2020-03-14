@@ -21,21 +21,6 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
     describe("analyze(fileURL:)") {
 
       context("when a type conforms to a protocol") {
-        it("returns the correct filename") {
-          let content = """
-          protocol Some {}
-
-          class Another: Some {}
-          """
-
-          self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "AFile")
-
-          let sut = TypeConformanceAnalyzer(typeName: "Some")
-          let result = try? sut.analyze(fileURL: self.fileURL)
-
-          expect(result?.lastPathComponent) == "AFile.swift"
-        }
-
         context("with only one conformance") {
           it("conforms") {
             let content = """

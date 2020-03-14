@@ -83,6 +83,11 @@ final class TypeConformanceCommandSpec: QuickSpec {
               let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType", "--path", path])
               expect(result?.outputMessage).to(contain("SomeType true"))
             }
+
+            it("outputs the path of the file") {
+              let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType", "--path", path])
+              expect(result?.outputMessage).to(contain(fileURL.lastPathComponent))
+            }
           }
 
         }
