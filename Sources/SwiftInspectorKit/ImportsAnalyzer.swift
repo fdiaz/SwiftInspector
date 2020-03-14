@@ -123,7 +123,7 @@ private final class ImportSyntaxReader: SyntaxRewriter {
   let onNodeVisit: (ImportDeclSyntax) -> Void
 }
 
-public struct ImportStatement {
+public struct ImportStatement: Hashable {
   public var attribute: String = ""
   public var kind: String = ""
   public let mainModule: String
