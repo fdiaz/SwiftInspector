@@ -123,9 +123,7 @@ private final class ImportSyntaxReader: SyntaxRewriter {
   let onNodeVisit: (ImportDeclSyntax) -> Void
 }
 
-public struct ImportStatement: StandardOutputConvertible {
-  public var standardOutput: String { mainModule }
-
+public struct ImportStatement {
   public var attribute: String = ""
   public var kind: String = ""
   public let mainModule: String

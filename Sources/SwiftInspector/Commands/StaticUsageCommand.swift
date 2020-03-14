@@ -25,8 +25,8 @@ final class StaticUsageCommand: ParsableCommand {
     for staticMember in statics {
       let analyzer = StaticUsageAnalyzer(staticMember: staticMember, cachedSyntaxTree: cachedSyntaxTree)
       let fileURL = URL(fileURLWithPath: path)
-      let results: String = try analyzer.analyze(fileURL: fileURL)
-      print(results) // Print to standard output
+      let result: StaticUsage = try analyzer.analyze(fileURL: fileURL)
+      output(from: result)
     }
   }
 
@@ -41,6 +41,11 @@ final class StaticUsageCommand: ParsableCommand {
     guard FileManager.default.fileExists(atPath: path) else {
       throw InspectorError.invalidArgument(argumentName: "--path", value: "options.path")
     }
+  }
+
+  // Outputs to standard output
+  private func output(from staticUsage: StaticUsage) {
+    print("\(path) \(staticUsage.staticMember.typeName).\(staticUsage.staticMember.memberName) \(staticUsage.isUsed)")
   }
 }
 

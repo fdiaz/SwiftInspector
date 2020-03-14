@@ -19,8 +19,8 @@ final class ImportsCommand: ParsableCommand {
     let cachedSyntaxTree = CachedSyntaxTree()
     let analyzer = ImportsAnalyzer(cachedSyntaxTree: cachedSyntaxTree)
     let fileURL = URL(fileURLWithPath: path)
-    let results: String = try analyzer.analyze(fileURL: fileURL)
-    print(results) // Print to standard output
+    let results: [ImportStatement] = try analyzer.analyze(fileURL: fileURL)
+    output(from: results)
   }
 
     /// Validates if the arguments of this command are valid
@@ -32,4 +32,11 @@ final class ImportsCommand: ParsableCommand {
       throw InspectorError.invalidArgument(argumentName: "--path", value: "options.path")
     }
   }
+
+   // Outputs to standard output
+  private func output(from imports: [ImportStatement]) {
+    let output = imports.map { $0.mainModule }.joined(separator: "\n")
+    print(output)
+  }
 }
+

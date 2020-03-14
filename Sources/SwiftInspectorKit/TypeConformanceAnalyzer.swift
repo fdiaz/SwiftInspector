@@ -39,14 +39,11 @@ public final class TypeConformanceAnalyzer: Analyzer {
   private let cachedSyntaxTree: CachedSyntaxTree
 }
 
-public struct TypeConformance: Equatable, StandardOutputConvertible {
-  public var standardOutput: String {
-    "\(filePath) \(typeName) \(doesConform)"
-  }
+public struct TypeConformance: Equatable {
 
-  let typeName: String
-  let filePath: String
-  let doesConform: Bool
+  public let typeName: String
+  public let filePath: String
+  public let doesConform: Bool
 }
 
 // TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)

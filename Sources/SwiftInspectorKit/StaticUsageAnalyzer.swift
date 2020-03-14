@@ -54,14 +54,10 @@ public struct StaticMember: Codable, Equatable {
   public let memberName: String
 }
 
-public struct StaticUsage: Equatable, StandardOutputConvertible {
-  public var standardOutput: String {
-    "\(filePath) \(staticMember.typeName).\(staticMember.memberName) \(isUsed)"
-  }
-
-  let staticMember: StaticMember
-  let filePath: String
-  let isUsed: Bool
+public struct StaticUsage: Equatable {
+  public let staticMember: StaticMember
+  public let filePath: String
+  public let isUsed: Bool
 }
 
 // TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
