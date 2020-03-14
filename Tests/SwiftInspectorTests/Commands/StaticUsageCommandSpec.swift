@@ -103,6 +103,11 @@ final class StaticUsageCommandSpec: QuickSpec {
           let result = try? TestStaticUsageTask.run(statics: "SomeType.shared", path: fileURL.path)
           expect(result?.outputMessage).to(contain("SomeType.shared true"))
         }
+
+        it("outputs the path to standard output") {
+          let result = try? TestStaticUsageTask.run(statics: "SomeType.shared", path: fileURL.path)
+          expect(result?.outputMessage).to(contain(fileURL.lastPathComponent))
+        }
       }
       
     }

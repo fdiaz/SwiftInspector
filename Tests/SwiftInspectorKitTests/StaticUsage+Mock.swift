@@ -10,16 +10,9 @@ extension StaticUsage {
   /// This makes it easier to change the initializer of StaticUsage without refactoring tests
   static func mock(
     staticMember: StaticMember = .mock(),
-    filePath: String = "mock/Some.swift",
     isUsed: Bool = true) -> StaticUsage
   {
-    StaticUsage(staticMember: staticMember, filePath: filePath, isUsed: isUsed)
-  }
-
-  /// The last path component of the provided filePath property
-  var lastPathComponent: String? {
-    let fileURL = URL(fileURLWithPath: filePath)
-    return fileURL.lastPathComponent
+    StaticUsage(staticMember: staticMember, isUsed: isUsed)
   }
 }
 

@@ -29,7 +29,6 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
           let result = try? sut.analyze(fileURL: self.fileURL)
 
           expect(result?.staticMember) == staticMember
-          expect(result?.lastPathComponent) == "ABC.swift"
           expect(result?.isUsed) == true
         }
 
@@ -48,7 +47,6 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
             let result = try? sut.analyze(fileURL: self.fileURL)
 
             expect(result?.staticMember) == staticMember
-            expect(result?.lastPathComponent) == "ABC.swift"
             expect(result?.isUsed) == true
           }
         }
@@ -63,7 +61,6 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
             let result = try? sut.analyze(fileURL: self.fileURL)
 
             expect(result?.staticMember) == staticMember
-            expect(result?.lastPathComponent) == "ABC.swift"
             expect(result?.isUsed) == false
           }
         }
@@ -81,7 +78,6 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
         let result = try? sut.analyze(fileURL: self.fileURL)
 
         expect(result?.staticMember) == staticMember
-        expect(result?.lastPathComponent) == "ABC.swift"
         expect(result?.isUsed) == true
       }
     }
@@ -96,7 +92,6 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
         let result = try? sut.analyze(fileURL: self.fileURL)
 
         expect(result?.staticMember) == staticMember
-        expect(result?.lastPathComponent) == "ABC.swift"
         expect(result?.isUsed) == true
       }
     }
@@ -117,7 +112,6 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
         let result = try? sut.analyze(fileURL: self.fileURL)
 
         expect(result?.staticMember) == staticMember
-        expect(result?.lastPathComponent) == "ABC.swift"
         expect(result?.isUsed) == true
       }
     }
@@ -136,7 +130,6 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
         let result = try? sut.analyze(fileURL: self.fileURL)
 
         expect(result?.staticMember) == staticMember
-        expect(result?.lastPathComponent) == "ABC.swift"
         expect(result?.isUsed) == true
       }
     }
@@ -160,7 +153,6 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
         let result = try? sut.analyze(fileURL: self.fileURL)
 
         expect(result?.staticMember) == staticMember
-        expect(result?.lastPathComponent) == "ABC.swift"
         expect(result?.isUsed) == true
       }
     }
@@ -184,7 +176,6 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
         let result = try? sut.analyze(fileURL: self.fileURL)
 
         expect(result?.staticMember) == staticMember
-        expect(result?.lastPathComponent) == "ABC.swift"
         expect(result?.isUsed) == true
       }
     }

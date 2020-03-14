@@ -23,7 +23,7 @@ public final class StaticUsageAnalyzer: Analyzer {
     }
     _ = reader.visit(syntax)
 
-    return StaticUsage(staticMember: self.staticMember, filePath: fileURL.path, isUsed: isUsed)
+    return StaticUsage(staticMember: self.staticMember, isUsed: isUsed)
   }
 
   // MARK: Private
@@ -56,7 +56,6 @@ public struct StaticMember: Codable, Equatable {
 
 public struct StaticUsage: Equatable {
   public let staticMember: StaticMember
-  public let filePath: String
   public let isUsed: Bool
 }
 
