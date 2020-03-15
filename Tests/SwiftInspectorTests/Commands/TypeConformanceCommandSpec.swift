@@ -58,7 +58,7 @@ final class TypeConformanceCommandSpec: QuickSpec {
           var path: String!
 
           beforeEach {
-            fileURL = try? Temporary.makeSwiftFile(content: "final class Some: SomeType { }")
+            fileURL = try? Temporary.makeFile(content: "final class Some: SomeType { }")
             path = fileURL?.path ?? ""
           }
 

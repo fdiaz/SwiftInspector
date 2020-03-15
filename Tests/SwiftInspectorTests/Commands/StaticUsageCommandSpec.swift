@@ -13,7 +13,7 @@ final class StaticUsageCommandSpec: QuickSpec {
       var fileURL: URL!
 
       beforeEach {
-        fileURL = try? Temporary.makeSwiftFile(content: "")
+        fileURL = try? Temporary.makeFile(content: "")
       }
 
       afterEach {
@@ -99,7 +99,7 @@ final class StaticUsageCommandSpec: QuickSpec {
         }
 
         it("outputs to standard output") {
-          fileURL = try? Temporary.makeSwiftFile(content: "SomeType.shared")
+          fileURL = try? Temporary.makeFile(content: "SomeType.shared")
           let result = try? TestStaticUsageTask.run(statics: "SomeType.shared", path: fileURL.path)
           expect(result?.outputMessage).to(contain("SomeType.shared true"))
         }

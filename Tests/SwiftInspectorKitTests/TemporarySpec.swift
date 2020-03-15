@@ -11,7 +11,7 @@ final class TemporarySpec: QuickSpec {
   override func spec() {
     describe("makeSwiftFile(content:name:)") {
       it("creates a file") {
-        guard let savedURL = try? Temporary.makeSwiftFile(content: "abc") else {
+        guard let savedURL = try? Temporary.makeFile(content: "abc") else {
           return fail("Something went wrong when creating a temporary file. This shouldn't fail.")
         }
 
@@ -20,7 +20,7 @@ final class TemporarySpec: QuickSpec {
 
       it("saves the correct content") {
         let content = "protocol Some { }"
-        guard let savedURL = try? Temporary.makeSwiftFile(content: content) else {
+        guard let savedURL = try? Temporary.makeFile(content: content) else {
           return fail("Something went wrong when creating a temporary file. This shouldn't fail.")
         }
 
@@ -29,7 +29,7 @@ final class TemporarySpec: QuickSpec {
       }
 
       it("uses the correct filename") {
-        guard let savedURL = try? Temporary.makeSwiftFile(content: "", name: "SomeName") else {
+        guard let savedURL = try? Temporary.makeFile(content: "", name: "SomeName") else {
           return fail("Something went wrong when creating a temporary file. This shouldn't fail.")
         }
 
@@ -49,7 +49,7 @@ final class TemporarySpec: QuickSpec {
 
     describe("removeItem(at:)") {
       it("deletes a existing file") {
-        guard let savedURL = try? Temporary.makeSwiftFile(content: "abc") else {
+        guard let savedURL = try? Temporary.makeFile(content: "abc") else {
           return fail("Something went wrong when creating a temporary file. This shouldn't fail.")
         }
 

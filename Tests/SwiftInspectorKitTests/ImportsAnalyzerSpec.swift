@@ -24,7 +24,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
                       public final class Some {
                       }
                       """
-        self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+        self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
         it("returns an empty array") {
           let sut = ImportsAnalyzer()
@@ -43,7 +43,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+          self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
           sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
         }
 
@@ -69,7 +69,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
 
                         public final class Some {}
                         """
-          self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+          self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
           sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
         }
 
@@ -87,7 +87,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+          self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
           sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
         }
 
@@ -114,7 +114,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+          self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
           sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
         }
 
@@ -142,7 +142,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+          self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
           sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
         }
 

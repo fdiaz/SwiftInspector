@@ -38,7 +38,7 @@ final class InspectorCommandSpec: QuickSpec {
         var fileURL: URL!
 
         beforeEach {
-          fileURL = try? Temporary.makeSwiftFile(content: "@testable import struct Foundation.Some")
+          fileURL = try? Temporary.makeFile(content: "@testable import struct Foundation.Some")
         }
 
         afterEach {
