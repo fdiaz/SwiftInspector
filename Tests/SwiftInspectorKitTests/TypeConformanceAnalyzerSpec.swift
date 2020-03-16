@@ -29,7 +29,7 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
             class Another: Some {}
             """
 
-            self.fileURL = try? Temporary.makeSwiftFile(content: content)
+            self.fileURL = try? Temporary.makeFile(content: content)
 
             let sut = TypeConformanceAnalyzer(typeName: "Some")
             let result = try? sut.analyze(fileURL: self.fileURL)
@@ -48,7 +48,7 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
               class Second: Foo {}
               """
 
-              self.fileURL = try? Temporary.makeSwiftFile(content: content)
+              self.fileURL = try? Temporary.makeFile(content: content)
 
               let sut = TypeConformanceAnalyzer(typeName: "Bar")
               let result = try? sut.analyze(fileURL: self.fileURL)
@@ -68,7 +68,7 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
               ,B, C  {}
               """
 
-              self.fileURL = try? Temporary.makeSwiftFile(content: content)
+              self.fileURL = try? Temporary.makeFile(content: content)
 
               let sut = TypeConformanceAnalyzer(typeName: "B")
               let result = try? sut.analyze(fileURL: self.fileURL)
@@ -88,7 +88,7 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
           class Another: Some {}
           """
 
-          self.fileURL = try? Temporary.makeSwiftFile(content: content)
+          self.fileURL = try? Temporary.makeFile(content: content)
 
           let sut = TypeConformanceAnalyzer(typeName: "Some")
           let result = try? sut.analyze(fileURL: self.fileURL)
@@ -105,7 +105,7 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
           class Another: Some {}
           """
 
-          self.fileURL = try? Temporary.makeSwiftFile(content: content)
+          self.fileURL = try? Temporary.makeFile(content: content)
 
           let sut = TypeConformanceAnalyzer(typeName: "AnotherType")
           let result = try? sut.analyze(fileURL: self.fileURL)

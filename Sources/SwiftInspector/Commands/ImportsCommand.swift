@@ -11,7 +11,7 @@ final class ImportsCommand: ParsableCommand {
     abstract: "Finds all the declared imports"
   )
 
-  @Option()
+  @Option(help: "The absolute path to the file or directory to inspect")
   var path: String
 
   @Option(default: .main, help: OutputMode.help)
@@ -22,8 +22,16 @@ final class ImportsCommand: ParsableCommand {
     let cachedSyntaxTree = CachedSyntaxTree()
     let analyzer = ImportsAnalyzer(cachedSyntaxTree: cachedSyntaxTree)
     let fileURL = URL(fileURLWithPath: path)
-    let results: [ImportStatement] = try analyzer.analyze(fileURL: fileURL)
-    output(from: results)
+
+    let outputArray = try FileManager.default.swiftFiles(at: fileURL)
+      .reduce(Set<String>()) { result, url in
+        let importStatements = try analyzer.analyze(fileURL: url)
+        let output = importStatements.map { outputString(from: $0)}
+        return result.union(output)
+    }
+
+    let output = outputArray.joined(separator: "\n")
+    print(output)
   }
 
     /// Validates if the arguments of this command are valid
@@ -34,12 +42,6 @@ final class ImportsCommand: ParsableCommand {
     guard FileManager.default.fileExists(atPath: path) else {
       throw InspectorError.invalidArgument(argumentName: "--path", value: "options.path")
     }
-  }
-
-   // Outputs to standard output
-  private func output(from imports: [ImportStatement]) {
-    let output = imports.map { outputString(from: $0) }.joined(separator: "\n")
-    print(output)
   }
 
   private func outputString(from statement: ImportStatement) -> String {

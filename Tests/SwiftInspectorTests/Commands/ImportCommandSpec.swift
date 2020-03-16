@@ -38,7 +38,7 @@ final class InspectorCommandSpec: QuickSpec {
         var fileURL: URL!
 
         beforeEach {
-          fileURL = try? Temporary.makeSwiftFile(content: "@testable import struct Foundation.Some")
+          fileURL = try? Temporary.makeFile(content: "@testable import struct Foundation.Some")
         }
 
         afterEach {
@@ -58,6 +58,36 @@ final class InspectorCommandSpec: QuickSpec {
         it("outputs the full import if full is passed") {
           let result = try? TestStaticUsageTask.run(path: fileURL.path, arguments: ["--mode", "full"])
           expect(result?.outputMessage).to(contain("@testable struct Foundation.Some"))
+        }
+      }
+
+      context("when path is a folder") {
+        var folderURL: URL!
+        beforeEach {
+          folderURL = try! Temporary.makeFolder()
+        }
+        afterEach {
+          try! Temporary.removeItem(at: folderURL)
+        }
+
+        it("succeeds") {
+          let result = try? TestStaticUsageTask.run(path: folderURL.path)
+
+          expect(result?.didSucceed) == true
+        }
+
+        it("outputs the correct modules") {
+          let _ = try? Temporary.makeFile(
+            content: """
+                     import Foundation
+                     import UIKit
+                     import MyService
+                     """,
+            atPath: folderURL.path)
+
+          let result = try? TestStaticUsageTask.run(path: folderURL.path)
+          let outputMessageLines = result?.outputMessage?.split { $0.isNewline }
+          expect(outputMessageLines).to(contain(["Foundation", "UIKit", "MyService"]))
         }
       }
 

@@ -22,7 +22,7 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
       context("when accessing a static property directly") {
         it("marks the staticMember as used") {
           let content = "AirbnbDeepLinkRouter.shared"
-          self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+          self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
           let staticMember = StaticMember(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
           let sut = StaticUsageAnalyzer(staticMember: staticMember)
@@ -40,7 +40,7 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
                            .shared
             }
             """
-            self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+            self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
             let staticMember = StaticMember(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
             let sut = StaticUsageAnalyzer(staticMember: staticMember)
@@ -54,7 +54,7 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
         context("when the type name is not present") {
           it("marks the staticMember as not used") {
             let content = "AirbnbDeepLinkRouter.shared"
-            self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+            self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
             let staticMember = StaticMember(typeName: "SomeOtherType", memberName: "shared")
             let sut = StaticUsageAnalyzer(staticMember: staticMember)
@@ -71,7 +71,7 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
     context("when accessing a method on a static property") {
       it("marks the staticMember as used") {
         let content = "DeprecatedTrebuchetManagingFactory.current!.isLaunched(.someTrebuchet)"
-        self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+        self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
         let staticMember = StaticMember(typeName: "DeprecatedTrebuchetManagingFactory", memberName: "current")
         let sut = StaticUsageAnalyzer(staticMember: staticMember)
@@ -85,7 +85,7 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
     context("when the staticMember is defined as a method") {
       it("marks the staticMember as used") {
         let content = "BBExperimentManager.sharedInstance()"
-        self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+        self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
         let staticMember = StaticMember(typeName: "BBExperimentManager", memberName: "sharedInstance")
         let sut = StaticUsageAnalyzer(staticMember: staticMember)
@@ -105,7 +105,7 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
               keyValueStore: UserDefaults.standard),
               localeService: LocaleServiceObjCAdapter.shared.localeService),
         """
-        self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+        self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
         let staticMember = StaticMember(typeName: "DeprecatedTrebuchetManagingFactory", memberName: "current")
         let sut = StaticUsageAnalyzer(staticMember: staticMember)
@@ -123,7 +123,7 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
           private let router = AirbnbDeepLinkRouter.shared
         }
         """
-        self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+        self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
         let staticMember = StaticMember(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
         let sut = StaticUsageAnalyzer(staticMember: staticMember)
@@ -146,7 +146,7 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
           }
         }
         """
-        self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+        self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
         let staticMember = StaticMember(typeName: "UIApplication", memberName: "shared")
         let sut = StaticUsageAnalyzer(staticMember: staticMember)
@@ -169,7 +169,7 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
               )
             )
         """
-        self.fileURL = try? Temporary.makeSwiftFile(content: content, name: "ABC")
+        self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
         let staticMember = StaticMember(typeName: "EventContext", memberName: "shared")
         let sut = StaticUsageAnalyzer(staticMember: staticMember)
