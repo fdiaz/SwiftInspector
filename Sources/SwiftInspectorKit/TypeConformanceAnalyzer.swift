@@ -24,7 +24,7 @@ public final class TypeConformanceAnalyzer: Analyzer {
     }
     _ = reader.visit(syntax)
 
-    return TypeConformance(typeName: typeName, filePath: fileURL.path, doesConform: doesConform)
+    return TypeConformance(typeName: typeName, doesConform: doesConform)
   }
 
   // MARK: Private
@@ -39,14 +39,9 @@ public final class TypeConformanceAnalyzer: Analyzer {
   private let cachedSyntaxTree: CachedSyntaxTree
 }
 
-public struct TypeConformance: Equatable, StandardOutputConvertible {
-  public var standardOutput: String {
-    "\(filePath) \(typeName) \(doesConform)"
-  }
-
-  let typeName: String
-  let filePath: String
-  let doesConform: Bool
+public struct TypeConformance: Equatable {
+  public let typeName: String
+  public let doesConform: Bool
 }
 
 // TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)

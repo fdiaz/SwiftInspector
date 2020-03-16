@@ -23,7 +23,7 @@ public final class StaticUsageAnalyzer: Analyzer {
     }
     _ = reader.visit(syntax)
 
-    return StaticUsage(staticMember: self.staticMember, filePath: fileURL.path, isUsed: isUsed)
+    return StaticUsage(staticMember: self.staticMember, isUsed: isUsed)
   }
 
   // MARK: Private
@@ -54,14 +54,9 @@ public struct StaticMember: Codable, Equatable {
   public let memberName: String
 }
 
-public struct StaticUsage: Equatable, StandardOutputConvertible {
-  public var standardOutput: String {
-    "\(filePath) \(staticMember.typeName).\(staticMember.memberName) \(isUsed)"
-  }
-
-  let staticMember: StaticMember
-  let filePath: String
-  let isUsed: Bool
+public struct StaticUsage: Equatable {
+  public let staticMember: StaticMember
+  public let isUsed: Bool
 }
 
 // TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)

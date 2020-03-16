@@ -25,8 +25,8 @@ final class TypeConformanceCommand: ParsableCommand {
     for typeName in typeNames {
       let analyzer = TypeConformanceAnalyzer(typeName: typeName, cachedSyntaxTree: cachedSyntaxTree)
       let fileURL = URL(fileURLWithPath: path)
-      let results: String = try analyzer.analyze(fileURL: fileURL)
-      print(results) // Print to standard output
+      let result: TypeConformance = try analyzer.analyze(fileURL: fileURL)
+      output(from: result)
     }
   }
 
@@ -41,6 +41,11 @@ final class TypeConformanceCommand: ParsableCommand {
     guard FileManager.default.fileExists(atPath: path) else {
       throw InspectorError.invalidArgument(argumentName: "--path", value: path)
     }
+  }
+
+  // Output to standard output
+  private func output(from conformance: TypeConformance) {
+    print("\(path) \(conformance.typeName) \(conformance.doesConform)")
   }
 
 }

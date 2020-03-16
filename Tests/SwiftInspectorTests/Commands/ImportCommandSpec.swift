@@ -38,7 +38,7 @@ final class InspectorCommandSpec: QuickSpec {
         var fileURL: URL!
 
         beforeEach {
-          fileURL = try? Temporary.makeSwiftFile(content: "import Foundation")
+          fileURL = try? Temporary.makeSwiftFile(content: "@testable import struct Foundation.Some")
         }
 
         afterEach {
@@ -50,9 +50,14 @@ final class InspectorCommandSpec: QuickSpec {
           expect(result?.didSucceed) == true
         }
 
-        it("outputs to standard output") {
+        it("outputs only the main module by default") {
           let result = try? TestStaticUsageTask.run(path: fileURL.path)
-          expect(result?.outputMessage).to(contain("Foundation"))
+          expect(result?.outputMessage) == "Foundation\n"
+        }
+
+        it("outputs the full import if full is passed") {
+          let result = try? TestStaticUsageTask.run(path: fileURL.path, arguments: ["--mode", "full"])
+          expect(result?.outputMessage).to(contain("@testable struct Foundation.Some"))
         }
       }
 
@@ -62,7 +67,8 @@ final class InspectorCommandSpec: QuickSpec {
 }
 
 private struct TestStaticUsageTask {
-  fileprivate static func run(path: String) throws -> TaskStatus {
-    try TestTask.run(withArguments: ["imports", "--path", path])
+  fileprivate static func run(path: String, arguments: [String] = []) throws -> TaskStatus {
+    let arguments = ["imports", "--path", path] + arguments
+    return try TestTask.run(withArguments: arguments)
   }
 }
