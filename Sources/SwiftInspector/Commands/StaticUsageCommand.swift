@@ -43,7 +43,7 @@ final class StaticUsageCommand: ParsableCommand {
     }
   }
 
-  // Outputs to standard output
+  /// Outputs to standard output
   private func output(from staticUsage: StaticUsage) {
     print("\(path) \(staticUsage.staticMember.typeName).\(staticUsage.staticMember.memberName) \(staticUsage.isUsed)")
   }
