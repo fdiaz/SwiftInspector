@@ -6,7 +6,7 @@ import Foundation
 extension FileManager {
 
   /// Finds all the swift files at a given file URL
-  /// If the baseURL is a folder, it will traverse all its subdirecttories for any .swift file
+  /// If the baseURL is a folder, it will traverse all its subdirectories for any .swift file
   ///
   /// - Parameter baseURL: The URL to look for Swift files. It can either be a file or a directory
   /// - Returns: All the files with a .swift extension at the given URL or an empty array if none exist
