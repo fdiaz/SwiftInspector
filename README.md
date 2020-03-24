@@ -4,6 +4,10 @@
 
 `SwiftInspector` is a command line tool built on top of [SwiftSyntax](https://github.com/apple/swift-syntax) to help inspect usage of classes, protocols, properties, etc in a Swift codebase.
 
+## Disclaimer
+
+This project is currently under development and can have breaking API changes.
+
 ---
 
 ## Generating an Xcode Project
@@ -22,5 +26,3 @@ Open the generated Xcode project:
 Then run the project using ⌘ R. 
 
 Make sure to select "My Mac" as the device.
-
-![image](https://media.git.musta.ch/user/2148/files/6abf8600-ec31-11e9-8e52-6ab5e421bcef)
