@@ -1,5 +1,26 @@
 // Created by Francisco Diaz on 10/16/19.
-// Copyright © 2019 Airbnb Inc. All rights reserved.
+//
+//  Copyright (c) 2020 Francisco Diaz
+//
+//  Distributed under the MIT License
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 
 import Nimble
 import Quick
@@ -21,10 +42,10 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
     describe("analyze(fileURL:)") {
       context("when accessing a static property directly") {
         it("marks the staticMember as used") {
-          let content = "AirbnbDeepLinkRouter.shared"
+          let content = "DeepLinkRouter.shared"
           self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
-          let staticMember = StaticMember(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
+          let staticMember = StaticMember(typeName: "DeepLinkRouter", memberName: "shared")
           let sut = StaticUsageAnalyzer(staticMember: staticMember)
           let result = try? sut.analyze(fileURL: self.fileURL)
 
@@ -36,13 +57,13 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
           it("marks the staticMember as used") {
             let content = """
             final class Some {
-              let router = AirbnbDeepLinkRouter
+              let router = DeepLinkRouter
                            .shared
             }
             """
             self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
-            let staticMember = StaticMember(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
+            let staticMember = StaticMember(typeName: "DeepLinkRouter", memberName: "shared")
             let sut = StaticUsageAnalyzer(staticMember: staticMember)
             let result = try? sut.analyze(fileURL: self.fileURL)
 
@@ -53,7 +74,7 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
 
         context("when the type name is not present") {
           it("marks the staticMember as not used") {
-            let content = "AirbnbDeepLinkRouter.shared"
+            let content = "DeepLinkRouter.shared"
             self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
             let staticMember = StaticMember(typeName: "SomeOtherType", memberName: "shared")
@@ -120,12 +141,12 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
       it("marks the staticMember as used") {
         let content = """
         public class SomeClass {
-          private let router = AirbnbDeepLinkRouter.shared
+          private let router = DeepLinkRouter.shared
         }
         """
         self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
 
-        let staticMember = StaticMember(typeName: "AirbnbDeepLinkRouter", memberName: "shared")
+        let staticMember = StaticMember(typeName: "DeepLinkRouter", memberName: "shared")
         let sut = StaticUsageAnalyzer(staticMember: staticMember)
         let result = try? sut.analyze(fileURL: self.fileURL)
 
