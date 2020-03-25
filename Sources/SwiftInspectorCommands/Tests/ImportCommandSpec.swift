@@ -26,7 +26,7 @@ import Nimble
 import Quick
 import Foundation
 
-@testable import SwiftInspectorKit
+@testable import SwiftInspectorCore
 
 final class InspectorCommandSpec: QuickSpec {
   private var fileURL: URL!

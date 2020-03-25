@@ -26,7 +26,7 @@ import Foundation
 import Nimble
 import Quick
 
-@testable import SwiftInspectorKit
+@testable import SwiftInspectorCore
 
 final class FileManagerSpec: QuickSpec {
   override func spec() {
