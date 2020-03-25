@@ -24,8 +24,10 @@
 
 import ArgumentParser
 
-struct InspectorCommand: ParsableCommand {
-  static var configuration = CommandConfiguration(
+public struct InspectorCommand: ParsableCommand {
+  public init() {}
+
+  public static var configuration = CommandConfiguration(
     commandName: "SwiftInspector",
     abstract: "A command line tool to help inspect usage of classes, protocols, properties, etc in a Swift codebase.",
     subcommands: [
