@@ -34,4 +34,4 @@ To add a new command create a `YourCommand.swift` file inside the `Commands` fol
 
 ### Adding new functionality
 
-Since we want to separate the commands from the core functionality, you should abstract your core functionality in a class that lives in the `Core` folder in `SwiftInspectorKit`.
+Since we want to separate the commands from the core functionality, you should abstract your core functionality in a class that lives in `SwiftInspectorKit`.
