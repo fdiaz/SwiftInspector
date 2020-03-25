@@ -1,4 +1,4 @@
-// Created by Francisco Diaz on 3/11/20.
+// Created by Francisco Diaz on 3/25/20.
 //
 // Copyright (c) 2020 Francisco Diaz
 //
@@ -23,17 +23,34 @@
 // SOFTWARE.
 
 import ArgumentParser
+import Foundation
 
-public struct InspectorCommand: ParsableCommand {
-  public init() {}
+final class TypealiasCommand: ParsableCommand {
+  static var configuration = CommandConfiguration(
+    commandName: "typealias",
+    abstract: "Finds information related to the declaration of a typelias"
+  )
 
-  public static var configuration = CommandConfiguration(
-    commandName: "SwiftInspector",
-    abstract: "A command line tool to help inspect usage of classes, protocols, properties, etc in a Swift codebase.",
-    subcommands: [
-      ImportsCommand.self,
-      StaticUsageCommand.self,
-      TypealiasCommand.self,
-      TypeConformanceCommand.self,
-  ])
+  @Option()
+  var name: String
+
+  @Option()
+  var path: String
+
+  /// Runs the command
+  func run() throws {
+  }
+
+  /// Validates if the arguments of this command are valid
+  func validate() throws {
+    guard !name.isEmpty else {
+      throw InspectorError.emptyArgument(argumentName: "--name")
+    }
+    guard !path.isEmpty else {
+      throw InspectorError.emptyArgument(argumentName: "--path")
+    }
+    guard FileManager.default.fileExists(atPath: path) else {
+      throw InspectorError.invalidArgument(argumentName: "--path", value: path)
+    }
+  }
 }
