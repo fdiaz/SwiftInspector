@@ -102,12 +102,23 @@ final class FileManagerSpec: QuickSpec {
         }
 
         context("when there are swift files in subfolders") {
-          it("it returns the swift file in the subfolder") {
+          it("returns the swift file in the subfolder") {
             let parentURL = try! Temporary.makeFolder()
             let subfolderURL = try! Temporary.makeFolder(parentPath: parentURL.path)
             let fileURL = try! Temporary.makeFile(content: "", atPath: subfolderURL.path)
 
             expect(fileManager.swiftFiles(at: parentURL)) == [fileURL]
+          }
+        }
+
+        context("with a subfolder with spaces")  {
+          it("returns the swift files in the subfolder") {
+            let parentURL = try! Temporary.makeFolder(parentPath: parentURL.path)
+            let subfolderURL = try! Temporary.makeFolder(name: "Some Folder Name", parentPath: parentURL.path)
+            let fileURL = try! Temporary.makeFile(content: "", atPath: subfolderURL.path)
+
+            expect(fileManager.swiftFiles(at: parentURL)) == [fileURL]
+
           }
         }
       }
