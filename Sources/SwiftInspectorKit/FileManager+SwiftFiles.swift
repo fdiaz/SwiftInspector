@@ -38,10 +38,17 @@ extension FileManager {
 
     var swiftFiles: [URL] = []
 
-    let enumerator = self.enumerator(atPath: baseURL.path)
-    while let path = enumerator?.nextObject() as? String {
-      let fileURL = URL(string: path, relativeTo: baseURL)
-      if let fileURL = fileURL, fileURL.pathExtension == "swift" {
+    guard let enumerator = self.enumerator(
+      at: baseURL,
+      includingPropertiesForKeys: nil,
+      options: [.skipsHiddenFiles])
+      else
+    {
+      return  []
+    }
+
+    for case let fileURL as URL in enumerator {
+      if fileURL.pathExtension == "swift" {
         swiftFiles.append(fileURL.standardizedFileURL)
       }
     }
