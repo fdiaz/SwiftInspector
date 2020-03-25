@@ -40,7 +40,7 @@ extension FileManager {
 
     guard let enumerator = self.enumerator(
       at: baseURL,
-      includingPropertiesForKeys: [.isDirectoryKey],
+      includingPropertiesForKeys: nil,
       options: [.skipsHiddenFiles])
       else
     {
