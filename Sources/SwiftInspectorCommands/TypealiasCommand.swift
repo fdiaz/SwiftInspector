@@ -24,6 +24,7 @@
 
 import ArgumentParser
 import Foundation
+import SwiftInspectorCore
 
 final class TypealiasCommand: ParsableCommand {
   static var configuration = CommandConfiguration(
@@ -31,7 +32,7 @@ final class TypealiasCommand: ParsableCommand {
     abstract: "Finds information related to the declaration of a typelias"
   )
 
-  @Option()
+  @Option(default: "", help: Help.name)
   var name: String
 
   @Option()
@@ -39,18 +40,55 @@ final class TypealiasCommand: ParsableCommand {
 
   /// Runs the command
   func run() throws {
+    let cachedSyntaxTree = CachedSyntaxTree()
+    let analyzer = TypealiasAnalyzer(cachedSyntaxTree: cachedSyntaxTree)
+    let fileURL = URL(fileURLWithPath: path)
+    let outputArray = try FileManager.default.swiftFiles(at: fileURL)
+      .reduce(Set<String>()) { result, url in
+        let statements = try analyzer.analyze(fileURL: url)
+        let output = filterOutput(statements).map { outputString(from: $0)}
+        return result.union(output)
+    }
+
+    let output = outputArray.filter { !$0.isEmpty }.joined(separator: "\n")
+    print(output)
   }
 
   /// Validates if the arguments of this command are valid
   func validate() throws {
-    guard !name.isEmpty else {
-      throw InspectorError.emptyArgument(argumentName: "--name")
-    }
     guard !path.isEmpty else {
       throw InspectorError.emptyArgument(argumentName: "--path")
     }
     guard FileManager.default.fileExists(atPath: path) else {
       throw InspectorError.invalidArgument(argumentName: "--path", value: path)
     }
+  }
+
+  /// Filters the output based on command line inputs
+  private func filterOutput(_ output: [TypealiasStatement]) -> [TypealiasStatement] {
+    guard !name.isEmpty else {
+      return output
+    }
+
+    return output.filter { $0.name == name }
+  }
+
+  private func outputString(from statement: TypealiasStatement) -> String {
+    guard !name.isEmpty else {
+      return statement.name
+    }
+
+    return "\(statement.name) \(statement.identifiers.joined(separator: " "))"
+  }
+}
+
+private struct Help {
+  static var name: ArgumentHelp {
+    ArgumentHelp("Used to filter by the name of the typelias",
+                 discussion: """
+                             If a value is passed, it outputs the name of the typealias and the
+                             information of the identifiers being declared in that typealias.
+                             """
+    )
   }
 }

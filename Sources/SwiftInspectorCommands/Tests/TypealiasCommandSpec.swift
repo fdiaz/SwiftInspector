@@ -33,7 +33,7 @@ final class TypealiasCommandSpec: QuickSpec {
     var path: String!
 
     beforeEach {
-      fileURL = try? Temporary.makeFile(content: "final class Some: SomeType { }")
+      fileURL = try? Temporary.makeFile(content: "typealias SomeAlias = SomeType")
       path = fileURL?.path ?? ""
     }
 
@@ -50,24 +50,44 @@ final class TypealiasCommandSpec: QuickSpec {
       }
 
       context("with no --name argument") {
-        it("fails") {
-          let result = try? TestTask.run(withArguments: ["typealias", "--path", path])
-          expect(result?.didFail) == true
+        var result: TaskStatus?
+        beforeEach {
+          result = try? TestTask.run(withArguments: ["typealias", "--path", path])
+        }
+
+        it("succeeds") {
+          expect(result?.didSucceed) == true
+        }
+
+        it("outputs the typealias information") {
+          expect(result?.outputMessage).to(contain("SomeAlias"))
+        }
+
+        it("does not output the typelias identifiers") {
+          expect(result?.outputMessage).toNot(contain("SomeType"))
         }
       }
 
       context("with an empty --name argument") {
-        it("fails") {
+        it("succeeds") {
           let result = try? TestTask.run(withArguments: ["typealias", "--name", "", "--path", path])
+          expect(result?.didSucceed) == true
+        }
+      }
+
+      context("with an empty --path argument") {
+        it("fails") {
+          let result = try? TestTask.run(withArguments: ["typealias", "--path", ""])
           expect(result?.didFail) == true
         }
       }
 
       context("with all arguments") {
+
         context("when path doesn't exist") {
           it("fails") {
             let result = try? TestTask.run(withArguments: ["typealias", "--name", "SomeAlias", "--path", "/abc"])
-            expect(result?.didSucceed) == false
+            expect(result?.didFail) == true
           }
         }
 
@@ -76,6 +96,22 @@ final class TypealiasCommandSpec: QuickSpec {
             let result = try? TestTask.run(withArguments: ["typealias", "--name", "SomeAlias", "--path", path])
             expect(result?.didSucceed) == true
           }
+        }
+
+        it("outputs the typealias information") {
+          let result = try? TestTask.run(withArguments: ["typealias", "--name", "SomeAlias", "--path", path])
+          expect(result?.outputMessage).to(contain("SomeAlias"))
+        }
+
+        it("does not output the typealias information if the name is different") {
+          let result = try? TestTask.run(withArguments: ["typealias", "--name", "AnotherTypealias", "--path", path])
+          expect(result?.outputMessage).toNot(contain("SomeAlias"))
+        }
+
+        it("outputs the typealias identifiers") {
+          let result = try? TestTask.run(withArguments: ["typealias", "--name", "SomeAlias", "--path", path])
+          expect(result?.outputMessage).to(contain("SomeAlias"))
+          expect(result?.outputMessage).to(contain("SomeType"))
         }
 
       }
