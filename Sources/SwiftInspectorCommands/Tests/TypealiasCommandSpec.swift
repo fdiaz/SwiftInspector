@@ -73,7 +73,7 @@ final class TypealiasCommandSpec: QuickSpec {
                                                        typealias SomeAlias = SomeType
                                                        typealias SomeAlias = SomethingElse
                                                        """
-                                                       )
+            )
             result = try? TestTask.run(withArguments: ["typealias", "--path", fileURL!.path])
 
             let lines = result?.outputMessage?.split { $0.isNewline }.count
@@ -128,6 +128,47 @@ final class TypealiasCommandSpec: QuickSpec {
           expect(result?.outputMessage).to(contain("SomeType"))
         }
 
+        context("with a file that has two typealias with the same name and identifiers") {
+          it("returns the typealias information once") {
+            let fileURL = try! Temporary.makeFile(
+              content: """
+                       typealias Foo = Bar
+
+                       struct MyNamespace {
+
+                         typealias Foo = Bar
+
+                       }
+                       """
+            )
+            let result = try? TestTask.run(withArguments: ["typealias", "--name", "Foo", "--path", fileURL.path])
+
+            let lines = result?.outputMessage?.split { $0.isNewline }
+
+            expect(lines?.count) == 1
+          }
+        }
+
+        context("with a file that has two typealias with the same name and different identifiers") {
+          it("returns the typealias information twice") {
+            let fileURL = try! Temporary.makeFile(
+              content: """
+                       typealias Foo = Bar1
+
+                       struct MyNamespace {
+
+                         typealias Foo = Bar2
+
+                       }
+                       """
+            )
+            let result = try? TestTask.run(withArguments: ["typealias", "--name", "Foo", "--path", fileURL.path])
+
+            let lines = result?.outputMessage?.split { $0.isNewline }
+
+            expect(lines?.count) == 2
+          }
+        }
       }
 
     }
