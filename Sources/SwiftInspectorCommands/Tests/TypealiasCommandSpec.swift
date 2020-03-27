@@ -66,6 +66,20 @@ final class TypealiasCommandSpec: QuickSpec {
         it("does not output the typelias identifiers") {
           expect(result?.outputMessage).toNot(contain("SomeType"))
         }
+
+        context("when a typealias is defined multiple times") {
+          it("only returns one the typealias name once") {
+            fileURL = try? Temporary.makeFile(content: """
+                                                       typealias SomeAlias = SomeType
+                                                       typealias SomeAlias = SomethingElse
+                                                       """
+                                                       )
+            result = try? TestTask.run(withArguments: ["typealias", "--path", fileURL!.path])
+
+            let lines = result?.outputMessage?.split { $0.isNewline }.count
+            expect(lines) == 1
+          }
+        }
       }
 
       context("with an empty --name argument") {
@@ -82,7 +96,7 @@ final class TypealiasCommandSpec: QuickSpec {
         }
       }
 
-      context("with all arguments") {
+      context("with --name and --path") {
 
         context("when path doesn't exist") {
           it("fails") {

@@ -83,7 +83,8 @@ final class TypealiasAnalyzerSpec: QuickSpec {
           fileURL = try! Temporary.makeFile(
             content: """
                      final class Some {
-                       typealias SomeTypealias = SomeType & SomeOtherType
+                       typealias SomeTypealias = SomeType
+                                                 & SomeOtherType
                      }
 
                      typealias AnotherTypealias = AnotherType
