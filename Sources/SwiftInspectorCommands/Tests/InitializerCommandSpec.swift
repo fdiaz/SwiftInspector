@@ -22,4 +22,57 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import Nimble
+import Quick
 import Foundation
+
+@testable import SwiftInspectorCore
+
+final class InitializerCommandSpec: QuickSpec {
+  override func spec() {
+    describe("run") {
+
+      context("with no arguments") {
+        it("fails") {
+          let result = try? TestTask.run(withArguments: ["initializer"])
+          expect(result?.didFail) == true
+        }
+      }
+
+      context("when path is invalid") {
+        it("fails when empty") {
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", ""])
+          expect(result?.didFail) == true
+        }
+
+        it("fails when it doesn't exist") {
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", "/fake/path"])
+          expect(result?.didFail) == true
+        }
+      }
+
+      context("when name is passed and path exists") {
+        var fileURL: URL!
+
+        beforeEach {
+          fileURL = try? Temporary.makeFile(content: "")
+        }
+
+        afterEach {
+          try? Temporary.removeItem(at: fileURL)
+        }
+
+        it("fails when name is empty") {
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", fileURL.path, "--name", ""])
+          expect(result?.didFail) == true
+        }
+
+        it("succeeds") {
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", fileURL.path, "--name", "SomeName"])
+          expect(result?.didSucceed) == true
+        }
+      }
+
+    }
+  }
+}

@@ -32,6 +32,7 @@ public struct InspectorCommand: ParsableCommand {
     abstract: "A command line tool to help inspect usage of classes, protocols, properties, etc in a Swift codebase.",
     subcommands: [
       ImportsCommand.self,
+      InitializerCommand.self,
       StaticUsageCommand.self,
       TypealiasCommand.self,
       TypeConformanceCommand.self,

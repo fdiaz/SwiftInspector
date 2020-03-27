@@ -22,4 +22,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import ArgumentParser
 import Foundation
+import SwiftInspectorCore
+
+final class InitializerCommand: ParsableCommand {
+  static var configuration = CommandConfiguration(
+    commandName: "initializer",
+    abstract: "Finds information about the initializers of the specified type"
+  )
+
+  @Option(help: "The absolute path to the file or directory to inspect")
+  var path: String
+
+  @Option(help: "The name of the type to look information of the initializer")
+  var name: String
+
+  /// Runs the command
+  func run() throws {
+  }
+
+  /// Validates if the arguments of this command are valid
+  func validate() throws {
+    guard !name.isEmpty else {
+      throw InspectorError.emptyArgument(argumentName: "--name")
+    }
+    guard !path.isEmpty else {
+      throw InspectorError.emptyArgument(argumentName: "--path")
+    }
+    guard FileManager.default.fileExists(atPath: path) else {
+      throw InspectorError.invalidArgument(argumentName: "--path", value: "options.path")
+    }
+  }
+}
