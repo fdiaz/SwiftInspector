@@ -105,6 +105,36 @@ final class TypealiasAnalyzerSpec: QuickSpec {
         }
       }
 
+      context("with multiple typealias with the same name") {
+        beforeEach {
+          fileURL = try! Temporary.makeFile(
+            content: """
+                     typealias Foo = Bar
+
+                     struct MyNamespace {
+
+                       typealias Foo = Bar
+
+                     }
+                     """
+          )
+        }
+        
+        it("returns all the names of the typeliases") {
+          let result = try? sut.analyze(fileURL: fileURL)
+          expect(result?.count) == 2
+          expect(result?.first?.name) == "Foo"
+          expect(result?.last?.name) == "Foo"
+        }
+
+        it("returns all the typealias identifiers") {
+          let result = try? sut.analyze(fileURL: fileURL)
+          expect(result?.count) == 2
+          expect(result?.first?.identifiers) == ["Bar"]
+          expect(result?.last?.identifiers) == ["Bar"]
+        }
+      }
+
     }
   }
 }
