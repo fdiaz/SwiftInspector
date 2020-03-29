@@ -63,11 +63,20 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           fileURL = try? Temporary.makeFile(content: content)
         }
 
-        it("returns type location") {
-          let sut = TypeLocationAnalyzer(typeName: "Foo")
-          let result = try? sut.analyze(fileURL: fileURL)
+        context("name matches") {
+          it("returns type location") {
+            let sut = TypeLocationAnalyzer(typeName: "Foo")
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result).notTo(beNil())
+          }
+        }
 
-          expect(result).notTo(beNil())
+        context("name does not match") {
+          it("returns nil") {
+            let sut = TypeLocationAnalyzer(typeName: "Bar")
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result).to(beNil())
+          }
         }
       }
 
@@ -81,11 +90,20 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
 
         }
 
-        it("returns type location") {
-          let sut = TypeLocationAnalyzer(typeName: "Foo")
-          let result = try? sut.analyze(fileURL: fileURL)
+        context("name matches") {
+          it("returns type location") {
+            let sut = TypeLocationAnalyzer(typeName: "Foo")
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result).notTo(beNil())
+          }
+        }
 
-          expect(result).notTo(beNil())
+        context("name does not match") {
+          it("returns nil") {
+            let sut = TypeLocationAnalyzer(typeName: "Bar")
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result).to(beNil())
+          }
         }
       }
 
@@ -98,11 +116,46 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           fileURL = try? Temporary.makeFile(content: content)
         }
 
-        it("returns type location") {
-          let sut = TypeLocationAnalyzer(typeName: "Foo")
-          let result = try? sut.analyze(fileURL: fileURL)
+        context("name matches") {
+          it("returns type location") {
+            let sut = TypeLocationAnalyzer(typeName: "Foo")
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result).notTo(beNil())
+          }
+        }
 
-          expect(result).notTo(beNil())
+        context("name does not match") {
+          it("returns nil") {
+            let sut = TypeLocationAnalyzer(typeName: "Bar")
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result).to(beNil())
+          }
+        }
+      }
+
+      context("protocol is present") {
+        beforeEach {
+          let content =
+          """
+          protocol Foo { }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        context("name matches") {
+          it("returns type location") {
+            let sut = TypeLocationAnalyzer(typeName: "Foo")
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result).notTo(beNil())
+          }
+        }
+
+        context("name does not match") {
+          it("returns nil") {
+            let sut = TypeLocationAnalyzer(typeName: "Bar")
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result).to(beNil())
+          }
         }
       }
     }
