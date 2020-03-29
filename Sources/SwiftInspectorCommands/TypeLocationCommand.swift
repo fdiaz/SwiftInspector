@@ -41,8 +41,12 @@ final class TypeLocationCommand: ParsableCommand {
   /// Runs the command
   func run() throws {
     let cachedSyntaxTree = CachedSyntaxTree()
-    _ = cachedSyntaxTree
-    print("Hello, world")
+
+    let analyzer = TypeLocationAnalyzer(typeName: name, cachedSyntaxTree: cachedSyntaxTree)
+    let fileURL = URL(fileURLWithPath: path)
+    let typeLocation = try analyzer.analyze(fileURL: fileURL)
+
+    print(typeLocation?.outputString() ?? "")
   }
 
   /// Validates if the arguments of this command are valid
