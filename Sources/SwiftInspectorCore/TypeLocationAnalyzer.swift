@@ -58,24 +58,20 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     self.onNodeVisit = onNodeVisit
   }
 
-  override func visit(_ node: ClassDeclSyntax) -> DeclSyntax {
-    onNodeVisit(node.identifier.text)
-    return super.visit(node)
-  }
-
-  override func visit(_ node: EnumDeclSyntax) -> DeclSyntax {
-    onNodeVisit(node.identifier.text)
-    return super.visit(node)
-  }
-
-  override func visit(_ node: ProtocolDeclSyntax) -> DeclSyntax {
-    onNodeVisit(node.identifier.text)
-    return super.visit(node)
-  }
-
-  override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
-    onNodeVisit(node.identifier.text)
-    return super.visit(node)
+  override func visitAny(_ node: Syntax) -> Syntax? {
+    switch node {
+    case let classDecl as ClassDeclSyntax:
+      onNodeVisit(classDecl.identifier.text)
+    case let enumDecl as EnumDeclSyntax:
+      onNodeVisit(enumDecl.identifier.text)
+    case let protocolDecl as ProtocolDeclSyntax:
+      onNodeVisit(protocolDecl.identifier.text)
+    case let structDecl as StructDeclSyntax:
+      onNodeVisit(structDecl.identifier.text)
+    default:
+      break
+    }
+    return super.visitAny(node)
   }
 
   let onNodeVisit: (String) -> Void
