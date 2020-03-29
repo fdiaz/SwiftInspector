@@ -37,7 +37,8 @@ public final class TypeLocationAnalyzer: Analyzer {
   public func analyze(fileURL: URL) throws -> TypeLocation? {
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
     var typeLocation: TypeLocation?
-    let reader = TypeLocationSyntaxReader() {
+    let reader = TypeLocationSyntaxReader() { [unowned self] typeName in
+      guard self.typeName == typeName else { return }
       typeLocation = TypeLocation(indexOfStartingLine: 0, indexOfEndingLine: 0)
     }
     _ = reader.visit(syntax)
@@ -53,31 +54,31 @@ public final class TypeLocationAnalyzer: Analyzer {
 
 // TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
 private final class TypeLocationSyntaxReader: SyntaxRewriter {
-  init(onNodeVisit: @escaping () -> Void) {
+  init(onNodeVisit: @escaping (_ typeName: String) -> Void) {
     self.onNodeVisit = onNodeVisit
   }
 
   override func visit(_ node: ClassDeclSyntax) -> DeclSyntax {
-    onNodeVisit()
+    onNodeVisit(node.identifier.text)
     return super.visit(node)
   }
 
   override func visit(_ node: EnumDeclSyntax) -> DeclSyntax {
-    onNodeVisit()
+    onNodeVisit(node.identifier.text)
     return super.visit(node)
   }
 
   override func visit(_ node: ProtocolDeclSyntax) -> DeclSyntax {
-    onNodeVisit()
+    onNodeVisit(node.identifier.text)
     return super.visit(node)
   }
 
   override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
-    onNodeVisit()
+    onNodeVisit(node.identifier.text)
     return super.visit(node)
   }
 
-  let onNodeVisit: () -> Void
+  let onNodeVisit: (String) -> Void
 }
 
 /// Information about a located type. Indices start with 0.
