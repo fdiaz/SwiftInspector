@@ -25,8 +25,10 @@ import SwiftSyntax
 
 public final class TypeLocationAnalyzer: Analyzer {
 
+  /// - Parameter typeName: The name of the type to locate.
   /// - Parameter cachedSyntaxTree: The cached syntax tree to return the AST tree from
-  public init(cachedSyntaxTree: CachedSyntaxTree = .init()) {
+  public init(typeName: String, cachedSyntaxTree: CachedSyntaxTree = .init()) {
+    self.typeName = typeName
     self.cachedSyntaxTree = cachedSyntaxTree
   }
 
@@ -47,6 +49,7 @@ public final class TypeLocationAnalyzer: Analyzer {
   // MARK: Private
 
   private let cachedSyntaxTree: CachedSyntaxTree
+  private let typeName: String
 }
 
 // TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
