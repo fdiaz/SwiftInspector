@@ -34,16 +34,16 @@ public final class TypeLocationAnalyzer: Analyzer {
 
   /// Analyzes the imports of the Swift file
   /// - Parameter fileURL: The fileURL where the Swift file is located
-  public func analyze(fileURL: URL) throws -> TypeLocation? {
+  public func analyze(fileURL: URL) throws -> LocatedType? {
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
-    var typeLocation: TypeLocation?
-    let reader = TypeLocationSyntaxReader() { [unowned self] typeName in
-      guard self.typeName == typeName else { return }
-      typeLocation = TypeLocation(indexOfStartingLine: 0, indexOfEndingLine: 0)
+    var result: LocatedType?
+    let reader = TypeLocationSyntaxReader() { [unowned self] locatedType in
+      guard self.typeName == locatedType.name else { return }
+      result = locatedType
     }
     _ = reader.visit(syntax)
 
-    return typeLocation
+    return result
   }
 
   // MARK: Private
@@ -54,31 +54,69 @@ public final class TypeLocationAnalyzer: Analyzer {
 
 // TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
 private final class TypeLocationSyntaxReader: SyntaxRewriter {
-  init(onNodeVisit: @escaping (_ typeName: String) -> Void) {
+  init(onNodeVisit: @escaping (_ locatedType: LocatedType) -> Void) {
     self.onNodeVisit = onNodeVisit
   }
 
   override func visitAny(_ node: Syntax) -> Syntax? {
+    if let leadingTrivia = node.leadingTrivia {
+      updateCurrentLineNumber(from: leadingTrivia, for: node)
+    }
+
+    var name: String?
     switch node {
     case let classDecl as ClassDeclSyntax:
-      onNodeVisit(classDecl.identifier.text)
+      name = classDecl.identifier.text
     case let enumDecl as EnumDeclSyntax:
-      onNodeVisit(enumDecl.identifier.text)
+      name = enumDecl.identifier.text
     case let protocolDecl as ProtocolDeclSyntax:
-      onNodeVisit(protocolDecl.identifier.text)
+      name = protocolDecl.identifier.text
     case let structDecl as StructDeclSyntax:
-      onNodeVisit(structDecl.identifier.text)
+      name = structDecl.identifier.text
     default:
       break
     }
+
+    if let name = name {
+      let locatedType = LocatedType(
+        name: name,
+        indexOfStartingLine: currentLineNumber,
+        indexOfEndingLine: currentLineNumber)
+      onNodeVisit(locatedType)
+    }
+
+    if let trailingTrivia = node.trailingTrivia {
+      updateCurrentLineNumber(from: trailingTrivia, for: node)
+    }
+
     return super.visitAny(node)
   }
 
-  let onNodeVisit: (String) -> Void
+  var currentLineNumber: UInt = 0
+  let onNodeVisit: (LocatedType) -> Void
+
+  private func updateCurrentLineNumber(from trivia: Trivia, for node: Syntax) {
+    // There may be a better way to do this. I found that CodeBlockItemSyntax was passing through
+    // trivia from a child item, leading to incorrect counding. So I included all CodeBlock* items.
+    if node is CodeBlockSyntax { return }
+    if node is CodeBlockItemSyntax { return }
+    if node is CodeBlockItemListSyntax { return }
+
+    for triviaPiece in trivia {
+      switch triviaPiece {
+      case .newlines(let count):
+        currentLineNumber += UInt(count)
+      default:
+        break
+      }
+    }
+  }
 }
 
 /// Information about a located type. Indices start with 0.
-public struct TypeLocation: Hashable {
+public struct LocatedType: Hashable {
+  /// The name of the type.
+  public let name: String
   /// The first line of the type.
   public let indexOfStartingLine: UInt
   /// The last line of the type.

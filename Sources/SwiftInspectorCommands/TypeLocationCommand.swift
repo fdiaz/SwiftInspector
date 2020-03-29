@@ -64,7 +64,7 @@ final class TypeLocationCommand: ParsableCommand {
   }
 }
 
-extension TypeLocation {
+extension LocatedType {
 
   func outputString() -> String {
     return "\(indexOfStartingLine) \(indexOfEndingLine)"
