@@ -27,14 +27,47 @@ import Quick
 @testable import SwiftInspectorCore
 
 final class TypeLocationAnalyzerSpec: QuickSpec {
-  private var fileURL: URL!
 
   override func spec() {
+    var fileURL: URL!
+
     afterEach {
-      guard let fileURL = self.fileURL else {
+      guard let fileURL = fileURL else {
         return
       }
       try? Temporary.removeItem(at: fileURL)
+    }
+
+    describe("analyze(fileURL:)") {
+      context("the type is not present") {
+        let content =
+        """
+        import Foundation
+        """
+        fileURL = try? Temporary.makeFile(content: content)
+
+        it("returns nil") {
+          let sut = TypeLocationAnalyzer(typeName: "Foo")
+          let result = try? sut.analyze(fileURL: fileURL)
+
+          expect(result).to(beNil())
+        }
+      }
+
+      context("struct is present") {
+        let content =
+        """
+        struct Foo { }
+        """
+        fileURL = try? Temporary.makeFile(content: content)
+
+        it("returns type location") {
+          let sut = TypeLocationAnalyzer(typeName: "Foo")
+          let result = try? sut.analyze(fileURL: fileURL)
+
+          expect(result).notTo(beNil())
+        }
+      }
     }
   }
 }
