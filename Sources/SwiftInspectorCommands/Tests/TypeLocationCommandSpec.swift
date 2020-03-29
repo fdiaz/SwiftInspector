@@ -95,6 +95,20 @@ final class TypeLocationCommandSpec: QuickSpec {
           let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
           expect(result?.didSucceed) == true
         }
+
+        it("outputs the correct line numbers") {
+          let contents =
+          """
+          import Foundation
+
+          struct Foo { }
+          """
+
+          pathURL = try? Temporary.makeFile(content: contents)
+
+          let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
+          expect(result?.outputMessage) == "2 2"
+        }
       }
     }
   }
