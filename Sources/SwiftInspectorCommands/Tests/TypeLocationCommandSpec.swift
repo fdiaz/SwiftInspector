@@ -134,13 +134,16 @@ final class TypeLocationCommandSpec: QuickSpec {
       }
     }
 
-    describe("TypeLocation") {
+    describe("LocatedType") {
 
       describe("outputString") {
 
         it("shows index of start and end line") {
-          let typeLocation = TypeLocation(indexOfStartingLine: 10, indexOfEndingLine: 12)
-          expect(typeLocation.outputString()) == "10 12"
+          let locatedType = LocatedType(
+            name: "MyType",
+            indexOfStartingLine: 10,
+            indexOfEndingLine: 12)
+          expect(locatedType.outputString()) == "10 12"
         }
       }
     }
