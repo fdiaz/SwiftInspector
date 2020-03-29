@@ -21,3 +21,48 @@
 // SOFTWARE.
 
 import Foundation
+import SwiftSyntax
+
+public final class TypeLocationAnalyzer: Analyzer {
+
+  /// - Parameter cachedSyntaxTree: The cached syntax tree to return the AST tree from
+  public init(cachedSyntaxTree: CachedSyntaxTree = .init()) {
+    self.cachedSyntaxTree = cachedSyntaxTree
+  }
+
+  /// Analyzes the imports of the Swift file
+  /// - Parameter fileURL: The fileURL where the Swift file is located
+  public func analyze(fileURL: URL) throws -> TypeLocation? {
+    let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
+    var typeLocation: TypeLocation?
+    let reader = TypeLocationSyntaxReader() { node in
+      // TODO: create type location if possible
+      typeLocation = nil
+    }
+    _ = reader.visit(syntax)
+
+    return typeLocation
+  }
+
+  // MARK: Private
+
+  private let cachedSyntaxTree: CachedSyntaxTree
+}
+
+// TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
+private final class TypeLocationSyntaxReader: SyntaxRewriter {
+  // TODO: Update this to be the correct type.
+  init(onNodeVisit: @escaping (ImportDeclSyntax) -> Void) {
+    self.onNodeVisit = onNodeVisit
+  }
+
+  override func visit(_ node: ImportDeclSyntax) -> DeclSyntax {
+    onNodeVisit(node)
+    return super.visit(node)
+  }
+
+  let onNodeVisit: (ImportDeclSyntax) -> Void
+}
+
+public struct TypeLocation: Hashable {
+}
