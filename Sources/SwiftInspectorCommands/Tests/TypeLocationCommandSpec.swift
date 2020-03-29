@@ -26,6 +26,7 @@ import Nimble
 import Quick
 import Foundation
 
+@testable import SwiftInspectorCommands
 @testable import SwiftInspectorCore
 
 final class TypeLocationCommandSpec: QuickSpec {
@@ -33,81 +34,95 @@ final class TypeLocationCommandSpec: QuickSpec {
   override func spec() {
     var pathURL: URL!
 
-    describe("run") {
+    describe("TypeLocationCommand") {
 
-      context("with no arguments") {
-        it("fails") {
-          let result = try? TestTypeLocationTask.run(path: nil, name: nil)
-          expect(result?.didFail) == true
-        }
-      }
+      describe("run") {
 
-      context("path is valid") {
-        beforeEach { pathURL = try? Temporary.makeFile(content: "struct Foo { }") }
-        afterEach { try? Temporary.removeItem(at: pathURL) }
-
-        context("with no --name argument") {
+        context("with no arguments") {
           it("fails") {
-            let result = try? TestTypeLocationTask.run(path: pathURL.path, name: nil)
+            let result = try? TestTypeLocationTask.run(path: nil, name: nil)
             expect(result?.didFail) == true
           }
         }
 
-        context("with an empty --name argument") {
+        context("path is valid") {
+          beforeEach { pathURL = try? Temporary.makeFile(content: "struct Foo { }") }
+          afterEach { try? Temporary.removeItem(at: pathURL) }
+
+          context("with no --name argument") {
+            it("fails") {
+              let result = try? TestTypeLocationTask.run(path: pathURL.path, name: nil)
+              expect(result?.didFail) == true
+            }
+          }
+
+          context("with an empty --name argument") {
+            it("fails") {
+              let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "")
+              expect(result?.didFail) == true
+            }
+          }
+        }
+
+        context("name is valid") {
+          context("with no --path argument") {
+            it("fails") {
+              let result = try? TestTypeLocationTask.run(path: nil, name: "Foo")
+              expect(result?.didFail) == true
+            }
+          }
+
+          context("with an empty --path argument") {
+            it("fails") {
+              let result = try? TestTypeLocationTask.run(path: "", name: "Foo")
+              expect(result?.didFail) == true
+            }
+          }
+        }
+
+        context("when path is a directory") {
+          beforeEach { pathURL = try? Temporary.makeFolder() }
+          afterEach { try? Temporary.removeItem(at: pathURL) }
+
           it("fails") {
-            let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "")
+            let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
             expect(result?.didFail) == true
           }
         }
-      }
 
-      context("name is valid") {
-        context("with no --path argument") {
-          it("fails") {
-            let result = try? TestTypeLocationTask.run(path: nil, name: "Foo")
-            expect(result?.didFail) == true
+        context("when path is a file") {
+          beforeEach { pathURL = try? Temporary.makeFile(content: "struct Foo { }") }
+          afterEach { try? Temporary.removeItem(at: pathURL) }
+
+          it("succeeds") {
+            let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
+            expect(result?.didSucceed) == true
+          }
+
+          it("outputs the correct line numbers") {
+            let contents =
+            """
+            import Foundation
+
+            struct Foo { }
+            """
+
+            pathURL = try? Temporary.makeFile(content: contents)
+
+            let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
+            expect(result?.outputMessage) == "2 2"
           }
         }
-
-        context("with an empty --path argument") {
-          it("fails") {
-            let result = try? TestTypeLocationTask.run(path: "", name: "Foo")
-            expect(result?.didFail) == true
-          }
-        }
       }
+    }
 
-      context("when path is a directory") {
-        beforeEach { pathURL = try? Temporary.makeFolder() }
-        afterEach { try? Temporary.removeItem(at: pathURL) }
+    describe("TypeLocation") {
 
-        it("fails") {
-          let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
-          expect(result?.didFail) == true
-        }
-      }
+      describe("outputString") {
 
-      context("when path is a file") {
-        beforeEach { pathURL = try? Temporary.makeFile(content: "struct Foo { }") }
-        afterEach { try? Temporary.removeItem(at: pathURL) }
-
-        it("succeeds") {
-          let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
-          expect(result?.didSucceed) == true
-        }
-
-        it("outputs the correct line numbers") {
-          let contents =
-          """
-          import Foundation
-
-          struct Foo { }
-          """
-
-          pathURL = try? Temporary.makeFile(content: contents)
-
-          let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
-          expect(result?.outputMessage) == "2 2"
+        it("shows index of start and end line") {
+          let typeLocation = TypeLocation(indexOfStartingLine: 10, indexOfEndingLine: 12)
+          expect(typeLocation.outputString()) == "10 12"
         }
       }
     }
