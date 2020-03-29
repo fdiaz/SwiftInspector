@@ -99,18 +99,36 @@ final class TypeLocationCommandSpec: QuickSpec {
             expect(result?.didSucceed) == true
           }
 
-          it("outputs the correct line numbers") {
-            let contents =
-            """
-            import Foundation
+          context("type is found") {
+            it("outputs the correct line numbers") {
+              let contents =
+              """
+              import Foundation
 
-            struct Foo { }
-            """
+              struct Foo { }
+              """
 
-            pathURL = try? Temporary.makeFile(content: contents)
+              pathURL = try? Temporary.makeFile(content: contents)
 
-            let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
-            expect(result?.outputMessage) == "2 2"
+              let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
+              expect(result?.outputMessage) == "2 2"
+            }
+          }
+
+          context("type is not found") {
+            it("outputs nothing") {
+              let contents =
+              """
+              import Foundation
+
+              struct Foo { }
+              """
+
+              pathURL = try? Temporary.makeFile(content: contents)
+
+              let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Bar")
+              expect(result?.outputMessage).to(equal("\n"))
+            }
           }
         }
       }
