@@ -68,6 +68,36 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           expect(result).notTo(beNil())
         }
       }
+
+      context("enum is present") {
+        let content =
+        """
+        enum Foo { }
+        """
+        fileURL = try? Temporary.makeFile(content: content)
+
+        it("returns type location") {
+          let sut = TypeLocationAnalyzer(typeName: "Foo")
+          let result = try? sut.analyze(fileURL: fileURL)
+
+          expect(result).notTo(beNil())
+        }
+      }
+
+      context("class is present") {
+        let content =
+        """
+        class Foo { }
+        """
+        fileURL = try? Temporary.makeFile(content: content)
+
+        it("returns type location") {
+          let sut = TypeLocationAnalyzer(typeName: "Foo")
+          let result = try? sut.analyze(fileURL: fileURL)
+
+          expect(result).notTo(beNil())
+        }
+      }
     }
   }
 }
