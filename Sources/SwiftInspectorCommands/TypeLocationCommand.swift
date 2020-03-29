@@ -32,7 +32,7 @@ final class TypeLocationCommand: ParsableCommand {
     abstract: "Finds the location of a type"
   )
 
-  @Option(help: "The name of the type to find the location of")
+  @Option(help: nameArgumentHelp)
   var name: String
 
   @Option(help: "The absolute path to the file to inspect")
@@ -70,3 +70,9 @@ extension TypeLocation {
     return "\(indexOfStartingLine) \(indexOfEndingLine)"
   }
 }
+
+// We recognize that a protocol may not strictly be a type, but we're OK with cutting that corner
+// for now...
+private let nameArgumentHelp = ArgumentHelp(
+  "The name of the type to find the location of",
+  discussion: "This may be a enum, class, struct, or protocol.")
