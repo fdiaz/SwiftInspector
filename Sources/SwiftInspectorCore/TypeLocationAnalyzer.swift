@@ -64,5 +64,10 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
   let onNodeVisit: (ImportDeclSyntax) -> Void
 }
 
+/// Information about a located type. Indices start with 0.
 public struct TypeLocation: Hashable {
+  /// The first line of the type.
+  public let indexOfStartingLine: UInt
+  /// The last line of the type.
+  public let indexOfEndingLine: UInt
 }

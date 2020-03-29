@@ -45,7 +45,7 @@ final class TypeLocationCommand: ParsableCommand {
     print("Hello, world")
   }
 
-    /// Validates if the arguments of this command are valid
+  /// Validates if the arguments of this command are valid
   func validate() throws {
     guard !name.isEmpty else {
       throw InspectorError.emptyArgument(argumentName: "--name")
@@ -57,5 +57,12 @@ final class TypeLocationCommand: ParsableCommand {
     guard FileManager.default.fileExists(atPath: path, isDirectory: &isDir) && !isDir.boolValue else {
       throw InspectorError.invalidArgument(argumentName: "--path", value: path)
     }
+  }
+}
+
+extension TypeLocation {
+
+  func outputString() -> String {
+    return "\(indexOfStartingLine) \(indexOfEndingLine)"
   }
 }
