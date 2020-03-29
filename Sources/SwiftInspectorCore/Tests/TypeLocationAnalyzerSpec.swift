@@ -158,6 +158,44 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           }
         }
       }
+
+      context("type is one line") {
+        context("which is the first line of file") {
+          beforeEach {
+            let content =
+            """
+            enum Foo { }
+            """
+            fileURL = try? Temporary.makeFile(content: content)
+          }
+
+          it("returns correct start and end indices") {
+            let sut = TypeLocationAnalyzer(typeName: "Foo")
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result?.indexOfStartingLine) == 0
+            expect(result?.indexOfEndingLine) == 0
+          }
+        }
+
+        context("which is not the first line of file") {
+          beforeEach {
+            let content =
+            """
+            import Foundation
+
+            enum Foo { }
+            """
+            fileURL = try? Temporary.makeFile(content: content)
+          }
+
+          it("returns correct start and end indices") {
+            let sut = TypeLocationAnalyzer(typeName: "Foo")
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result?.indexOfStartingLine) == 2
+            expect(result?.indexOfEndingLine) == 2
+          }
+        }
+      }
     }
   }
 }
