@@ -20,11 +20,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import Foundation
 import Nimble
 import Quick
 
 @testable import SwiftInspectorCore
 
 final class TypeLocationAnalyzerSpec: QuickSpec {
+  private var fileURL: URL!
 
+  override func spec() {
+    afterEach {
+      guard let fileURL = self.fileURL else {
+        return
+      }
+      try? Temporary.removeItem(at: fileURL)
+    }
+  }
 }
