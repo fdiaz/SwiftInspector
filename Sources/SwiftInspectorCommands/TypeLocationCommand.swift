@@ -1,4 +1,4 @@
-// Created by Francisco Diaz on 3/11/20.
+// Created by Michael Bachand on 3/28/20.
 //
 // Copyright (c) 2020 Francisco Diaz
 //
@@ -23,19 +23,39 @@
 // SOFTWARE.
 
 import ArgumentParser
+import Foundation
+import SwiftInspectorCore
 
-public struct InspectorCommand: ParsableCommand {
-  public init() {}
+final class TypeLocationCommand: ParsableCommand {
+  static var configuration = CommandConfiguration(
+    commandName: "type-location",
+    abstract: "Finds the location of a type"
+  )
 
-  public static var configuration = CommandConfiguration(
-    commandName: "SwiftInspector",
-    abstract: "A command line tool to help inspect usage of classes, protocols, properties, etc in a Swift codebase.",
-    subcommands: [
-      ImportsCommand.self,
-      InitializerCommand.self,
-      StaticUsageCommand.self,
-      TypealiasCommand.self,
-      TypeConformanceCommand.self,
-      TypeLocationCommand.self,
-  ])
+  @Option(help: "The name of the type to find the location of")
+  var name: String
+
+  @Option(help: "The absolute path to the file to inspect")
+  var path: String
+
+  /// Runs the command
+  func run() throws {
+    let cachedSyntaxTree = CachedSyntaxTree()
+    _ = cachedSyntaxTree
+    print("Hello, world")
+  }
+
+    /// Validates if the arguments of this command are valid
+  func validate() throws {
+    guard !name.isEmpty else {
+      throw InspectorError.emptyArgument(argumentName: "--name")
+    }
+    guard !path.isEmpty else {
+      throw InspectorError.emptyArgument(argumentName: "--path")
+    }
+    var isDir: ObjCBool = false
+    guard FileManager.default.fileExists(atPath: path, isDirectory: &isDir) && !isDir.boolValue else {
+      throw InspectorError.invalidArgument(argumentName: "--path", value: path)
+    }
+  }
 }
