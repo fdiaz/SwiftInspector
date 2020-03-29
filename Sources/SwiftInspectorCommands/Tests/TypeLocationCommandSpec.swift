@@ -111,7 +111,7 @@ final class TypeLocationCommandSpec: QuickSpec {
               pathURL = try? Temporary.makeFile(content: contents)
 
               let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
-              expect(result?.outputMessage) == "2 2"
+              expect(result?.outputMessage).to(contain("2 2"))
             }
           }
 
