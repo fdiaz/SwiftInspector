@@ -55,11 +55,13 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
       }
 
       context("struct is present") {
-        let content =
-        """
-        struct Foo { }
-        """
-        fileURL = try? Temporary.makeFile(content: content)
+        beforeEach {
+          let content =
+          """
+          struct Foo { }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
 
         it("returns type location") {
           let sut = TypeLocationAnalyzer(typeName: "Foo")
@@ -70,11 +72,14 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
       }
 
       context("enum is present") {
-        let content =
-        """
-        enum Foo { }
-        """
-        fileURL = try? Temporary.makeFile(content: content)
+        beforeEach {
+          let content =
+          """
+          enum Foo { }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+
+        }
 
         it("returns type location") {
           let sut = TypeLocationAnalyzer(typeName: "Foo")
@@ -85,11 +90,13 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
       }
 
       context("class is present") {
-        let content =
-        """
-        class Foo { }
-        """
-        fileURL = try? Temporary.makeFile(content: content)
+        beforeEach {
+          let content =
+          """
+          class Foo { }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
 
         it("returns type location") {
           let sut = TypeLocationAnalyzer(typeName: "Foo")
