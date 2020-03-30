@@ -195,6 +195,96 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
             expect(result?.indexOfEndingLine) == 2
           }
         }
+
+        context("type spans multiple lines") {
+          context("starting on the first line of the file") {
+             beforeEach {
+               let content =
+               """
+               struct Foo {
+                 let myProperty: String
+               }
+               """
+               fileURL = try? Temporary.makeFile(content: content)
+             }
+
+             it("returns correct start and end indices") {
+               let sut = TypeLocationAnalyzer(typeName: "Foo")
+               let result = try? sut.analyze(fileURL: fileURL)
+               expect(result?.indexOfStartingLine) == 0
+               expect(result?.indexOfEndingLine) == 2
+             }
+           }
+
+           context("starting on a line of the file that is not the first") {
+             beforeEach {
+               let content =
+               """
+               import Foundation
+
+               struct Foo {
+                 let myProperty: String
+               }
+               """
+               fileURL = try? Temporary.makeFile(content: content)
+             }
+
+             it("returns correct start and end indices") {
+               let sut = TypeLocationAnalyzer(typeName: "Foo")
+               let result = try? sut.analyze(fileURL: fileURL)
+               expect(result?.indexOfStartingLine) == 2
+               expect(result?.indexOfEndingLine) == 4
+             }
+           }
+
+          context("contains another single line type") {
+            beforeEach {
+              let content =
+              """
+              import Foundation
+
+              struct Foo {
+                let myProperty: String
+
+                enum Bar { }
+              }
+              """
+              fileURL = try? Temporary.makeFile(content: content)
+            }
+
+            it("returns correct start and end indices") {
+              let sut = TypeLocationAnalyzer(typeName: "Foo")
+              let result = try? sut.analyze(fileURL: fileURL)
+              expect(result?.indexOfStartingLine) == 2
+              expect(result?.indexOfEndingLine) == 6
+            }
+          }
+
+          context("contains another type that spans multiple lines") {
+            beforeEach {
+              let content =
+              """
+              import Foundation
+
+              struct Foo {
+                let myProperty: String
+
+                enum Bar {
+                  case myCase
+                }
+              }
+              """
+              fileURL = try? Temporary.makeFile(content: content)
+            }
+
+            it("returns correct start and end indices") {
+              let sut = TypeLocationAnalyzer(typeName: "Foo")
+              let result = try? sut.analyze(fileURL: fileURL)
+              expect(result?.indexOfStartingLine) == 2
+              expect(result?.indexOfEndingLine) == 8
+            }
+          }
+        }
       }
     }
   }
