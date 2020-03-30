@@ -159,7 +159,7 @@ public struct LocatedType: Hashable {
 
 extension Trivia {
 
-  func countOfNewlines() -> UInt {
+  fileprivate func countOfNewlines() -> UInt {
     var result: UInt = 0
     for triviaPiece in self {
       switch triviaPiece {
