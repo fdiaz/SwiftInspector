@@ -108,6 +108,8 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
 
   /// The total newlines associated with this node.
   private func countOfNewlines(from trivia: Trivia, for node: Syntax) -> UInt {
+    // Some nodes seem to include trivia from other nodes. Filtering to just tokens ensures we get
+    // an accurate count.
     guard node is TokenSyntax else { return 0 }
     return trivia.countOfNewlines()
   }
