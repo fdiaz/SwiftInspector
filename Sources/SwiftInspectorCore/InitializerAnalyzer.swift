@@ -123,8 +123,8 @@ public struct InitializerStatement: Equatable {
 
 
   public struct Parameter: Equatable {
-    let name: String
-    let typeName: String
+    public let name: String
+    public let typeName: String
   }
 
   public struct Modifier: Equatable, OptionSet  {

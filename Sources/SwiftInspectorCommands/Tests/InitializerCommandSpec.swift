@@ -55,7 +55,11 @@ final class InitializerCommandSpec: QuickSpec {
         var fileURL: URL!
 
         beforeEach {
-          fileURL = try? Temporary.makeFile(content: "")
+          fileURL = try? Temporary.makeFile(content: """
+          final class Some {
+            init(some: String, someInt: Int) {}
+          }
+          """)
         }
 
         afterEach {
@@ -68,8 +72,18 @@ final class InitializerCommandSpec: QuickSpec {
         }
 
         it("succeeds") {
-          let result = try? TestTask.run(withArguments: ["initializer", "--path", fileURL.path, "--name", "SomeName"])
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", fileURL.path, "--name", "Some"])
           expect(result?.didSucceed) == true
+        }
+
+        it("returns only the type names by default") {
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", fileURL.path, "--name", "Some"])
+          expect(result?.outputMessage).to(contain("String Int"))
+        }
+
+        it("returns the name and type name if we disable type only") {
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", fileURL.path, "--name", "Some", "--disable-type-only"])
+          expect(result?.outputMessage).to(contain("some,String someInt,Int"))
         }
       }
 

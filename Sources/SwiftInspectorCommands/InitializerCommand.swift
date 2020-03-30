@@ -32,14 +32,26 @@ final class InitializerCommand: ParsableCommand {
     abstract: "Finds information about the initializers of the specified type"
   )
 
-  @Option(help: "The absolute path to the file or directory to inspect")
+  @Option(help: "The absolute path to the file to inspect")
   var path: String
 
   @Option(help: "The name of the type to look information of the initializer")
   var name: String
 
+  @Flag(name: .shortAndLong, default: true, inversion: .prefixedEnableDisable, help: Help.typeOnly)
+  var typeOnly: Bool
+
   /// Runs the command
   func run() throws {
+    let cachedSyntaxTree = CachedSyntaxTree()
+    let analyzer = InitializerAnalyzer(name: name, cachedSyntaxTree: cachedSyntaxTree)
+    let fileURL = URL(fileURLWithPath: path)
+
+    let initializerStatements = try analyzer.analyze(fileURL: fileURL)
+    let outputArray = initializerStatements.map { outputString(from: $0)}
+
+    let output = outputArray.joined(separator: "\n")
+    print(output)
   }
 
   /// Validates if the arguments of this command are valid
@@ -54,4 +66,19 @@ final class InitializerCommand: ParsableCommand {
       throw InspectorError.invalidArgument(argumentName: "--path", value: "options.path")
     }
   }
+
+  private func outputString(from statement: InitializerStatement) -> String {
+    if typeOnly {
+      return statement.parameters.map { $0.typeName }.joined(separator: " ")
+    } else {
+      return statement.parameters.map { "\($0.name),\($0.typeName)" }.joined(separator: " ")
+    }
+  }
+}
+
+private enum Help {
+  static var typeOnly: ArgumentHelp = ArgumentHelp("The granularity of the output",
+                                                   discussion: """
+                                                    Outputs a list of the type names by default. If disabled it outputs the name of the parameter and the name of the type (e.g. 'foo,Int bar,String')
+                                                    """)
 }
