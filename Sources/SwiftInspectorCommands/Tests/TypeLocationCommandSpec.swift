@@ -35,6 +35,12 @@ final class TypeLocationCommandSpec: QuickSpec {
     var pathURL: URL!
 
     describe("TypeLocationCommand") {
+      afterEach {
+        guard let pathURL = pathURL else {
+          return
+        }
+        try? Temporary.removeItem(at: pathURL)
+      }
 
       describe("run") {
 
@@ -47,7 +53,6 @@ final class TypeLocationCommandSpec: QuickSpec {
 
         context("path is valid") {
           beforeEach { pathURL = try? Temporary.makeFile(content: "struct Foo { }") }
-          afterEach { try? Temporary.removeItem(at: pathURL) }
 
           context("with no --name argument") {
             it("fails") {
@@ -82,7 +87,6 @@ final class TypeLocationCommandSpec: QuickSpec {
 
         context("when path is a directory") {
           beforeEach { pathURL = try? Temporary.makeFolder() }
-          afterEach { try? Temporary.removeItem(at: pathURL) }
 
           it("fails") {
             let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
@@ -92,7 +96,6 @@ final class TypeLocationCommandSpec: QuickSpec {
 
         context("when path is a file") {
           beforeEach { pathURL = try? Temporary.makeFile(content: "struct Foo { }") }
-          afterEach { try? Temporary.removeItem(at: pathURL) }
 
           it("succeeds") {
             let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
