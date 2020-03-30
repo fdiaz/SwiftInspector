@@ -48,7 +48,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
 
         it("returns nil") {
           let sut = TypeLocationAnalyzer(typeName: "Foo")
-          let result = try? sut.analyze(fileURL: fileURL)
+          let result = try? sut.analyze(fileURL: fileURL).first
 
           expect(result).to(beNil())
         }
@@ -74,7 +74,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
         context("name does not match") {
           it("returns nil") {
             let sut = TypeLocationAnalyzer(typeName: "Bar")
-            let result = try? sut.analyze(fileURL: fileURL)
+            let result = try? sut.analyze(fileURL: fileURL).first
             expect(result).to(beNil())
           }
         }
@@ -101,7 +101,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
         context("name does not match") {
           it("returns nil") {
             let sut = TypeLocationAnalyzer(typeName: "Bar")
-            let result = try? sut.analyze(fileURL: fileURL)
+            let result = try? sut.analyze(fileURL: fileURL).first
             expect(result).to(beNil())
           }
         }
@@ -119,7 +119,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
         context("name matches") {
           it("returns type location") {
             let sut = TypeLocationAnalyzer(typeName: "Foo")
-            let result = try? sut.analyze(fileURL: fileURL)
+            let result = try? sut.analyze(fileURL: fileURL).first
             expect(result).notTo(beNil())
           }
         }
@@ -127,7 +127,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
         context("name does not match") {
           it("returns nil") {
             let sut = TypeLocationAnalyzer(typeName: "Bar")
-            let result = try? sut.analyze(fileURL: fileURL)
+            let result = try? sut.analyze(fileURL: fileURL).first
             expect(result).to(beNil())
           }
         }
@@ -153,7 +153,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
         context("name does not match") {
           it("returns nil") {
             let sut = TypeLocationAnalyzer(typeName: "Bar")
-            let result = try? sut.analyze(fileURL: fileURL)
+            let result = try? sut.analyze(fileURL: fileURL).first
             expect(result).to(beNil())
           }
         }
@@ -171,7 +171,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
 
           it("returns correct start and end indices") {
             let sut = TypeLocationAnalyzer(typeName: "Foo")
-            let result = try? sut.analyze(fileURL: fileURL)
+            let result = try? sut.analyze(fileURL: fileURL).first
             expect(result?.indexOfStartingLine) == 0
             expect(result?.indexOfEndingLine) == 0
           }
@@ -190,7 +190,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
 
           it("returns correct start and end indices") {
             let sut = TypeLocationAnalyzer(typeName: "Foo")
-            let result = try? sut.analyze(fileURL: fileURL)
+            let result = try? sut.analyze(fileURL: fileURL).first
             expect(result?.indexOfStartingLine) == 2
             expect(result?.indexOfEndingLine) == 2
           }
@@ -211,7 +211,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
 
            it("returns correct start and end indices") {
              let sut = TypeLocationAnalyzer(typeName: "Foo")
-             let result = try? sut.analyze(fileURL: fileURL)
+            let result = try? sut.analyze(fileURL: fileURL).first
              expect(result?.indexOfStartingLine) == 0
              expect(result?.indexOfEndingLine) == 2
            }
@@ -232,7 +232,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
 
            it("returns correct start and end indices") {
              let sut = TypeLocationAnalyzer(typeName: "Foo")
-             let result = try? sut.analyze(fileURL: fileURL)
+            let result = try? sut.analyze(fileURL: fileURL).first
              expect(result?.indexOfStartingLine) == 2
              expect(result?.indexOfEndingLine) == 4
            }
@@ -255,7 +255,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
 
           it("returns correct start and end indices") {
             let sut = TypeLocationAnalyzer(typeName: "Foo")
-            let result = try? sut.analyze(fileURL: fileURL)
+            let result = try? sut.analyze(fileURL: fileURL).first
             expect(result?.indexOfStartingLine) == 2
             expect(result?.indexOfEndingLine) == 6
           }
@@ -280,10 +280,33 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
 
           it("returns correct start and end indices") {
             let sut = TypeLocationAnalyzer(typeName: "Foo")
-            let result = try? sut.analyze(fileURL: fileURL)
+            let result = try? sut.analyze(fileURL: fileURL).first
             expect(result?.indexOfStartingLine) == 2
             expect(result?.indexOfEndingLine) == 8
           }
+        }
+      }
+      context("when multiple types with the same name exist") {
+        beforeEach {
+          let content =
+          """
+          struct Foo { }
+
+          class Bar {
+            enum Foo { }
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        it("returns correct start and end indices") {
+          let sut = TypeLocationAnalyzer(typeName: "Foo")
+          let result = try? sut.analyze(fileURL: fileURL)
+          expect(result?.count).to(equal(2))
+          expect(result?.first?.indexOfStartingLine) == 0
+          expect(result?.first?.indexOfEndingLine) == 0
+          expect(result?.last?.indexOfStartingLine) == 3
+          expect(result?.last?.indexOfEndingLine) == 3
         }
       }
     }

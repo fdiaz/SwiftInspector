@@ -36,12 +36,12 @@ public final class TypeLocationAnalyzer: Analyzer {
 
   /// Analyzes the imports of the Swift file
   /// - Parameter fileURL: The fileURL where the Swift file is located
-  public func analyze(fileURL: URL) throws -> LocatedType? {
+  public func analyze(fileURL: URL) throws -> [LocatedType] {
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
-    var result: LocatedType?
+    var result = [LocatedType]()
     let reader = TypeLocationSyntaxReader() { [unowned self] locatedType in
       guard self.typeName == locatedType.name else { return }
-      result = locatedType
+      result.append(locatedType)
     }
     _ = reader.visit(syntax)
 
@@ -61,33 +61,37 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
   }
 
   override func visitAny(_ node: Syntax) -> Syntax? {
-    if let leadingTrivia = node.leadingTrivia {
-      currentLineNumber += countOfNewlines(from: leadingTrivia, for: node)
-    }
+    let anyLocatedType: (name: String, keywordToken: TokenSyntax)?
 
-    var name: String?
     switch node {
     case let classDecl as ClassDeclSyntax:
-      name = classDecl.identifier.text
+      anyLocatedType = (classDecl.identifier.text, classDecl.classKeyword)
     case let enumDecl as EnumDeclSyntax:
-      name = enumDecl.identifier.text
+      anyLocatedType = (enumDecl.identifier.text, enumDecl.enumKeyword)
     case let protocolDecl as ProtocolDeclSyntax:
-      name = protocolDecl.identifier.text
+      anyLocatedType = (protocolDecl.identifier.text, protocolDecl.protocolKeyword)
     case let structDecl as StructDeclSyntax:
-      name = structDecl.identifier.text
+      anyLocatedType = (structDecl.identifier.text, structDecl.structKeyword)
     default:
-      break
+      anyLocatedType = nil
     }
 
-    if let name = name {
-      let countOfNewlinesInsideType = countOfNewlines(within: node)
+    if let anyLocatedType = anyLocatedType {
+      var indexOfStartingLine = currentLineNumber
+      indexOfStartingLine += countOfLeadingNewlines(for: anyLocatedType.keywordToken)
+
+      let indexOfEndingLine = indexOfStartingLine + countOfNewlines(within: node)
+
       let locatedType = LocatedType(
-        name: name,
-        indexOfStartingLine: currentLineNumber,
-        indexOfEndingLine: currentLineNumber + countOfNewlinesInsideType)
+        name: anyLocatedType.name,
+        indexOfStartingLine: indexOfStartingLine,
+        indexOfEndingLine: indexOfEndingLine)
       onNodeVisit(locatedType)
     }
 
+    if let leadingTrivia = node.leadingTrivia {
+      currentLineNumber += countOfNewlines(from: leadingTrivia, for: node)
+    }
     if let trailingTrivia = node.trailingTrivia {
       currentLineNumber += countOfNewlines(from: trailingTrivia, for: node)
     }
@@ -98,13 +102,16 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
   var currentLineNumber: UInt = 0
   let onNodeVisit: (LocatedType) -> Void
 
+  /// The total newlines associated with this node.
   private func countOfNewlines(from trivia: Trivia, for node: Syntax) -> UInt {
-    // There may be a better way to do this. I found that CodeBlockItemSyntax was passing through
-    // trivia from a child item, leading to incorrect counting. So I included all CodeBlock* items.
-    if node is CodeBlockSyntax { return 0 }
-    if node is CodeBlockItemSyntax { return 0 }
-    if node is CodeBlockItemListSyntax { return 0 }
+    guard node is TokenSyntax else { return 0 }
     return trivia.countOfNewlines()
+  }
+
+  /// The number of newlines preceding this token.
+  private func countOfLeadingNewlines(for token: TokenSyntax) -> UInt {
+    guard let leadingTrivia = token.leadingTrivia else { return 0 }
+    return leadingTrivia.countOfNewlines()
   }
 
   /// Find the number of newlines within this node.
@@ -112,6 +119,7 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     var countOfNewlinesInsideType: UInt = 0
 
     for (offset, token) in node.tokens.enumerated() {
+      // We've already counted the leading trivia for the first token.
       if let leadingTrivia = token.leadingTrivia, offset != 0 {
         countOfNewlinesInsideType += leadingTrivia.countOfNewlines()
       }
