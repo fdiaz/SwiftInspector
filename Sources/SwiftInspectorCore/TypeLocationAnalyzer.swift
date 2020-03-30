@@ -23,6 +23,8 @@
 import Foundation
 import SwiftSyntax
 
+// MARK: - TypeLocationAnalyzer
+
 public final class TypeLocationAnalyzer: Analyzer {
 
   /// - Parameter typeName: The name of the type to locate.
@@ -60,7 +62,7 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
 
   override func visitAny(_ node: Syntax) -> Syntax? {
     if let leadingTrivia = node.leadingTrivia {
-      updateCurrentLineNumber(from: leadingTrivia, for: node)
+      currentLineNumber += countOfNewlines(from: leadingTrivia, for: node)
     }
 
     var name: String?
@@ -78,15 +80,16 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     }
 
     if let name = name {
+      let countOfNewlinesInsideType = countOfNewlines(within: node)
       let locatedType = LocatedType(
         name: name,
         indexOfStartingLine: currentLineNumber,
-        indexOfEndingLine: currentLineNumber)
+        indexOfEndingLine: currentLineNumber + countOfNewlinesInsideType)
       onNodeVisit(locatedType)
     }
 
     if let trailingTrivia = node.trailingTrivia {
-      updateCurrentLineNumber(from: trailingTrivia, for: node)
+      currentLineNumber += countOfNewlines(from: trailingTrivia, for: node)
     }
 
     return super.visitAny(node)
@@ -95,23 +98,33 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
   var currentLineNumber: UInt = 0
   let onNodeVisit: (LocatedType) -> Void
 
-  private func updateCurrentLineNumber(from trivia: Trivia, for node: Syntax) {
+  private func countOfNewlines(from trivia: Trivia, for node: Syntax) -> UInt {
     // There may be a better way to do this. I found that CodeBlockItemSyntax was passing through
-    // trivia from a child item, leading to incorrect counding. So I included all CodeBlock* items.
-    if node is CodeBlockSyntax { return }
-    if node is CodeBlockItemSyntax { return }
-    if node is CodeBlockItemListSyntax { return }
+    // trivia from a child item, leading to incorrect counting. So I included all CodeBlock* items.
+    if node is CodeBlockSyntax { return 0 }
+    if node is CodeBlockItemSyntax { return 0 }
+    if node is CodeBlockItemListSyntax { return 0 }
+    return trivia.countOfNewlines()
+  }
 
-    for triviaPiece in trivia {
-      switch triviaPiece {
-      case .newlines(let count):
-        currentLineNumber += UInt(count)
-      default:
-        break
+  /// Find the number of newlines within this node.
+  private func countOfNewlines(within node: Syntax) -> UInt {
+    var countOfNewlinesInsideType: UInt = 0
+
+    for (offset, token) in node.tokens.enumerated() {
+      if let leadingTrivia = token.leadingTrivia, offset != 0 {
+        countOfNewlinesInsideType += leadingTrivia.countOfNewlines()
+      }
+      if let trailingTrivia = token.trailingTrivia{
+        countOfNewlinesInsideType += trailingTrivia.countOfNewlines()
       }
     }
+
+    return countOfNewlinesInsideType
   }
 }
+
+// MARK: - LocatedType
 
 /// Information about a located type. Indices start with 0.
 public struct LocatedType: Hashable {
@@ -121,4 +134,22 @@ public struct LocatedType: Hashable {
   public let indexOfStartingLine: UInt
   /// The last line of the type.
   public let indexOfEndingLine: UInt
+}
+
+// MARK: Trivia
+
+extension Trivia {
+
+  func countOfNewlines() -> UInt {
+    var result: UInt = 0
+    for triviaPiece in self {
+      switch triviaPiece {
+      case .newlines(let count):
+        result += UInt(count)
+      default:
+        break
+      }
+    }
+    return result
+  }
 }
