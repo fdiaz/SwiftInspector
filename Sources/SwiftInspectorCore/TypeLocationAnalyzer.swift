@@ -61,24 +61,28 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
   }
 
   override func visitAny(_ node: Syntax) -> Syntax? {
-    let anyLocatedType: (name: String, keywordToken: TokenSyntax)?
+    let anyLocatedType: (name: String, keywordToken: TokenSyntax, modifiers: ModifierListSyntax?)?
 
     switch node {
     case let classDecl as ClassDeclSyntax:
-      anyLocatedType = (classDecl.identifier.text, classDecl.classKeyword)
+      anyLocatedType = (classDecl.identifier.text, classDecl.classKeyword, classDecl.modifiers)
     case let enumDecl as EnumDeclSyntax:
-      anyLocatedType = (enumDecl.identifier.text, enumDecl.enumKeyword)
+      anyLocatedType = (enumDecl.identifier.text, enumDecl.enumKeyword, enumDecl.modifiers)
     case let protocolDecl as ProtocolDeclSyntax:
-      anyLocatedType = (protocolDecl.identifier.text, protocolDecl.protocolKeyword)
+      anyLocatedType = (protocolDecl.identifier.text, protocolDecl.protocolKeyword, protocolDecl.modifiers)
     case let structDecl as StructDeclSyntax:
-      anyLocatedType = (structDecl.identifier.text, structDecl.structKeyword)
+      anyLocatedType = (structDecl.identifier.text, structDecl.structKeyword, structDecl.modifiers)
     default:
       anyLocatedType = nil
     }
 
     if let anyLocatedType = anyLocatedType {
       var indexOfStartingLine = currentLineNumber
-      indexOfStartingLine += countOfLeadingNewlines(for: anyLocatedType.keywordToken)
+      // We need to add this in early. We don't modify currentLineNumber since they will be added
+      // in later when we compute the leading newlines for this entire node.
+      indexOfStartingLine += countOfLeadingNewlinesForType(
+        keywordToken: anyLocatedType.keywordToken,
+        modifiers: anyLocatedType.modifiers)
 
       let indexOfEndingLine = indexOfStartingLine + countOfNewlines(within: node)
 
@@ -109,9 +113,14 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
   }
 
   /// The number of newlines preceding this token.
-  private func countOfLeadingNewlines(for token: TokenSyntax) -> UInt {
-    guard let leadingTrivia = token.leadingTrivia else { return 0 }
-    return leadingTrivia.countOfNewlines()
+  private func countOfLeadingNewlinesForType(
+    keywordToken: TokenSyntax,
+    modifiers: ModifierListSyntax?) -> UInt
+  {
+    var result: UInt = 0
+    result += keywordToken.leadingTrivia.countOfNewlines()
+    modifiers?.leadingTrivia.flatMap { result += $0.countOfNewlines() }
+    return result
   }
 
   /// Find the number of newlines within this node.

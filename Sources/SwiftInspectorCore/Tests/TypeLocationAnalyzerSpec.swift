@@ -286,6 +286,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           }
         }
       }
+
       context("when multiple types with the same name exist") {
         beforeEach {
           let content =
@@ -307,6 +308,25 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           expect(result?.first?.indexOfEndingLine) == 0
           expect(result?.last?.indexOfStartingLine) == 3
           expect(result?.last?.indexOfEndingLine) == 3
+        }
+      }
+
+      context("when the type has a modifier") {
+        beforeEach {
+          let content =
+          """
+
+          final class Foo {
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        fit("returns correct start and end indices") {
+          let sut = TypeLocationAnalyzer(typeName: "Foo")
+          let result = try? sut.analyze(fileURL: fileURL).first
+          expect(result?.indexOfStartingLine) == 1
+          expect(result?.indexOfEndingLine) == 2
         }
       }
     }
