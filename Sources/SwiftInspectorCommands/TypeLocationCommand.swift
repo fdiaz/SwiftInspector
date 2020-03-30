@@ -44,9 +44,9 @@ final class TypeLocationCommand: ParsableCommand {
 
     let analyzer = TypeLocationAnalyzer(typeName: name, cachedSyntaxTree: cachedSyntaxTree)
     let fileURL = URL(fileURLWithPath: path)
-    let typeLocation = try analyzer.analyze(fileURL: fileURL)
+    let typeLocations = try analyzer.analyze(fileURL: fileURL)
 
-    print(typeLocation?.outputString() ?? "")
+    print(typeLocations.map { $0.outputString() }.joined(separator: "\n"))
   }
 
   /// Validates if the arguments of this command are valid

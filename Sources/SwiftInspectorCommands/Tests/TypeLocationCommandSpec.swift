@@ -130,6 +130,29 @@ final class TypeLocationCommandSpec: QuickSpec {
               expect(result?.outputMessage).to(equal("\n"))
             }
           }
+
+          context("multiple types found") {
+            it("outputs line numbers for each type") {
+              let contents =
+              """
+              import Foundation
+
+              struct Foo { }
+
+              public final class Bar {
+                enum Foo { }
+              }
+              """
+
+              pathURL = try? Temporary.makeFile(content: contents)
+
+              let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
+              let lines = result?.outputMessage?.split { $0.isNewline }
+              expect(lines?.count) == 2
+              expect(lines?.first).to(equal("2 2"))
+              expect(lines?.last).to(equal("5 5"))
+            }
+          }
         }
       }
     }
