@@ -30,11 +30,13 @@ import Quick
 
 final class FileManagerSpec: QuickSpec {
   override func spec() {
+    var fileManager: FileManager!
+    
+    beforeEach {
+      fileManager = FileManager.default
+    }
+
     describe("swiftFileURLs(at:)") {
-      var fileManager: FileManager!
-      beforeEach {
-        fileManager = FileManager.default
-      }
 
       context("with a file") {
         var fileURL: URL!
@@ -124,5 +126,48 @@ final class FileManagerSpec: QuickSpec {
       }
 
     }
+
+    describe("isSwiftFile(at:)") {
+      context("with a directory") {
+        var parentURL: URL!
+        beforeEach {
+          parentURL = try! Temporary.makeFolder()
+        }
+        afterEach {
+          try? Temporary.removeItem(at: parentURL)
+        }
+
+        it("returns false") {
+          expect(fileManager.isSwiftFile(at: parentURL)) == false
+        }
+      }
+
+      context("with a file") {
+        var fileURL: URL!
+
+        afterEach {
+          try? Temporary.removeItem(at: fileURL)
+        }
+
+        it("returns false if it's not a Swift file") {
+          fileURL = try! Temporary.makeFile(content: "", fileExtension: ".txt")
+          expect(fileManager.isSwiftFile(at: fileURL)) == false
+        }
+
+        it("returns true if it's a Swift file") {
+          fileURL = try! Temporary.makeFile(content: "", fileExtension: ".swift")
+          expect(fileManager.isSwiftFile(at: fileURL)) == true
+        }
+      }
+
+      context("with an invalid URL") {
+        it("returns false") {
+          let fileURL = URL(fileURLWithPath: "")
+          expect(fileManager.isSwiftFile(at: fileURL)) == false
+        }
+      }
+
+    }
+
   }
 }
