@@ -35,7 +35,7 @@ final class TypealiasCommand: ParsableCommand {
   @Option(default: "", help: Help.name)
   var name: String
 
-  @Option()
+  @Option(help: "The absolute path to the file to inspect")
   var path: String
 
   /// Runs the command
@@ -59,7 +59,9 @@ final class TypealiasCommand: ParsableCommand {
     guard !path.isEmpty else {
       throw InspectorError.emptyArgument(argumentName: "--path")
     }
-    guard FileManager.default.fileExists(atPath: path) else {
+
+    let pathURL = URL(fileURLWithPath: path)
+    guard FileManager.default.isSwiftFile(at: pathURL) else {
       throw InspectorError.invalidArgument(argumentName: "--path", value: path)
     }
   }
