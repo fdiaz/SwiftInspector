@@ -130,15 +130,20 @@ final class FileManagerSpec: QuickSpec {
     describe("isSwiftFile(at:)") {
       context("with a directory") {
         var parentURL: URL!
-        beforeEach {
-          parentURL = try! Temporary.makeFolder()
-        }
         afterEach {
           try? Temporary.removeItem(at: parentURL)
         }
 
         it("returns false") {
+          parentURL = try! Temporary.makeFolder()
           expect(fileManager.isSwiftFile(at: parentURL)) == false
+        }
+
+        context("when the directory ends in .swift") {
+          it("returns false") {
+            parentURL = try! Temporary.makeFolder(name: "Some.swift")
+            expect(fileManager.isSwiftFile(at: parentURL)) == false
+          }
         }
       }
 
