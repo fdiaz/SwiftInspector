@@ -47,7 +47,7 @@ final class ImportsCommand: ParsableCommand {
     let outputArray = try FileManager.default.swiftFiles(at: fileURL)
       .reduce(Set<String>()) { result, url in
         let importStatements = try analyzer.analyze(fileURL: url)
-        let output = importStatements.map { outputString(from: $0)}
+        let output = importStatements.map { outputString(from: $0) }
         return result.union(output)
     }
 
@@ -61,7 +61,7 @@ final class ImportsCommand: ParsableCommand {
       throw InspectorError.emptyArgument(argumentName: "--path")
     }
     guard FileManager.default.fileExists(atPath: path) else {
-      throw InspectorError.invalidArgument(argumentName: "--path", value: "options.path")
+      throw InspectorError.invalidArgument(argumentName: "--path", value: path)
     }
   }
 

@@ -35,10 +35,10 @@ final class InitializerCommand: ParsableCommand {
   @Option(help: "The absolute path to the file to inspect")
   var path: String
 
-  @Option(help: "The name of the type to look information of the initializer")
+  @Option(help: "The name of the type whose initializer information we'll be looking for")
   var name: String
 
-  @Flag(name: .shortAndLong, default: true, inversion: .prefixedEnableDisable, help: Help.typeOnly)
+  @Flag(name: .shortAndLong, default: true, inversion: .prefixedEnableDisable, help: typeOnlyHelp)
   var typeOnly: Bool
 
   /// Runs the command
@@ -48,7 +48,7 @@ final class InitializerCommand: ParsableCommand {
     let fileURL = URL(fileURLWithPath: path)
 
     let initializerStatements = try analyzer.analyze(fileURL: fileURL)
-    let outputArray = initializerStatements.map { outputString(from: $0)}
+    let outputArray = initializerStatements.map { outputString(from: $0) }
 
     let output = outputArray.joined(separator: "\n")
     print(output)
@@ -63,7 +63,7 @@ final class InitializerCommand: ParsableCommand {
       throw InspectorError.emptyArgument(argumentName: "--path")
     }
     guard FileManager.default.fileExists(atPath: path) else {
-      throw InspectorError.invalidArgument(argumentName: "--path", value: "options.path")
+      throw InspectorError.invalidArgument(argumentName: "--path", value: path)
     }
   }
 
@@ -76,9 +76,7 @@ final class InitializerCommand: ParsableCommand {
   }
 }
 
-private enum Help {
-  static var typeOnly: ArgumentHelp = ArgumentHelp("The granularity of the output",
-                                                   discussion: """
-                                                    Outputs a list of the type names by default. If disabled it outputs the name of the parameter and the name of the type (e.g. 'foo,Int bar,String')
-                                                    """)
-}
+private var typeOnlyHelp = ArgumentHelp("The granularity of the output",
+                                        discussion: """
+                                        Outputs a list of the type names by default. If disabled it outputs the name of the parameter and the name of the type (e.g. 'foo,Int bar,String')
+                                        """)

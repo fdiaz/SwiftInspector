@@ -46,7 +46,7 @@ final class TypealiasCommand: ParsableCommand {
     let outputArray = try FileManager.default.swiftFiles(at: fileURL)
       .reduce(Set<String>()) { result, url in
         let statements = try analyzer.analyze(fileURL: url)
-        let output = filterOutput(statements).map { outputString(from: $0)}
+        let output = filterOutput(statements).map { outputString(from: $0) }
         return result.union(output)
     }
 

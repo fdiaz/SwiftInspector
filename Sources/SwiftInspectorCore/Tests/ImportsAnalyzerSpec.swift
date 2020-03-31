@@ -45,7 +45,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
                       public final class Some {
                       }
                       """
-        self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
+        self.fileURL = try? Temporary.makeFile(content: content)
 
         it("returns an empty array") {
           let sut = ImportsAnalyzer()
@@ -64,7 +64,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
+          self.fileURL = try? Temporary.makeFile(content: content)
           sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
         }
 
@@ -90,7 +90,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
 
                         public final class Some {}
                         """
-          self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
+          self.fileURL = try? Temporary.makeFile(content: content)
           sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
         }
 
@@ -108,7 +108,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
+          self.fileURL = try? Temporary.makeFile(content: content)
           sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
         }
 
@@ -135,7 +135,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
+          self.fileURL = try? Temporary.makeFile(content: content)
           sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
         }
 
@@ -163,7 +163,7 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeFile(content: content, name: "ABC")
+          self.fileURL = try? Temporary.makeFile(content: content)
           sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
         }
 
