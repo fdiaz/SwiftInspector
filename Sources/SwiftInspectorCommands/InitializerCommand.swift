@@ -1,4 +1,4 @@
-// Created by Francisco Diaz on 3/25/20.
+// Created by Francisco Diaz on 3/27/20.
 //
 // Copyright (c) 2020 Francisco Diaz
 //
@@ -26,36 +26,39 @@ import ArgumentParser
 import Foundation
 import SwiftInspectorCore
 
-final class TypealiasCommand: ParsableCommand {
+final class InitializerCommand: ParsableCommand {
   static var configuration = CommandConfiguration(
-    commandName: "typealias",
-    abstract: "Finds information related to the declaration of a typelias"
+    commandName: "initializer",
+    abstract: "Finds information about the initializers of the specified type"
   )
 
-  @Option(default: "", help: Help.name)
+  @Option(help: "The absolute path to the file to inspect")
+  var path: String
+
+  @Option(help: "The name of the type whose initializer information we'll be looking for")
   var name: String
 
-  @Option()
-  var path: String
+  @Flag(name: .shortAndLong, default: true, inversion: .prefixedEnableDisable, help: typeOnlyHelp)
+  var typeOnly: Bool
 
   /// Runs the command
   func run() throws {
     let cachedSyntaxTree = CachedSyntaxTree()
-    let analyzer = TypealiasAnalyzer(cachedSyntaxTree: cachedSyntaxTree)
+    let analyzer = InitializerAnalyzer(name: name, cachedSyntaxTree: cachedSyntaxTree)
     let fileURL = URL(fileURLWithPath: path)
-    let outputArray = try FileManager.default.swiftFiles(at: fileURL)
-      .reduce(Set<String>()) { result, url in
-        let statements = try analyzer.analyze(fileURL: url)
-        let output = filterOutput(statements).map { outputString(from: $0) }
-        return result.union(output)
-    }
 
-    let output = outputArray.filter { !$0.isEmpty }.joined(separator: "\n")
+    let initializerStatements = try analyzer.analyze(fileURL: fileURL)
+    let outputArray = initializerStatements.map { outputString(from: $0) }
+
+    let output = outputArray.joined(separator: "\n")
     print(output)
   }
 
   /// Validates if the arguments of this command are valid
   func validate() throws {
+    guard !name.isEmpty else {
+      throw InspectorError.emptyArgument(argumentName: "--name")
+    }
     guard !path.isEmpty else {
       throw InspectorError.emptyArgument(argumentName: "--path")
     }
@@ -64,31 +67,16 @@ final class TypealiasCommand: ParsableCommand {
     }
   }
 
-  /// Filters the output based on command line inputs
-  private func filterOutput(_ output: [TypealiasStatement]) -> [TypealiasStatement] {
-    guard !name.isEmpty else {
-      return output
+  private func outputString(from statement: InitializerStatement) -> String {
+    if typeOnly {
+      return statement.parameters.map { $0.typeName }.joined(separator: " ")
+    } else {
+      return statement.parameters.map { "\($0.name),\($0.typeName)" }.joined(separator: " ")
     }
-
-    return output.filter { $0.name == name }
-  }
-
-  private func outputString(from statement: TypealiasStatement) -> String {
-    guard !name.isEmpty else {
-      return statement.name
-    }
-
-    return "\(statement.name) \(statement.identifiers.joined(separator: " "))"
   }
 }
 
-private struct Help {
-  static var name: ArgumentHelp {
-    ArgumentHelp("Used to filter by the name of the typelias",
-                 discussion: """
-                             If a value is passed, it outputs the name of the typealias and the
-                             information of the identifiers being declared in that typealias.
-                             """
-    )
-  }
-}
+private var typeOnlyHelp = ArgumentHelp("The granularity of the output",
+                                        discussion: """
+                                        Outputs a list of the type names by default. If disabled it outputs the name of the parameter and the name of the type (e.g. 'foo,Int bar,String')
+                                        """)

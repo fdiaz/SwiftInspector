@@ -60,7 +60,7 @@ final class StaticUsageCommand: ParsableCommand {
       throw InspectorError.emptyArgument(argumentName: "--path")
     }
     guard FileManager.default.fileExists(atPath: path) else {
-      throw InspectorError.invalidArgument(argumentName: "--path", value: "options.path")
+      throw InspectorError.invalidArgument(argumentName: "--path", value: path)
     }
   }
 

@@ -28,9 +28,7 @@ import Foundation
 
 @testable import SwiftInspectorCore
 
-final class InspectorCommandSpec: QuickSpec {
-  private var fileURL: URL!
-
+final class ImportCommandSpec: QuickSpec {
   override func spec() {
     describe("run") {
 
