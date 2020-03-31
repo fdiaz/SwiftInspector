@@ -50,7 +50,7 @@ final class InitializerAnalyzerSpec: QuickSpec {
           let content = """
                         public final class FakeType {}
                         """
-          fileURL = try? Temporary.makeFile(content: content, name: "ABC")
+          fileURL = try? Temporary.makeFile(content: content)
         }
 
         it("returns an empty array") {
@@ -67,7 +67,7 @@ final class InitializerAnalyzerSpec: QuickSpec {
             convenience init(someString: String, someInt: Int) {}
           }
           """
-          fileURL = try? Temporary.makeFile(content: content, name: "ABC")
+          fileURL = try? Temporary.makeFile(content: content)
         }
 
         it("detects the type name") {
@@ -94,6 +94,29 @@ final class InitializerAnalyzerSpec: QuickSpec {
           expect(result?.first?.modifiers) == .convenience
         }
 
+        context("with default values") {
+          beforeEach {
+            let content = """
+            public final class FakeType {
+              convenience init(someString: String = "abc", someInt: Int = 2) {}
+            }
+            """
+            fileURL = try? Temporary.makeFile(content: content)
+          }
+
+          it("detects the parameters") {
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result?.first?.parameters) == [
+              InitializerStatement.Parameter(name: "someString", typeName: "String"),
+              InitializerStatement.Parameter(name: "someInt", typeName: "Int"),
+            ]
+          }
+
+          it("detects the modifier") {
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result?.first?.modifiers) == .convenience
+          }
+        }
       }
 
       context("with multiple initializers") {
@@ -108,7 +131,7 @@ final class InitializerAnalyzerSpec: QuickSpec {
             override init(someString: String, someInt: Int) {}
           }
           """
-          fileURL = try? Temporary.makeFile(content: content, name: "ABC")
+          fileURL = try? Temporary.makeFile(content: content)
         }
 
         it("returns the correct modifiers") {
