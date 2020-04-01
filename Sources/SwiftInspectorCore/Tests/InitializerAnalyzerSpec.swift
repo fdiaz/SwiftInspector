@@ -117,6 +117,28 @@ final class InitializerAnalyzerSpec: QuickSpec {
             expect(result?.first?.modifiers) == .convenience
           }
         }
+
+        context("with a composition of types") {
+          beforeEach {
+            let content = """
+            protocol Some {}
+            protocol Another {}
+
+            public final class FakeType {
+              init(someString: Some & Another, someInt: Int) {}
+            }
+            """
+            fileURL = try? Temporary.makeFile(content: content)
+          }
+
+          it("returns all the types in the array") {
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result?.first?.parameters) == [
+              InitializerStatement.Parameter(name: "someString", typeNames: ["Some", "Another"]),
+              InitializerStatement.Parameter(name: "someInt", typeName: "Int"),
+            ]
+          }
+        }
       }
 
       context("with multiple initializers") {
