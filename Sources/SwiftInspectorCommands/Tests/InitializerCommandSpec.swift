@@ -87,6 +87,33 @@ final class InitializerCommandSpec: QuickSpec {
         }
       }
 
+      context("when argument-name is passed") {
+        var fileURL: URL!
+
+        beforeEach {
+          fileURL = try? Temporary.makeFile(content: """
+          final class Some {
+            init(some: String, someInt: Int) {}
+          }
+          """)
+        }
+
+        it("filters out the initializers that don't have the argument names") {
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", fileURL.path, "--name", "Some", "--argument-name", "AnotherType"])
+          expect(result?.outputMessage).toNot(contain("String"))
+        }
+
+        it("returns the initializers that have the same names") {
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", fileURL.path, "--name", "Some", "--argument-name", "some", "someInt"])
+          expect(result?.outputMessage).to(contain("String Int"))
+        }
+
+        it("returns the initializers that have the same names in different order") {
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", fileURL.path, "--name", "Some", "--argument-name", "someInt", "some"])
+          expect(result?.outputMessage).to(contain("String Int"))
+        }
+      }
+
     }
   }
 }

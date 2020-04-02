@@ -41,6 +41,9 @@ final class InitializerCommand: ParsableCommand {
   @Flag(name: .shortAndLong, default: true, inversion: .prefixedEnableDisable, help: typeOnlyHelp)
   var typeOnly: Bool
 
+  @Option(parsing: .upToNextOption, help: argumentNameHelp)
+  var argumentName: [String]
+
   /// Runs the command
   func run() throws {
     let cachedSyntaxTree = CachedSyntaxTree()
@@ -48,7 +51,7 @@ final class InitializerCommand: ParsableCommand {
     let fileURL = URL(fileURLWithPath: path)
 
     let initializerStatements = try analyzer.analyze(fileURL: fileURL)
-    let outputArray = initializerStatements.map { outputString(from: $0) }
+    let outputArray = initializerStatements.filter(shouldReturnParameters).map { outputString(from: $0) }
 
     let output = outputArray.joined(separator: "\n")
     print(output)
@@ -76,9 +79,27 @@ final class InitializerCommand: ParsableCommand {
       return statement.parameters.map { "\($0.name),\($0.typeNames.joined(separator: ","))" }.joined(separator: " ")
     }
   }
+
+  /// Filters the provided `InitializerStatement` given the user provided `argumentName`
+  ///
+  /// - Returns: `true` if the provided initializer statement should be used as output, `false` otherwise
+  private func shouldReturnParameters(from statement: InitializerStatement) -> Bool {
+    guard !argumentName.isEmpty else {
+      return true
+    }
+
+    let parameterNames = statement.parameters.map { $0.name }
+
+    return parameterNames.sorted().elementsEqual(argumentName.sorted())
+  }
 }
 
 private var typeOnlyHelp = ArgumentHelp("The granularity of the output",
                                         discussion: """
                                         Outputs a list of the type names by default. If disabled it outputs the name of the parameter and the name of the type (e.g. 'foo,Int bar,String')
+                                        """)
+
+private var argumentNameHelp = ArgumentHelp("A list of arguments name to filter initializers for",
+                                        discussion: """
+                                        When this value is provided, the command will only return the initializers that contain the list of arguments provided and will filter out everything else
                                         """)
