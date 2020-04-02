@@ -80,7 +80,7 @@ final class InitializerCommand: ParsableCommand {
     }
   }
 
-  /// Filters the provided `InitializerStatement` given the user provided `argumentName`
+  /// Filters the provided `InitializerStatement` given the user-provided `argumentName`
   ///
   /// - Returns: `true` if the provided initializer statement should be used as output, `false` otherwise
   private func shouldReturnParameters(from statement: InitializerStatement) -> Bool {
