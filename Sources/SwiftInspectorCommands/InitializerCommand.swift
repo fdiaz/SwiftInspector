@@ -71,9 +71,9 @@ final class InitializerCommand: ParsableCommand {
 
   private func outputString(from statement: InitializerStatement) -> String {
     if typeOnly {
-      return statement.parameters.map { $0.typeName }.joined(separator: " ")
+      return statement.parameters.map { $0.typeNames.joined(separator: " ") }.joined(separator: " ")
     } else {
-      return statement.parameters.map { "\($0.name),\($0.typeName)" }.joined(separator: " ")
+      return statement.parameters.map { "\($0.name),\($0.typeNames.joined(separator: ","))" }.joined(separator: " ")
     }
   }
 }

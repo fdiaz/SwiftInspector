@@ -82,9 +82,14 @@ public final class InitializerAnalyzer: Analyzer {
 
   private func findParameter(from node: FunctionParameterSyntax) -> InitializerStatement.Parameter {
     let name = node.firstName?.text ?? ""
-    let typeName = node.children.compactMap { $0 as? SimpleTypeIdentifierSyntax }.first?.name.text ?? ""
 
-    return .init(name: name, typeName: typeName)
+    var typeNames: [String] = []
+    var reader = FunctionParameterReader() { identifierNode in
+      typeNames.append(identifierNode.name.text)
+    }
+    node.walk(&reader)
+
+    return .init(name: name, typeNames: typeNames)
   }
 
   private func findModifiers(from node: InitializerDeclSyntax) -> InitializerStatement.Modifier {
@@ -124,7 +129,25 @@ public struct InitializerStatement: Equatable {
 
   public struct Parameter: Equatable {
     public let name: String
-    public let typeName: String
+    public let typeNames: [String]
+
+    /// The most common use case is for a parameter to only contain one type
+    /// That's why we have this computed property as a convenience
+    public var typeName: String? {
+      return typeNames.first
+    }
+
+    public init(name: String, typeNames: [String]) {
+      self.name = name
+      self.typeNames = typeNames
+    }
+
+    /// The most common use case is for a parameter to only contain one type
+    /// That's why we have this convenience initializer
+    public init(name: String, typeName: String) {
+      self.name = name
+      self.typeNames = [typeName]
+    }
   }
 
   public struct Modifier: Equatable, OptionSet  {
@@ -179,4 +202,18 @@ private final class InitializerSyntaxReader: SyntaxVisitor {
 
   let shouldVisitIdentifier: (String) -> Bool
   let onNodeVisit: (InitializerDeclSyntax) -> Void
+}
+
+private final class FunctionParameterReader: SyntaxVisitor {
+  init(onNodeVisit: @escaping (SimpleTypeIdentifierSyntax) -> Void) {
+    self.onNodeVisit = onNodeVisit
+  }
+
+  func visit(_ node: SimpleTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
+    onNodeVisit(node)
+    return .visitChildren
+  }
+
+  let onNodeVisit: (SimpleTypeIdentifierSyntax) -> Void
+
 }
