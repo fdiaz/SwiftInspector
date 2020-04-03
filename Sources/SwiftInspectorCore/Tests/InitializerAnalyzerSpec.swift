@@ -139,6 +139,43 @@ final class InitializerAnalyzerSpec: QuickSpec {
             ]
           }
         }
+
+        context("with a tuple") {
+          beforeEach {
+            let content = """
+            public final class FakeType {
+              init(someTyple: (String, Int)) {}
+            }
+            """
+            fileURL = try? Temporary.makeFile(content: content)
+          }
+
+          it("returns all the types in the array") {
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result?.first?.parameters) == [
+              InitializerStatement.Parameter(name: "someTyple", typeNames: ["String", "Int"]),
+            ]
+          }
+        }
+
+        context("with a closure") {
+          beforeEach {
+            let content = """
+            public final class FakeType {
+              init(someTyple: (String, Int)) {}
+            }
+            """
+            fileURL = try? Temporary.makeFile(content: content)
+          }
+
+          it("returns all the types in the array") {
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result?.first?.parameters) == [
+              InitializerStatement.Parameter(name: "someTyple", typeNames: ["String", "Int"]),
+            ]
+          }
+        }
+
       }
 
       context("with multiple initializers") {
