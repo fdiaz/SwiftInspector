@@ -42,7 +42,7 @@ final class InitializerCommand: ParsableCommand {
   var typeOnly: Bool
 
   @Option(parsing: .upToNextOption, help: argumentNameHelp)
-  var argumentName: [String]
+  var parameterName: [String]
 
   /// Runs the command
   func run() throws {
@@ -84,13 +84,13 @@ final class InitializerCommand: ParsableCommand {
   ///
   /// - Returns: `true` if the provided initializer statement should be used as output, `false` otherwise
   private func shouldReturnParameters(from statement: InitializerStatement) -> Bool {
-    guard !argumentName.isEmpty else {
+    guard !parameterName.isEmpty else {
       return true
     }
 
     let parameterNames = statement.parameters.map { $0.name }
 
-    return parameterNames.sorted().elementsEqual(argumentName.sorted())
+    return parameterNames.sorted().elementsEqual(parameterName.sorted())
   }
 }
 
@@ -99,7 +99,7 @@ private var typeOnlyHelp = ArgumentHelp("The granularity of the output",
                                         Outputs a list of the type names by default. If disabled it outputs the name of the parameter and the name of the type (e.g. 'foo,Int bar,String')
                                         """)
 
-private var argumentNameHelp = ArgumentHelp("A list of arguments name to filter initializers for",
+private var argumentNameHelp = ArgumentHelp("A list of parameter names to filter initializers for",
                                         discussion: """
-                                        When this value is provided, the command will only return the initializers that contain the list of arguments provided and will filter out everything else
+                                        When this value is provided, the command will only return the initializers that contain the list of parameters provided and will filter out everything else
                                         """)
