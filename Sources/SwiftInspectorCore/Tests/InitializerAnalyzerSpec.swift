@@ -176,6 +176,41 @@ final class InitializerAnalyzerSpec: QuickSpec {
           }
         }
 
+        context("with an argument label different than the parameter name") {
+          beforeEach {
+            let content = """
+            public final class FakeType {
+              init(someLabel someName: String) {}
+            }
+            """
+            fileURL = try? Temporary.makeFile(content: content)
+          }
+
+          it("returns the correct parameter name") {
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result?.first?.parameters) == [
+              InitializerStatement.Parameter(name: "someName", typeNames: ["String"]),
+            ]
+          }
+        }
+
+        context("with an argument label of _") {
+          beforeEach {
+            let content = """
+                   public final class FakeType {
+                     init(_ someName: String) {}
+                   }
+                   """
+            fileURL = try? Temporary.makeFile(content: content)
+          }
+
+          it("returns the correct parameter name") {
+            let result = try? sut.analyze(fileURL: fileURL)
+            expect(result?.first?.parameters) == [
+              InitializerStatement.Parameter(name: "someName", typeNames: ["String"]),
+            ]
+          }
+        }
       }
 
       context("with multiple initializers") {
