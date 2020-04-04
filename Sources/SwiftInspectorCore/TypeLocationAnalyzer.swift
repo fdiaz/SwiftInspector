@@ -103,7 +103,7 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     return super.visitAny(node)
   }
 
-  var currentLineNumber: Int = 0
+  var currentLineNumber = 0
   let onNodeVisit: (LocatedType) -> Void
 
   /// The total newlines associated with this node.
@@ -119,7 +119,7 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     keywordToken: TokenSyntax,
     modifiers: ModifierListSyntax?) -> Int
   {
-    var result: Int = 0
+    var result = 0
     result += keywordToken.leadingTrivia.countOfNewlines()
     modifiers?.leadingTrivia.flatMap { result += $0.countOfNewlines() }
     return result
@@ -127,7 +127,7 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
 
   /// Find the number of newlines within this node.
   private func countOfNewlines(within node: Syntax) -> Int {
-    var countOfNewlinesInsideType: Int = 0
+    var countOfNewlinesInsideType = 0
 
     for (offset, token) in node.tokens.enumerated() {
       // We've already counted the leading trivia for the first token.
@@ -160,7 +160,7 @@ public struct LocatedType: Hashable {
 extension Trivia {
 
   fileprivate func countOfNewlines() -> Int {
-    var result: Int = 0
+    var result = 0
     for triviaPiece in self {
       switch triviaPiece {
       case .newlines(let count):
