@@ -104,10 +104,10 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     // associated with tokens ensures we get an accurate count.
     // Tokens are processed after `*DeclSyntax` nodes.
     if let leadingTrivia = token.leadingTrivia {
-      currentLineNumber += countOfNewlines(from: leadingTrivia, for: token)
+      currentLineNumber += leadingTrivia.countOfNewlines()
     }
     if let trailingTrivia = token.trailingTrivia {
-      currentLineNumber += countOfNewlines(from: trailingTrivia, for: token)
+      currentLineNumber += trailingTrivia.countOfNewlines()
     }
     return super.visit(token)
   }
@@ -133,12 +133,6 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
       indexOfStartingLine: indexOfStartingLine,
       indexOfEndingLine: indexOfEndingLine)
     onNodeVisit(locatedType)
-  }
-
-  /// The total newlines associated with this node.
-  private func countOfNewlines(from trivia: Trivia, for node: Syntax) -> Int {
-    guard node is TokenSyntax else { return 0 }
-    return trivia.countOfNewlines()
   }
 
   /// The number of newlines preceding this token.
