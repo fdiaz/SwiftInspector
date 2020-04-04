@@ -141,7 +141,7 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
     modifiers: ModifierListSyntax?) -> Int
   {
     // We know modifiers come before the keyword. So if have modifiers, we don't need to look at the
-    // token.
+    // keyword.
     if let modifiers = modifiers {
       return modifiers.leadingTrivia?.countOfNewlines() ?? 0
     }
