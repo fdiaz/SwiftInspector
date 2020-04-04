@@ -59,8 +59,8 @@ final class TypeLocationCommand: ParsableCommand {
     guard !path.isEmpty else {
       throw InspectorError.emptyArgument(argumentName: "--path")
     }
-    var isDir: ObjCBool = false
-    guard FileManager.default.fileExists(atPath: path, isDirectory: &isDir) && !isDir.boolValue else {
+    let pathURL = URL(fileURLWithPath: path)
+    guard FileManager.default.isSwiftFile(at: pathURL) else {
       throw InspectorError.invalidArgument(argumentName: "--path", value: path)
     }
   }
