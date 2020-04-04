@@ -164,6 +164,69 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
   }
 }
 
+// MARK: - TypeLocationSyntaxVisitor
+
+private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
+
+  init(onNodeVisit: @escaping (_ locatedType: LocatedType) -> Void) {
+    self.onNodeVisit = onNodeVisit
+  }
+
+  private var currentLineNumber = 0
+  private let onNodeVisit: (LocatedType) -> Void
+
+  /// Compute the location of the type and invoke the callback.
+  private func processLocatedType(
+    name: String,
+    keywordToken: TokenSyntax,
+    modifiers: ModifierListSyntax?,
+    for node: Syntax)
+  {
+    var indexOfStartingLine = currentLineNumber
+    // We need to add this in early. We rely on the token visitation method to update
+    // `currentLineNumber`.
+    indexOfStartingLine += countOfLeadingNewlinesForType(
+      keywordToken: keywordToken,
+      modifiers: modifiers)
+
+    let indexOfEndingLine = indexOfStartingLine + countOfNewlines(within: node)
+
+    let locatedType = LocatedType(
+      name: name,
+      indexOfStartingLine: indexOfStartingLine,
+      indexOfEndingLine: indexOfEndingLine)
+    onNodeVisit(locatedType)
+  }
+
+  /// The number of newlines preceding this token.
+  private func countOfLeadingNewlinesForType(
+    keywordToken: TokenSyntax,
+    modifiers: ModifierListSyntax?) -> Int
+  {
+    var result = 0
+    result += keywordToken.leadingTrivia.countOfNewlines()
+    modifiers?.leadingTrivia.flatMap { result += $0.countOfNewlines() }
+    return result
+  }
+
+  /// Find the number of newlines within this node.
+  private func countOfNewlines(within node: Syntax) -> Int {
+    var countOfNewlinesInsideType = 0
+
+    for (offset, token) in node.tokens.enumerated() {
+      // We've already counted the leading trivia for the first token.
+      if let leadingTrivia = token.leadingTrivia, offset != 0 {
+        countOfNewlinesInsideType += leadingTrivia.countOfNewlines()
+      }
+      if let trailingTrivia = token.trailingTrivia{
+        countOfNewlinesInsideType += trailingTrivia.countOfNewlines()
+      }
+    }
+
+    return countOfNewlinesInsideType
+  }
+}
+
 // MARK: - LocatedType
 
 /// Information about a located type. Indices start with 0.
