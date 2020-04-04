@@ -120,8 +120,8 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     for node: Syntax)
   {
     var indexOfStartingLine = currentLineNumber
-    // We need to add this in early. We don't modify currentLineNumber since they will be added
-    // in later when we compute the leading newlines for this entire node.
+    // We need to add this in early. We rely on the token visitation method to update
+    // `currentLineNumber`.
     indexOfStartingLine += countOfLeadingNewlinesForType(
       keywordToken: keywordToken,
       modifiers: modifiers)
