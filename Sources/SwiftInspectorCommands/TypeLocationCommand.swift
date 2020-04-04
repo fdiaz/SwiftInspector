@@ -29,7 +29,7 @@ import SwiftInspectorCore
 final class TypeLocationCommand: ParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "type-location",
-    abstract: "Finds the location of a type"
+    abstract: "Finds the line numbers on which a type is declared"
   )
 
   @Option(help: nameArgumentHelp)
