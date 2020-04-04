@@ -103,11 +103,11 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     return super.visitAny(node)
   }
 
-  var currentLineNumber: UInt = 0
+  var currentLineNumber: Int = 0
   let onNodeVisit: (LocatedType) -> Void
 
   /// The total newlines associated with this node.
-  private func countOfNewlines(from trivia: Trivia, for node: Syntax) -> UInt {
+  private func countOfNewlines(from trivia: Trivia, for node: Syntax) -> Int {
     // Some nodes seem to include trivia from other nodes. Filtering to just tokens ensures we get
     // an accurate count.
     guard node is TokenSyntax else { return 0 }
@@ -117,17 +117,17 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
   /// The number of newlines preceding this token.
   private func countOfLeadingNewlinesForType(
     keywordToken: TokenSyntax,
-    modifiers: ModifierListSyntax?) -> UInt
+    modifiers: ModifierListSyntax?) -> Int
   {
-    var result: UInt = 0
+    var result: Int = 0
     result += keywordToken.leadingTrivia.countOfNewlines()
     modifiers?.leadingTrivia.flatMap { result += $0.countOfNewlines() }
     return result
   }
 
   /// Find the number of newlines within this node.
-  private func countOfNewlines(within node: Syntax) -> UInt {
-    var countOfNewlinesInsideType: UInt = 0
+  private func countOfNewlines(within node: Syntax) -> Int {
+    var countOfNewlinesInsideType: Int = 0
 
     for (offset, token) in node.tokens.enumerated() {
       // We've already counted the leading trivia for the first token.
@@ -150,21 +150,21 @@ public struct LocatedType: Hashable {
   /// The name of the type.
   public let name: String
   /// The first line of the type.
-  public let indexOfStartingLine: UInt
+  public let indexOfStartingLine: Int
   /// The last line of the type.
-  public let indexOfEndingLine: UInt
+  public let indexOfEndingLine: Int
 }
 
 // MARK: Trivia
 
 extension Trivia {
 
-  fileprivate func countOfNewlines() -> UInt {
-    var result: UInt = 0
+  fileprivate func countOfNewlines() -> Int {
+    var result: Int = 0
     for triviaPiece in self {
       switch triviaPiece {
       case .newlines(let count):
-        result += UInt(count)
+        result += count
       default:
         break
       }
