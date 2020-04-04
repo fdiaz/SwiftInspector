@@ -327,7 +327,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           fileURL = try? Temporary.makeFile(content: content)
         }
 
-        fit("returns correct start and end indices") {
+        it("returns correct start and end indices") {
           let sut = TypeLocationAnalyzer(typeName: "Foo")
           let result = try? sut.analyze(fileURL: fileURL)
           let typeLocation = result?.first
@@ -349,7 +349,7 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           fileURL = try? Temporary.makeFile(content: content)
         }
 
-        fit("returns correct start and end indices") {
+        it("returns correct start and end indices") {
           let sut = TypeLocationAnalyzer(typeName: "Foo")
           let result = try? sut.analyze(fileURL: fileURL)
           let typeLocation = result?.first
