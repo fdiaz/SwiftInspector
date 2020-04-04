@@ -199,44 +199,44 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
 
       context("type spans multiple lines") {
         context("starting on the first line of the file") {
-           beforeEach {
-             let content =
-             """
+          beforeEach {
+            let content =
+            """
              struct Foo {
                let myProperty: String
              }
              """
-             fileURL = try? Temporary.makeFile(content: content)
-           }
+            fileURL = try? Temporary.makeFile(content: content)
+          }
 
-           it("returns correct start and end indices") {
-             let sut = TypeLocationAnalyzer(typeName: "Foo")
+          it("returns correct start and end indices") {
+            let sut = TypeLocationAnalyzer(typeName: "Foo")
             let result = try? sut.analyze(fileURL: fileURL).first
-             expect(result?.indexOfStartingLine) == 0
-             expect(result?.indexOfEndingLine) == 2
-           }
-         }
+            expect(result?.indexOfStartingLine) == 0
+            expect(result?.indexOfEndingLine) == 2
+          }
+        }
 
-         context("starting on a line of the file that is not the first") {
-           beforeEach {
-             let content =
-             """
+        context("starting on a line of the file that is not the first") {
+          beforeEach {
+            let content =
+            """
              import Foundation
 
              struct Foo {
                let myProperty: String
              }
              """
-             fileURL = try? Temporary.makeFile(content: content)
-           }
+            fileURL = try? Temporary.makeFile(content: content)
+          }
 
-           it("returns correct start and end indices") {
-             let sut = TypeLocationAnalyzer(typeName: "Foo")
+          it("returns correct start and end indices") {
+            let sut = TypeLocationAnalyzer(typeName: "Foo")
             let result = try? sut.analyze(fileURL: fileURL).first
-             expect(result?.indexOfStartingLine) == 2
-             expect(result?.indexOfEndingLine) == 4
-           }
-         }
+            expect(result?.indexOfStartingLine) == 2
+            expect(result?.indexOfEndingLine) == 4
+          }
+        }
 
         context("contains another single line type") {
           beforeEach {
