@@ -60,49 +60,55 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     self.onNodeVisit = onNodeVisit
   }
 
-  override func visitAny(_ node: Syntax) -> Syntax? {
-    switch node {
-    case let classDecl as ClassDeclSyntax:
-      processLocatedType(
-        name: classDecl.identifier.text,
-        keywordToken: classDecl.classKeyword,
-        modifiers: classDecl.modifiers,
-        for: node)
-    case let enumDecl as EnumDeclSyntax:
-      processLocatedType(
-        name: enumDecl.identifier.text,
-        keywordToken: enumDecl.enumKeyword,
-        modifiers: enumDecl.modifiers,
-        for: node)
-    case let protocolDecl as ProtocolDeclSyntax:
-      processLocatedType(
-        name: protocolDecl.identifier.text,
-        keywordToken: protocolDecl.protocolKeyword,
-        modifiers: protocolDecl.modifiers,
-        for: node)
-    case let structDecl as StructDeclSyntax:
-      processLocatedType(
-        name: structDecl.identifier.text,
-        keywordToken: structDecl.structKeyword,
-        modifiers: structDecl.modifiers,
-        for: node)
-    default:
-      // Nothing to do here.
-      break
-    }
-
-    if let leadingTrivia = node.leadingTrivia {
-      currentLineNumber += countOfNewlines(from: leadingTrivia, for: node)
-    }
-    if let trailingTrivia = node.trailingTrivia {
-      currentLineNumber += countOfNewlines(from: trailingTrivia, for: node)
-    }
-
-    return super.visitAny(node)
-  }
-
   var currentLineNumber = 0
   let onNodeVisit: (LocatedType) -> Void
+
+  override func visit(_ node: ClassDeclSyntax) -> DeclSyntax {
+    processLocatedType(
+      name: node.identifier.text,
+      keywordToken: node.classKeyword,
+      modifiers: node.modifiers,
+      for: node)
+    return super.visit(node)
+  }
+
+  override func visit(_ node: EnumDeclSyntax) -> DeclSyntax {
+    processLocatedType(
+      name: node.identifier.text,
+      keywordToken: node.enumKeyword,
+      modifiers: node.modifiers,
+      for: node)
+    return super.visit(node)
+  }
+
+  override func visit(_ node: ProtocolDeclSyntax) -> DeclSyntax {
+    processLocatedType(
+      name: node.identifier.text,
+      keywordToken: node.protocolKeyword,
+      modifiers: node.modifiers,
+      for: node)
+    return super.visit(node)
+  }
+
+  override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
+    processLocatedType(
+      name: node.identifier.text,
+      keywordToken: node.structKeyword,
+      modifiers: node.modifiers,
+      for: node)
+    return super.visit(node)
+  }
+
+  // Tokens seem to be processed last
+  override func visit(_ token: TokenSyntax) -> Syntax {
+    if let leadingTrivia = token.leadingTrivia {
+      currentLineNumber += countOfNewlines(from: leadingTrivia, for: token)
+    }
+    if let trailingTrivia = token.trailingTrivia {
+      currentLineNumber += countOfNewlines(from: trailingTrivia, for: token)
+    }
+    return super.visit(token)
+  }
 
   /// Compute the location of the type and invoke the callback.
   private func processLocatedType(
