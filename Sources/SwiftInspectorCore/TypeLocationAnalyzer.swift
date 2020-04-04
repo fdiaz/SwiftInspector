@@ -27,7 +27,7 @@ import SwiftSyntax
 
 public final class TypeLocationAnalyzer: Analyzer {
 
-  /// - Parameter typeName: The name of the type to locate.
+  /// - Parameter typeName: The name of the type to locate
   /// - Parameter cachedSyntaxTree: The cached syntax tree to return the AST tree from
   public init(typeName: String, cachedSyntaxTree: CachedSyntaxTree = .init()) {
     self.typeName = typeName
