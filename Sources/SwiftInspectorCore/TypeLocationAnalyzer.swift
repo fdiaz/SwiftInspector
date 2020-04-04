@@ -39,12 +39,11 @@ public final class TypeLocationAnalyzer: Analyzer {
   public func analyze(fileURL: URL) throws -> [LocatedType] {
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
     var result = [LocatedType]()
-    let reader = TypeLocationSyntaxReader() { [unowned self] locatedType in
+    var visitor = TypeLocationSyntaxVisitor() { [unowned self] locatedType in
       guard self.typeName == locatedType.name else { return }
       result.append(locatedType)
     }
-    _ = reader.visit(syntax)
-
+    syntax.walk(&visitor)
     return result
   }
 
@@ -54,49 +53,51 @@ public final class TypeLocationAnalyzer: Analyzer {
   private let typeName: String
 }
 
-// TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
-private final class TypeLocationSyntaxReader: SyntaxRewriter {
+// MARK: - TypeLocationSyntaxVisitor
+
+private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
+
   init(onNodeVisit: @escaping (_ locatedType: LocatedType) -> Void) {
     self.onNodeVisit = onNodeVisit
   }
 
-  override func visit(_ node: ClassDeclSyntax) -> DeclSyntax {
+  func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
     processLocatedType(
       name: node.identifier.text,
       keywordToken: node.classKeyword,
       modifiers: node.modifiers,
       for: node)
-    return super.visit(node)
+    return .visitChildren
   }
 
-  override func visit(_ node: EnumDeclSyntax) -> DeclSyntax {
+  func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
     processLocatedType(
       name: node.identifier.text,
       keywordToken: node.enumKeyword,
       modifiers: node.modifiers,
       for: node)
-    return super.visit(node)
+    return .visitChildren
   }
 
-  override func visit(_ node: ProtocolDeclSyntax) -> DeclSyntax {
+  func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
     processLocatedType(
       name: node.identifier.text,
       keywordToken: node.protocolKeyword,
       modifiers: node.modifiers,
       for: node)
-    return super.visit(node)
+    return .visitChildren
   }
 
-  override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
+  func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
     processLocatedType(
       name: node.identifier.text,
       keywordToken: node.structKeyword,
       modifiers: node.modifiers,
       for: node)
-    return super.visit(node)
+    return .visitChildren
   }
 
-  override func visit(_ token: TokenSyntax) -> Syntax {
+  func visit(_ token: TokenSyntax) -> SyntaxVisitorContinueKind {
     // Some nodes seem to include trivia from other nodes. Only counting newlines for trivia
     // associated with tokens ensures we get an accurate count.
     // Tokens are processed after `*DeclSyntax` nodes.
@@ -106,70 +107,7 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     if let trailingTrivia = token.trailingTrivia {
       currentLineNumber += trailingTrivia.countOfNewlines()
     }
-    return super.visit(token)
-  }
-
-  private var currentLineNumber = 0
-  private let onNodeVisit: (LocatedType) -> Void
-
-  /// Compute the location of the type and invoke the callback.
-  private func processLocatedType(
-    name: String,
-    keywordToken: TokenSyntax,
-    modifiers: ModifierListSyntax?,
-    for node: Syntax)
-  {
-    var indexOfStartingLine = currentLineNumber
-    // We need to add this in early. We rely on the token visitation method to update
-    // `currentLineNumber`.
-    indexOfStartingLine += countOfLeadingNewlinesForType(
-      keywordToken: keywordToken,
-      modifiers: modifiers)
-
-    let indexOfEndingLine = indexOfStartingLine + countOfNewlines(within: node)
-
-    let locatedType = LocatedType(
-      name: name,
-      indexOfStartingLine: indexOfStartingLine,
-      indexOfEndingLine: indexOfEndingLine)
-    onNodeVisit(locatedType)
-  }
-
-  /// The number of newlines preceding this token.
-  private func countOfLeadingNewlinesForType(
-    keywordToken: TokenSyntax,
-    modifiers: ModifierListSyntax?) -> Int
-  {
-    var result = 0
-    result += keywordToken.leadingTrivia.countOfNewlines()
-    modifiers?.leadingTrivia.flatMap { result += $0.countOfNewlines() }
-    return result
-  }
-
-  /// Find the number of newlines within this node.
-  private func countOfNewlines(within node: Syntax) -> Int {
-    var countOfNewlinesInsideType = 0
-
-    for (offset, token) in node.tokens.enumerated() {
-      // We've already counted the leading trivia for the first token.
-      if let leadingTrivia = token.leadingTrivia, offset != 0 {
-        countOfNewlinesInsideType += leadingTrivia.countOfNewlines()
-      }
-      if let trailingTrivia = token.trailingTrivia{
-        countOfNewlinesInsideType += trailingTrivia.countOfNewlines()
-      }
-    }
-
-    return countOfNewlinesInsideType
-  }
-}
-
-// MARK: - TypeLocationSyntaxVisitor
-
-private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
-
-  init(onNodeVisit: @escaping (_ locatedType: LocatedType) -> Void) {
-    self.onNodeVisit = onNodeVisit
+    return .visitChildren
   }
 
   private var currentLineNumber = 0
