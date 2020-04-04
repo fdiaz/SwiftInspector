@@ -12,19 +12,28 @@ This project is currently under development and can have breaking API changes.
 
 ---
 
-## Generating an Xcode Project
+## Requirements
 
-To see this project locally in Xcode you can run the following command on the root of this project:
-`swift package generate-xcodeproj`
+- Swift 5.1
 
-This will generate an `SwiftInspector.xcodeproj` in the root of this repository.
+## Install
 
-## Run this project
+Run the following command:
 
-Open the generated Xcode project:
+```
+$ git clone git@github.com:fdiaz/SwiftInspector.git
+$ cd SwiftInspector
+$ make install
+```
 
-`open SwiftInspector.xcodeproj`
+## Develop
 
-Then run the project using ⌘ R. 
+If you want to contribute to this project, please take a look at our [CONTRIBUTING](CONTRIBUTING.md) guidelines. To generate and open the project in Xcode run:
 
-Make sure to select "My Mac" as the device.
+```
+$ make develop
+```
+
+## License
+
+[MIT](LICENSE)
