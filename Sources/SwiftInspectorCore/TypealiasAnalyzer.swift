@@ -32,7 +32,7 @@ public final class TypealiasAnalyzer: Analyzer {
     self.cachedSyntaxTree = cachedSyntaxTree
   }
 
-  /// Analyzes the imports of the Swift file
+  /// Analyzes the matching initializers of the Swift file
   /// - Parameter fileURL: The fileURL where the Swift file is located
   public func analyze(fileURL: URL) throws -> [TypealiasStatement] {
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
