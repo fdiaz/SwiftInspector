@@ -203,10 +203,10 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           beforeEach {
             let content =
             """
-             struct Foo {
-               let myProperty: String
-             }
-             """
+            struct Foo {
+              let myProperty: String
+            }
+            """
             fileURL = try? Temporary.makeFile(content: content)
           }
 
@@ -223,12 +223,12 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           beforeEach {
             let content =
             """
-             import Foundation
+            import Foundation
 
-             struct Foo {
-               let myProperty: String
-             }
-             """
+            struct Foo {
+              let myProperty: String
+            }
+            """
             fileURL = try? Temporary.makeFile(content: content)
           }
 
