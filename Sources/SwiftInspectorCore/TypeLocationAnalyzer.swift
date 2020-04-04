@@ -99,8 +99,10 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     return super.visit(node)
   }
 
-  // Tokens seem to be processed last
   override func visit(_ token: TokenSyntax) -> Syntax {
+    // Some nodes seem to include trivia from other nodes. Only counting newlines for trivia
+    // associated with tokens ensures we get an accurate count.
+    // Tokens are processed after `*DeclSyntax` nodes.
     if let leadingTrivia = token.leadingTrivia {
       currentLineNumber += countOfNewlines(from: leadingTrivia, for: token)
     }
@@ -135,8 +137,6 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
 
   /// The total newlines associated with this node.
   private func countOfNewlines(from trivia: Trivia, for node: Syntax) -> Int {
-    // Some nodes seem to include trivia from other nodes. Filtering to just tokens ensures we get
-    // an accurate count.
     guard node is TokenSyntax else { return 0 }
     return trivia.countOfNewlines()
   }
