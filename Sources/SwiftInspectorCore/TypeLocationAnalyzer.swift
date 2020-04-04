@@ -60,9 +60,6 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     self.onNodeVisit = onNodeVisit
   }
 
-  var currentLineNumber = 0
-  let onNodeVisit: (LocatedType) -> Void
-
   override func visit(_ node: ClassDeclSyntax) -> DeclSyntax {
     processLocatedType(
       name: node.identifier.text,
@@ -111,6 +108,9 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     }
     return super.visit(token)
   }
+
+  private var currentLineNumber = 0
+  private let onNodeVisit: (LocatedType) -> Void
 
   /// Compute the location of the type and invoke the callback.
   private func processLocatedType(
