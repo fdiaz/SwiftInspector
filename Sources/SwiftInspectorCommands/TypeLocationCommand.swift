@@ -47,7 +47,7 @@ final class TypeLocationCommand: ParsableCommand {
     let typeLocations = try analyzer.analyze(fileURL: fileURL)
 
     if !typeLocations.isEmpty {
-      print(typeLocations.map { $0.outputString() }.joined(separator: "\n"))
+      print(typeLocations.map { outputString(from: $0) }.joined(separator: "\n"))
     }
   }
 
@@ -64,12 +64,9 @@ final class TypeLocationCommand: ParsableCommand {
       throw InspectorError.invalidArgument(argumentName: "--path", value: path)
     }
   }
-}
 
-extension LocatedType {
-
-  func outputString() -> String {
-    return "\(indexOfStartingLine) \(indexOfEndingLine)"
+  func outputString(from statement: LocatedType) -> String {
+    "\(statement.indexOfStartingLine) \(statement.indexOfEndingLine)"
   }
 }
 
