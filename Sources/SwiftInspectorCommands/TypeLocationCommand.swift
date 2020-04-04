@@ -35,7 +35,7 @@ final class TypeLocationCommand: ParsableCommand {
   @Option(help: nameArgumentHelp)
   var name: String
 
-  @Option(help: "The absolute path to the file to inspect")
+  @Option(help: "The absolute path of the file to inspect")
   var path: String
 
   /// Runs the command
