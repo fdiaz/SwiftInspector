@@ -77,20 +77,11 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
     }
 
     if let anyLocatedType = anyLocatedType {
-      var indexOfStartingLine = currentLineNumber
-      // We need to add this in early. We don't modify currentLineNumber since they will be added
-      // in later when we compute the leading newlines for this entire node.
-      indexOfStartingLine += countOfLeadingNewlinesForType(
-        keywordToken: anyLocatedType.keywordToken,
-        modifiers: anyLocatedType.modifiers)
-
-      let indexOfEndingLine = indexOfStartingLine + countOfNewlines(within: node)
-
-      let locatedType = LocatedType(
+      processLocatedType(
         name: anyLocatedType.name,
-        indexOfStartingLine: indexOfStartingLine,
-        indexOfEndingLine: indexOfEndingLine)
-      onNodeVisit(locatedType)
+        keywordToken: anyLocatedType.keywordToken,
+        modifiers: anyLocatedType.modifiers,
+        for: node)
     }
 
     if let leadingTrivia = node.leadingTrivia {
@@ -105,6 +96,29 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
 
   var currentLineNumber = 0
   let onNodeVisit: (LocatedType) -> Void
+
+  /// Compute the location of the type and invoke the callback.
+  private func processLocatedType(
+    name: String,
+    keywordToken: TokenSyntax,
+    modifiers: ModifierListSyntax?,
+    for node: Syntax)
+  {
+    var indexOfStartingLine = currentLineNumber
+    // We need to add this in early. We don't modify currentLineNumber since they will be added
+    // in later when we compute the leading newlines for this entire node.
+    indexOfStartingLine += countOfLeadingNewlinesForType(
+      keywordToken: keywordToken,
+      modifiers: modifiers)
+
+    let indexOfEndingLine = indexOfStartingLine + countOfNewlines(within: node)
+
+    let locatedType = LocatedType(
+      name: name,
+      indexOfStartingLine: indexOfStartingLine,
+      indexOfEndingLine: indexOfEndingLine)
+    onNodeVisit(locatedType)
+  }
 
   /// The total newlines associated with this node.
   private func countOfNewlines(from trivia: Trivia, for node: Syntax) -> Int {
