@@ -121,8 +121,7 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
     for node: Syntax)
   {
     var indexOfStartingLine = currentLineNumber
-    // We need to add this in early. We rely on the token visitation method to update
-    // `currentLineNumber`.
+    // `currentLineNumber` doesn't include leading trivia for this type. We compute it now.
     indexOfStartingLine += countOfLeadingNewlinesForType(
       keywordToken: keywordToken,
       modifiers: modifiers)
@@ -136,15 +135,19 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
     onNodeVisit(locatedType)
   }
 
-  /// The number of newlines preceding this token.
+  /// The number of newlines preceding the type.
   private func countOfLeadingNewlinesForType(
     keywordToken: TokenSyntax,
     modifiers: ModifierListSyntax?) -> Int
   {
-    var result = 0
-    result += keywordToken.leadingTrivia.countOfNewlines()
-    modifiers?.leadingTrivia.flatMap { result += $0.countOfNewlines() }
-    return result
+    // We know modifiers come before the keyword. So if have modifiers, we don't need to look at the
+    // token.
+    if let modifiers = modifiers {
+      return modifiers.leadingTrivia?.countOfNewlines() ?? 0
+    }
+    else {
+      return keywordToken.leadingTrivia.countOfNewlines()
+    }
   }
 
   /// Find the number of newlines within this node.
