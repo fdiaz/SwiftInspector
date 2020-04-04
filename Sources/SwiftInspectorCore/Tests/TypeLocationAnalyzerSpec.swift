@@ -335,6 +335,28 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           expect(typeLocation?.indexOfEndingLine) == 2
         }
       }
+
+      context("when the type has modifiers on multiple lines") {
+        beforeEach {
+          let content =
+          """
+
+          public
+          final
+          class Foo {
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        fit("returns correct start and end indices") {
+          let sut = TypeLocationAnalyzer(typeName: "Foo")
+          let result = try? sut.analyze(fileURL: fileURL)
+          let typeLocation = result?.first
+          expect(typeLocation?.indexOfStartingLine) == 1
+          expect(typeLocation?.indexOfEndingLine) == 4
+        }
+      }
     }
   }
 }
