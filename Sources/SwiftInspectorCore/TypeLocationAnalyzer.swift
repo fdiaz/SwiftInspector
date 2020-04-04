@@ -34,7 +34,7 @@ public final class TypeLocationAnalyzer: Analyzer {
     self.cachedSyntaxTree = cachedSyntaxTree
   }
 
-  /// Analyzes the imports of the Swift file
+  /// Finds the location(s) of the specified type name in the Swift file
   /// - Parameter fileURL: The fileURL where the Swift file is located
   public func analyze(fileURL: URL) throws -> [LocatedType] {
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
