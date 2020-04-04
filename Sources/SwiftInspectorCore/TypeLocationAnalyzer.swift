@@ -61,27 +61,34 @@ private final class TypeLocationSyntaxReader: SyntaxRewriter {
   }
 
   override func visitAny(_ node: Syntax) -> Syntax? {
-    let anyLocatedType: (name: String, keywordToken: TokenSyntax, modifiers: ModifierListSyntax?)?
-
     switch node {
     case let classDecl as ClassDeclSyntax:
-      anyLocatedType = (classDecl.identifier.text, classDecl.classKeyword, classDecl.modifiers)
-    case let enumDecl as EnumDeclSyntax:
-      anyLocatedType = (enumDecl.identifier.text, enumDecl.enumKeyword, enumDecl.modifiers)
-    case let protocolDecl as ProtocolDeclSyntax:
-      anyLocatedType = (protocolDecl.identifier.text, protocolDecl.protocolKeyword, protocolDecl.modifiers)
-    case let structDecl as StructDeclSyntax:
-      anyLocatedType = (structDecl.identifier.text, structDecl.structKeyword, structDecl.modifiers)
-    default:
-      anyLocatedType = nil
-    }
-
-    if let anyLocatedType = anyLocatedType {
       processLocatedType(
-        name: anyLocatedType.name,
-        keywordToken: anyLocatedType.keywordToken,
-        modifiers: anyLocatedType.modifiers,
+        name: classDecl.identifier.text,
+        keywordToken: classDecl.classKeyword,
+        modifiers: classDecl.modifiers,
         for: node)
+    case let enumDecl as EnumDeclSyntax:
+      processLocatedType(
+        name: enumDecl.identifier.text,
+        keywordToken: enumDecl.enumKeyword,
+        modifiers: enumDecl.modifiers,
+        for: node)
+    case let protocolDecl as ProtocolDeclSyntax:
+      processLocatedType(
+        name: protocolDecl.identifier.text,
+        keywordToken: protocolDecl.protocolKeyword,
+        modifiers: protocolDecl.modifiers,
+        for: node)
+    case let structDecl as StructDeclSyntax:
+      processLocatedType(
+        name: structDecl.identifier.text,
+        keywordToken: structDecl.structKeyword,
+        modifiers: structDecl.modifiers,
+        for: node)
+    default:
+      // Nothing to do here.
+      break
     }
 
     if let leadingTrivia = node.leadingTrivia {
