@@ -36,5 +36,6 @@ public struct InspectorCommand: ParsableCommand {
       StaticUsageCommand.self,
       TypealiasCommand.self,
       TypeConformanceCommand.self,
+      TypeLocationCommand.self,
   ])
 }
