@@ -83,18 +83,18 @@ final class TypeLocationCommandSpec: QuickSpec {
               expect(result?.didFail) == true
             }
           }
-        }
 
-        context("when path is a directory") {
-          beforeEach { pathURL = try? Temporary.makeFolder() }
+          context("path is a directory") {
+            beforeEach { pathURL = try? Temporary.makeFolder() }
 
-          it("fails") {
-            let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
-            expect(result?.didFail) == true
+            it("fails") {
+              let result = try? TestTypeLocationTask.run(path: pathURL.path, name: "Foo")
+              expect(result?.didFail) == true
+            }
           }
         }
 
-        context("when path is a file") {
+        context("all arguments are valid") {
           beforeEach { pathURL = try? Temporary.makeFile(content: "struct Foo { }") }
 
           it("succeeds") {
