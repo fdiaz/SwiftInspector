@@ -65,7 +65,7 @@ final class TypeLocationCommand: ParsableCommand {
     }
   }
 
-  func outputString(from statement: LocatedType) -> String {
+  private func outputString(from statement: LocatedType) -> String {
     "\(statement.indexOfStartingLine) \(statement.indexOfEndingLine)"
   }
 }
