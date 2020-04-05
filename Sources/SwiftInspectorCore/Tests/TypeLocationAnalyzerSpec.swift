@@ -357,6 +357,49 @@ final class TypeLocationAnalyzerSpec: QuickSpec {
           expect(typeLocation?.indexOfEndingLine) == 4
         }
       }
+
+      context("when the type has an attribute") {
+        beforeEach {
+          let content =
+          """
+          import Foundation
+
+          @objc class Foo: NSObject {
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        fit("returns correct start and end indices") {
+          let sut = TypeLocationAnalyzer(typeName: "Foo")
+          let result = try? sut.analyze(fileURL: fileURL)
+          let typeLocation = result?.first
+          expect(typeLocation?.indexOfStartingLine) == 2
+          expect(typeLocation?.indexOfEndingLine) == 3
+        }
+      }
+
+      context("when the type has an attribute and modifiers") {
+        beforeEach {
+          let content =
+          """
+          import Foundation
+
+          @objc
+          public final class Foo: NSObject {
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        it("returns correct start and end indices") {
+          let sut = TypeLocationAnalyzer(typeName: "Foo")
+          let result = try? sut.analyze(fileURL: fileURL)
+          let typeLocation = result?.first
+          expect(typeLocation?.indexOfStartingLine) == 2
+          expect(typeLocation?.indexOfEndingLine) == 4
+        }
+      }
     }
   }
 }
