@@ -62,38 +62,22 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
   }
 
   func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    processLocatedType(
-      name: node.identifier.text,
-      keywordToken: node.classKeyword,
-      modifiers: node.modifiers,
-      for: node)
+    processLocatedType(name: node.identifier.text, keywordToken: node.classKeyword, for: node)
     return .visitChildren
   }
 
   func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    processLocatedType(
-      name: node.identifier.text,
-      keywordToken: node.enumKeyword,
-      modifiers: node.modifiers,
-      for: node)
+    processLocatedType(name: node.identifier.text, keywordToken: node.enumKeyword, for: node)
     return .visitChildren
   }
 
   func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
-    processLocatedType(
-      name: node.identifier.text,
-      keywordToken: node.protocolKeyword,
-      modifiers: node.modifiers,
-      for: node)
+    processLocatedType(name: node.identifier.text, keywordToken: node.protocolKeyword, for: node)
     return .visitChildren
   }
 
   func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    processLocatedType(
-      name: node.identifier.text,
-      keywordToken: node.structKeyword,
-      modifiers: node.modifiers,
-      for: node)
+    processLocatedType(name: node.identifier.text, keywordToken: node.structKeyword, for: node)
     return .visitChildren
   }
 
@@ -114,17 +98,10 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
   private let onNodeVisit: (LocatedType) -> Void
 
   /// Compute the location of the type and invoke the callback.
-  private func processLocatedType(
-    name: String,
-    keywordToken: TokenSyntax,
-    modifiers: ModifierListSyntax?,
-    for node: Syntax)
-  {
+  private func processLocatedType(name: String, keywordToken: TokenSyntax, for node: Syntax) {
     var indexOfStartingLine = currentLineNumber
-    // `currentLineNumber` doesn't include leading trivia for this type. We compute it now.
-    indexOfStartingLine += countOfLeadingNewlinesForType(
-      keywordToken: keywordToken,
-      modifiers: modifiers)
+    // `currentLineNumber` doesn't yet include newlines from the leading trivia for the first token.
+    indexOfStartingLine += node.firstToken?.leadingTrivia.countOfNewlines() ?? 0
 
     let indexOfEndingLine = indexOfStartingLine + countOfNewlines(within: node)
 
@@ -133,21 +110,6 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
       indexOfStartingLine: indexOfStartingLine,
       indexOfEndingLine: indexOfEndingLine)
     onNodeVisit(locatedType)
-  }
-
-  /// The number of newlines preceding the type.
-  private func countOfLeadingNewlinesForType(
-    keywordToken: TokenSyntax,
-    modifiers: ModifierListSyntax?) -> Int
-  {
-    // We know modifiers come before the keyword. So if have modifiers, we don't need to look at the
-    // keyword.
-    if let modifiers = modifiers {
-      return modifiers.leadingTrivia?.countOfNewlines() ?? 0
-    }
-    else {
-      return keywordToken.leadingTrivia.countOfNewlines()
-    }
   }
 
   /// Find the number of newlines within this node.
