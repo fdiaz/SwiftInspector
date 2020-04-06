@@ -53,7 +53,7 @@ public final class TypealiasAnalyzer: Analyzer {
     var identifiers: [String] = []
 
     for child in node.children {
-      guard let typeInitializerSyntax = child as? TypeInitializerClauseSyntax else {
+      guard let typeInitializerSyntax = child.as(TypeInitializerClauseSyntax.self) else {
         continue
       }
 
