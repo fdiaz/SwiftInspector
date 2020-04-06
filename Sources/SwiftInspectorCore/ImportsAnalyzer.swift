@@ -97,7 +97,7 @@ public final class ImportsAnalyzer: Analyzer {
     var submoduleIdentifier: String = ""
 
     for child in syntaxNode.children {
-      guard let accessPath = child as? AccessPathSyntax else {
+      guard let accessPath = child.as(AccessPathSyntax.self) else {
         continue
       }
 
@@ -118,7 +118,7 @@ public final class ImportsAnalyzer: Analyzer {
 
   private func findAttribute(from syntaxNode: ImportDeclSyntax) -> String {
     for child in syntaxNode.children {
-      guard let attributeList = child as? AttributeListSyntax else {
+      guard let attributeList = child.as(AttributeListSyntax.self) else {
         continue
       }
 

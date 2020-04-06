@@ -52,7 +52,7 @@ public final class StaticUsageAnalyzer: Analyzer {
     // A MemberAccessExprSyntax contains a base, a dot and a name.
     // The base in this case will be the type of the staticMember, while the name is the member
 
-    let baseNode = node.base as? IdentifierExprSyntax
+    let baseNode = node.base?.as(IdentifierExprSyntax.self)
     let nameText = node.name.text
     guard let baseText = baseNode?.identifier.text else {
       return false

@@ -36,11 +36,11 @@ public final class InitializerAnalyzer: Analyzer {
     var statements: [InitializerStatement] = []
     let syntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
 
-    var reader = InitializerSyntaxReader(shouldVisitIdentifier: shouldVisit) { [unowned self] node in
+    let reader = InitializerSyntaxReader(shouldVisitIdentifier: shouldVisit) { [unowned self] node in
       let statement = self.initializerStatement(from: node)
       statements.append(statement)
     }
-    syntax.walk(&reader)
+    reader.walk(syntax)
 
     return statements
   }
@@ -61,9 +61,9 @@ public final class InitializerAnalyzer: Analyzer {
 
   private func findParameters(from node: InitializerDeclSyntax) -> [InitializerStatement.Parameter] {
     let functionList = node.children
-      .compactMap { $0 as? ParameterClauseSyntax }
+      .compactMap { $0.as(ParameterClauseSyntax.self) }
       .first?.children
-      .compactMap { $0 as? FunctionParameterListSyntax }
+      .compactMap { $0.as(FunctionParameterListSyntax.self) }
       .first
 
     guard let list = functionList else {
@@ -93,20 +93,20 @@ public final class InitializerAnalyzer: Analyzer {
     }
 
     var typeNames: [String] = []
-    var reader = FunctionParameterReader() { identifierNode in
+    let reader = FunctionParameterReader() { identifierNode in
       typeNames.append(identifierNode.name.text)
     }
-    node.walk(&reader)
+    reader.walk(node)
 
     return .init(name: name, typeNames: typeNames)
   }
 
   private func findModifiers(from node: InitializerDeclSyntax) -> InitializerStatement.Modifier {
     let modifiersString: [String] = node.children
-      .compactMap { $0 as? ModifierListSyntax }
+      .compactMap { $0.as(ModifierListSyntax.self) }
       .reduce(into: []) { result, syntax in
         let modifiers = syntax.children
-          .compactMap { $0 as? DeclModifierSyntax }
+          .compactMap { $0.as(DeclModifierSyntax.self) }
           .map { $0.name.text }
         result.append(contentsOf: modifiers)
       }
@@ -192,19 +192,19 @@ private final class InitializerSyntaxReader: SyntaxVisitor {
     self.onNodeVisit = onNodeVisit
   }
 
-  func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
     shouldVisitIdentifier(node.identifier.text) ? .visitChildren : .skipChildren
   }
 
-  func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
     shouldVisitIdentifier(node.identifier.text) ? .visitChildren : .skipChildren
   }
 
-  func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
     shouldVisitIdentifier(node.identifier.text) ? .visitChildren : .skipChildren
   }
 
-  func visit(_ node: InitializerDeclSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: InitializerDeclSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(node)
     return .visitChildren
   }
@@ -218,7 +218,7 @@ private final class FunctionParameterReader: SyntaxVisitor {
     self.onNodeVisit = onNodeVisit
   }
 
-  func visit(_ node: SimpleTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: SimpleTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(node)
     return .visitChildren
   }

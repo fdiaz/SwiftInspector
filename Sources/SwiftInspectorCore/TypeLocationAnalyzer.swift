@@ -39,11 +39,11 @@ public final class TypeLocationAnalyzer: Analyzer {
   public func analyze(fileURL: URL) throws -> [LocatedType] {
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
     var result = [LocatedType]()
-    var visitor = TypeLocationSyntaxVisitor() { [unowned self] locatedType in
+    let visitor = TypeLocationSyntaxVisitor() { [unowned self] locatedType in
       guard self.typeName == locatedType.name else { return }
       result.append(locatedType)
     }
-    syntax.walk(&visitor)
+    visitor.walk(syntax)
     return result
   }
 
@@ -61,27 +61,27 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
     self.onNodeVisit = onNodeVisit
   }
 
-  func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
     processLocatedType(name: node.identifier.text, keywordToken: node.classKeyword, for: node)
     return .visitChildren
   }
 
-  func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
     processLocatedType(name: node.identifier.text, keywordToken: node.enumKeyword, for: node)
     return .visitChildren
   }
 
-  func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
     processLocatedType(name: node.identifier.text, keywordToken: node.protocolKeyword, for: node)
     return .visitChildren
   }
 
-  func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
     processLocatedType(name: node.identifier.text, keywordToken: node.structKeyword, for: node)
     return .visitChildren
   }
 
-  func visit(_ token: TokenSyntax) -> SyntaxVisitorContinueKind {
+  override func visit(_ token: TokenSyntax) -> SyntaxVisitorContinueKind {
     // Some nodes seem to include trivia from other nodes. Only counting newlines for trivia
     // associated with tokens ensures we get an accurate count.
     // Tokens are processed after `*DeclSyntax` nodes.
@@ -98,7 +98,7 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
   private let onNodeVisit: (LocatedType) -> Void
 
   /// Compute the location of the type and invoke the callback.
-  private func processLocatedType(name: String, keywordToken: TokenSyntax, for node: Syntax) {
+  private func processLocatedType(name: String, keywordToken: TokenSyntax, for node: SyntaxProtocol) {
     var indexOfStartingLine = currentLineNumber
     // `currentLineNumber` doesn't yet include newlines from the leading trivia for the first token.
     indexOfStartingLine += node.firstToken?.leadingTrivia.countOfNewlines() ?? 0
@@ -113,7 +113,7 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
   }
 
   /// Find the number of newlines within this node.
-  private func countOfNewlines(within node: Syntax) -> Int {
+  private func countOfNewlines(within node: SyntaxProtocol) -> Int {
     var countOfNewlinesInsideType = 0
 
     for (offset, token) in node.tokens.enumerated() {
