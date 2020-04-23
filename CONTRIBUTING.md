@@ -6,7 +6,7 @@ This document explains some of the guidelines around contributing to this projec
 
 ## Alignment first
 
-We ask you that if you have an idea for a new feature you [open an issue](https://github.com/fdiaz/SwiftInspector/issues/new).
+We ask you that if you have an idea for a new feature you [open an issue](issues/new).
 
 ## Submitting your changes
 
