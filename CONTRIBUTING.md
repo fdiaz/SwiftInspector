@@ -6,11 +6,11 @@ This document explains some of the guidelines around contributing to this projec
 
 ## Alignment first
 
-We ask you that if you have an idea for a new feature you [open an issue](https://git.musta.ch/francisco-diaz/SwiftInspector/issues/new) to discuss or reach out to [francisco-diaz](https://git.musta.ch/francisco-diaz) to align first.
+We ask you that if you have an idea for a new feature you [open an issue](https://github.com/fdiaz/SwiftInspector/issues/new).
 
 ## Submitting your changes
 
-Whenever your feature is ready for review, please [open a PR](https://git.musta.ch/francisco-diaz/SwiftInspector/pull/new/master) with a clear list of what you've done.
+Whenever your feature is ready for review, please [open a PR](https://github.com/fdiaz/SwiftInspector/pull/new/master) with a clear list of what you've done.
 
 For any change you make, we ask you to also **add corresponding unit tests**.
 
