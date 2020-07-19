@@ -40,10 +40,11 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
     }
 
     describe("analyze(fileURL:)") {
+      var result: TypeConformance!
 
       context("when a type conforms to a protocol") {
         context("with only one conformance") {
-          it("conforms") {
+          beforeEach {
             let content = """
             protocol Some {}
 
@@ -51,15 +52,16 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
             """
 
             self.fileURL = try? Temporary.makeFile(content: content)
-
             let sut = TypeConformanceAnalyzer(typeName: "Some")
-            let result = try? sut.analyze(fileURL: self.fileURL)
+            result = try? sut.analyze(fileURL: self.fileURL)
+          }
 
+          it("conforms") {
             expect(result?.doesConform) == true
           }
 
           context("when the type has multiple conformances") {
-            it("conforms") {
+            beforeEach {
               let content = """
               protocol Foo {}
               protocol Bar {}
@@ -70,16 +72,17 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
               """
 
               self.fileURL = try? Temporary.makeFile(content: content)
-
               let sut = TypeConformanceAnalyzer(typeName: "Bar")
-              let result = try? sut.analyze(fileURL: self.fileURL)
+              result = try? sut.analyze(fileURL: self.fileURL)
+            }
 
+            it("conforms") {
               expect(result?.doesConform) == true
             }
           }
 
           context("when the types conform in a different line") {
-            it("conforms") {
+            beforeEach {
               let content = """
               protocol A {}
               protocol B {}
@@ -90,19 +93,19 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
               """
 
               self.fileURL = try? Temporary.makeFile(content: content)
-
               let sut = TypeConformanceAnalyzer(typeName: "B")
-              let result = try? sut.analyze(fileURL: self.fileURL)
+              result = try? sut.analyze(fileURL: self.fileURL)
+            }
 
+            it("conforms") {
               expect(result?.doesConform) == true
             }
           }
-
         }
       }
 
       context("when a type implements a subclass") {
-        it("is marked as conforms") {
+        beforeEach {
           let content = """
           open class Some {}
 
@@ -110,16 +113,17 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
           """
 
           self.fileURL = try? Temporary.makeFile(content: content)
-
           let sut = TypeConformanceAnalyzer(typeName: "Some")
-          let result = try? sut.analyze(fileURL: self.fileURL)
+          result = try? sut.analyze(fileURL: self.fileURL)
+        }
 
+        it("is marked as conforms") {
           expect(result?.doesConform) == true
         }
       }
 
       context("when the type is not present") {
-        it("is not marked as conforms") {
+        beforeEach {
           let content = """
           protocol Some {}
 
@@ -127,10 +131,11 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
           """
 
           self.fileURL = try? Temporary.makeFile(content: content)
-
           let sut = TypeConformanceAnalyzer(typeName: "AnotherType")
-          let result = try? sut.analyze(fileURL: self.fileURL)
+          result = try? sut.analyze(fileURL: self.fileURL)
+        }
 
+        it("is not marked as conforms") {
           expect(result?.doesConform) == false
         }
       }
