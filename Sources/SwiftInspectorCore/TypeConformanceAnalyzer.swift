@@ -40,10 +40,11 @@ public final class TypeConformanceAnalyzer: Analyzer {
     var doesConform = false
 
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
-    let reader = TypeConformanceSyntaxReader() { [unowned self] node in
+    let reader = TypeConformanceSyntaxVisitor() { [unowned self] node in
       doesConform = doesConform || self.isSyntaxNode(node, ofType: self.typeName)
     }
-    _ = reader.visit(syntax)
+
+    reader.walk(syntax)
 
     return TypeConformance(typeName: typeName, doesConform: doesConform)
   }
@@ -65,15 +66,14 @@ public struct TypeConformance: Equatable {
   public let doesConform: Bool
 }
 
-// TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
-private final class TypeConformanceSyntaxReader: SyntaxRewriter {
+private final class TypeConformanceSyntaxVisitor: SyntaxVisitor {
   init(onNodeVisit: @escaping (InheritedTypeSyntax) -> Void) {
     self.onNodeVisit = onNodeVisit
   }
 
-  override func visit(_ node: InheritedTypeSyntax) -> Syntax {
+  override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(node)
-    return super.visit(node)
+    return .visitChildren
   }
 
   private let onNodeVisit: (InheritedTypeSyntax) -> Void
