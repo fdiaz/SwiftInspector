@@ -46,7 +46,7 @@ public final class TypeConformanceAnalyzer: Analyzer {
 
     reader.walk(syntax)
 
-    return TypeConformance(typeName: typeName, doesConform: doesConform, conformingTypeName: "")
+    return TypeConformance(typeName: typeName, doesConform: doesConform, conformingTypeNames: [])
   }
 
   // MARK: Private
@@ -64,7 +64,7 @@ public final class TypeConformanceAnalyzer: Analyzer {
 public struct TypeConformance: Equatable {
   public let typeName: String
   public let doesConform: Bool
-  public let conformingTypeName: String
+  public let conformingTypeNames: [String]
 }
 
 private final class TypeConformanceSyntaxVisitor: SyntaxVisitor {

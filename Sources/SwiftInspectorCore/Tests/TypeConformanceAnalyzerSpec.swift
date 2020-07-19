@@ -60,6 +60,10 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
             expect(result?.doesConform) == true
           }
 
+          it("returns the conforming type name") {
+            expect(result?.conformingTypeNames) == ["Another"]
+          }
+
           context("when the type has multiple conformances") {
             beforeEach {
               let content = """
@@ -78,6 +82,10 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
 
             it("conforms") {
               expect(result?.doesConform) == true
+            }
+
+            it("returns the conforming type names") {
+              expect(result?.conformingTypeNames) == ["Another", "Second"]
             }
           }
 
@@ -100,6 +108,10 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
             it("conforms") {
               expect(result?.doesConform) == true
             }
+
+            it("returns the conforming type name") {
+              expect(result?.conformingTypeNames) == ["Another"]
+            }
           }
         }
       }
@@ -120,6 +132,10 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
         it("is marked as conforms") {
           expect(result?.doesConform) == true
         }
+
+        it("returns the conforming type name") {
+          expect(result?.conformingTypeNames) == ["Another"]
+        }
       }
 
       context("when the type is not present") {
@@ -137,6 +153,10 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
 
         it("is not marked as conforms") {
           expect(result?.doesConform) == false
+        }
+
+        it("returns an empty array for conforming types") {
+          expect(result?.conformingTypeNames) == []
         }
       }
 
