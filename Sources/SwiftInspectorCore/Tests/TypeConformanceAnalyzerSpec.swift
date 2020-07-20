@@ -76,7 +76,7 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
               """
 
               self.fileURL = try? Temporary.makeFile(content: content)
-              let sut = TypeConformanceAnalyzer(typeName: "Bar")
+              let sut = TypeConformanceAnalyzer(typeName: "Foo")
               result = try? sut.analyze(fileURL: self.fileURL)
             }
 
