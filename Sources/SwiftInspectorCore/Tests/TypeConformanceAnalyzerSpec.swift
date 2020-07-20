@@ -64,7 +64,51 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
             expect(result?.conformingTypeNames) == ["Another"]
           }
         }
+
+        context("with a struct conforming to the protocol") {
+          beforeEach {
+            let content = """
+            protocol Some {}
+
+            struct Another: Some {}
+            """
+
+            self.fileURL = try? Temporary.makeFile(content: content)
+            let sut = TypeConformanceAnalyzer(typeName: "Some")
+            result = try? sut.analyze(fileURL: self.fileURL)
+          }
+
+          it("conforms") {
+            expect(result?.doesConform) == true
+          }
+
+          it("returns the conforming type name") {
+            expect(result?.conformingTypeNames) == ["Another"]
+          }
+        }
         
+        context("with an enum conforming to the protocol") {
+          beforeEach {
+            let content = """
+            protocol Some {}
+
+            enum Another: Some {}
+            """
+
+            self.fileURL = try? Temporary.makeFile(content: content)
+            let sut = TypeConformanceAnalyzer(typeName: "Some")
+            result = try? sut.analyze(fileURL: self.fileURL)
+          }
+
+          it("conforms") {
+            expect(result?.doesConform) == true
+          }
+
+          it("returns the conforming type name") {
+            expect(result?.conformingTypeNames) == ["Another"]
+          }
+        }
+
         context("when the type has multiple conformances") {
           beforeEach {
             let content = """
