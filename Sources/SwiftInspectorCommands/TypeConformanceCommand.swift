@@ -68,7 +68,14 @@ final class TypeConformanceCommand: ParsableCommand {
 
   // Output to standard output
   private func output(from conformance: TypeConformance) {
-    print("\(path) \(conformance.typeName) \(conformance.doesConform)")
+    guard !conformance.conformingTypeNames.isEmpty else {
+      print("\(path) \(conformance.typeName) \(conformance.doesConform)")
+      return
+    }
+
+    conformance.conformingTypeNames.forEach {
+      print("\(path) \(conformance.typeName) \(conformance.doesConform) \($0)")
+    }
   }
 
 }

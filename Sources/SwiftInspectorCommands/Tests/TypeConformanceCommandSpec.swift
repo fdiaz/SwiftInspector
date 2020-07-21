@@ -79,7 +79,7 @@ final class TypeConformanceCommandSpec: QuickSpec {
           var path: String!
 
           beforeEach {
-            fileURL = try? Temporary.makeFile(content: "final class Some: SomeType { }")
+            fileURL = try? Temporary.makeFile(content: "final class Foo: SomeType { }")
             path = fileURL?.path ?? ""
           }
 
@@ -108,6 +108,11 @@ final class TypeConformanceCommandSpec: QuickSpec {
             it("outputs the path of the file") {
               let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType", "--path", path])
               expect(result?.outputMessage).to(contain(fileURL.lastPathComponent))
+            }
+
+            it("outputs the conforming type name") {
+              let result = try? TestTask.run(withArguments: ["type-conformance", "--type-names", "SomeType", "--path", path])
+              expect(result?.outputMessage).to(contain("Foo"))
             }
           }
 

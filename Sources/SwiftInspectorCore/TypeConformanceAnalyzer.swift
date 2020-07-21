@@ -38,14 +38,21 @@ public final class TypeConformanceAnalyzer: Analyzer {
   /// - Parameter fileURL: The fileURL where the Swift file is located
   public func analyze(fileURL: URL) throws -> TypeConformance {
     var doesConform = false
+    var conformingTypes: [String] = []
 
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
-    let reader = TypeConformanceSyntaxReader() { [unowned self] node in
-      doesConform = doesConform || self.isSyntaxNode(node, ofType: self.typeName)
-    }
-    _ = reader.visit(syntax)
+    let reader = TypeConformanceSyntaxVisitor() { [unowned self] node in
+      let nodeConforms = self.isSyntaxNode(node, ofType: self.typeName)
+      guard nodeConforms else { return }
+      doesConform = doesConform || nodeConforms
 
-    return TypeConformance(typeName: typeName, doesConform: doesConform)
+      guard let node = self.findConformingType(of: node) else { return }
+      conformingTypes.append(node)
+    }
+
+    reader.walk(syntax)
+
+    return TypeConformance(typeName: typeName, doesConform: doesConform, conformingTypeNames: conformingTypes)
   }
 
   // MARK: Private
@@ -55,6 +62,24 @@ public final class TypeConformanceAnalyzer: Analyzer {
     let syntaxTypeName = String(describing: node.typeName).trimmingCharacters(in: .whitespaces)
     return (syntaxTypeName == self.typeName)
   }
+
+  private func findConformingType(of node: SyntaxProtocol?) -> String? {
+    guard let originalNode = node else { return nil }
+
+    guard let parent = originalNode.parent else { return nil }
+
+    // A conforming type can only be a class, struct or enum
+    // See: https://docs.swift.org/swift-book/LanguageGuide/Protocols.html
+    if let classSyntax = parent.as(ClassDeclSyntax.self) {
+      return classSyntax.identifier.text
+    } else if let structSyntax = parent.as(StructDeclSyntax.self) {
+      return structSyntax.identifier.text
+    } else if let enumSyntax = parent.as(EnumDeclSyntax.self) {
+      return enumSyntax.identifier.text
+    } else {
+      return findConformingType(of: parent.parent)
+    }
+  }
   
   private let typeName: String
   private let cachedSyntaxTree: CachedSyntaxTree
@@ -63,17 +88,17 @@ public final class TypeConformanceAnalyzer: Analyzer {
 public struct TypeConformance: Equatable {
   public let typeName: String
   public let doesConform: Bool
+  public let conformingTypeNames: [String]
 }
 
-// TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
-private final class TypeConformanceSyntaxReader: SyntaxRewriter {
+private final class TypeConformanceSyntaxVisitor: SyntaxVisitor {
   init(onNodeVisit: @escaping (InheritedTypeSyntax) -> Void) {
     self.onNodeVisit = onNodeVisit
   }
 
-  override func visit(_ node: InheritedTypeSyntax) -> Syntax {
+  override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(node)
-    return super.visit(node)
+    return .visitChildren
   }
 
   private let onNodeVisit: (InheritedTypeSyntax) -> Void
