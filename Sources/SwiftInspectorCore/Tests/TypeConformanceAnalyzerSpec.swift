@@ -40,7 +40,7 @@ final class TypeConformanceAnalyzerSpec: QuickSpec {
     }
     
     describe("analyze(fileURL:)") {
-      var result: TypeConformance!
+      var result: TypeConformance?
       
       context("when a type conforms to a protocol") {
         context("with only one conformance") {
