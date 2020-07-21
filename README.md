@@ -34,6 +34,10 @@ If you want to contribute to this project, please take a look at our [CONTRIBUTI
 $ make develop
 ```
 
+## Default branch
+The default branch of this repository is `main`. Between the initial commit and [75bd9f4
+](https://github.com/fdiaz/SwiftInspector/commit/75bd9f440d72ade9abd1e1d8e9d118e8bb8701a0), the default branch of this repository was `master`. See [#38](https://github.com/fdiaz/SwiftInspector/issues/38) for more details on why this change was made.
+
 ## License
 
 [MIT](LICENSE)
