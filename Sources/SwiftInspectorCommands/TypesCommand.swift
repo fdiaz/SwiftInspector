@@ -35,9 +35,6 @@ final class TypesCommand: ParsableCommand {
   @Option(help: "The absolute path to the file or directory to inspect")
   var path: String
 
-  @Flag(name: .shortAndLong, default: false, inversion: .prefixedEnableDisable, help: commentFlagHelp)
-  var includeComments: Bool
-
   /// Runs the command
   func run() throws {
     let cachedSyntaxTree = CachedSyntaxTree()
@@ -67,20 +64,6 @@ final class TypesCommand: ParsableCommand {
   }
 
   private func outputString(from info: TypeInfo) -> String {
-    guard
-      includeComments,
-      !info.comment.isEmpty,
-      let comment = info.comment.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.newlines.inverted) else
-    {
-      return "\(info.name),\(info.type)"
-    }
-    return "\(info.name),\(info.type),\(comment)"
+    "\(info.name),\(info.type)"
   }
 }
-
-private var commentFlagHelp = ArgumentHelp(
-  "The granularity of the output",
-  discussion: """
-             Outputs type names with type information by deafult. If enabled,
-             also outputs comments associated with each of these types
-             """)

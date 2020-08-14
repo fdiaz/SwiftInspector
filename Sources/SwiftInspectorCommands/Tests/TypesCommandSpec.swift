@@ -68,7 +68,7 @@ final class TypesCommandSpec: QuickSpec {
           expect(result?.didSucceed) == true
         }
 
-        it("runs and outputs the result (without comment)") {
+        it("runs and outputs the result without comment") {
           fileURL = try? Temporary.makeFile(content: """
                                                    // This is a comment
                                                    struct Foo { }
@@ -76,16 +76,6 @@ final class TypesCommandSpec: QuickSpec {
           let path = fileURL?.path ?? ""
           let result = try? TestTypesCommandTask.run(path: path)
           expect(result?.outputMessage).to(contain("Foo,struct"))
-        }
-
-        it("runs and outputs the result (with comment)") {
-          fileURL = try? Temporary.makeFile(content: """
-                                                   // This is a comment
-                                                   struct Foo { }
-                                                   """)
-          let path = fileURL?.path ?? ""
-          let result = try? TestTypesCommandTask.run(path: path, arguments: ["--enable-include-comments"])
-          expect(result?.outputMessage).to(contain("Foo,struct,// This is a comment"))
         }
       }
 
