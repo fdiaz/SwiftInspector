@@ -30,8 +30,17 @@ import Foundation
 
 final class TypesCommandSpec: QuickSpec {
   override func spec() {
-    describe("run") {
+    var fileURL: URL!
 
+    afterEach {
+      guard let fileURL = fileURL else {
+        return
+      }
+      try? Temporary.removeItem(at: fileURL)
+    }
+
+
+    describe("run") {
       context("with no arguments") {
         it("fails") {
           let result = try? TestTask.run(withArguments: ["types"])
@@ -48,6 +57,25 @@ final class TypesCommandSpec: QuickSpec {
         it("fails when it doesn't exist") {
           let result = try? TestTask.run(withArguments: ["types", "--path", "/fake/path"])
           expect(result?.didFail) == true
+        }
+      }
+
+      context("when path is valid") {
+        it("runs and outputs the result (without comment)") {
+          fileURL = try? Temporary.makeFile(content: "struct Foo { }")
+          let path = fileURL?.path ?? ""
+          let result = try? TestTask.run(withArguments: ["types", "--path", path])
+          expect(result!.outputMessage).to(contain("Foo,struct"))
+        }
+
+        it("runs and outputs the result (with comment)") {
+          fileURL = try? Temporary.makeFile(content: """
+                                                   // This is a comment
+                                                   struct Foo { }
+                                                   """)
+          let path = fileURL?.path ?? ""
+          let result = try? TestTask.run(withArguments: ["types", "--path", path])
+          expect(result!.outputMessage).to(contain("Foo,struct,// This is a comment"))
         }
       }
 
