@@ -60,7 +60,7 @@ final class TypesCommandSpec: QuickSpec {
         }
       }
 
-      context("when path is valid") {
+      context("when path is valid file") {
         it("succeeds") {
           fileURL = try? Temporary.makeFile(content: "struct Foo { }")
           let path = fileURL?.path ?? ""
