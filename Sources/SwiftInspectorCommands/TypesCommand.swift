@@ -32,8 +32,11 @@ final class TypesCommand: ParsableCommand {
     abstract: "Finds information about types in a file"
   )
 
-  @Option(help: "The absolute path to the file to inspect")
+  @Option(help: "The absolute path to the file or directory to inspect")
   var path: String
+
+  @Flag(name: .shortAndLong, default: false, inversion: .prefixedEnableDisable, help: commentFlagHelp)
+  var includeComments: Bool
 
   /// Runs the command
   func run() throws {
@@ -58,13 +61,14 @@ final class TypesCommand: ParsableCommand {
     }
 
     let pathURL = URL(fileURLWithPath: path)
-    guard FileManager.default.isSwiftFile(at: pathURL) else {
+    guard FileManager.default.isSwiftFile(at: pathURL) || pathURL.hasDirectoryPath else {
       throw InspectorError.invalidArgument(argumentName: "--path", value: path)
     }
   }
 
   private func outputString(from info: TypeInfo) -> String {
     guard
+      includeComments,
       !info.comment.isEmpty,
       let comment = info.comment.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.newlines.inverted) else
     {
@@ -73,3 +77,10 @@ final class TypesCommand: ParsableCommand {
     return "\(info.name),\(info.type),\(comment)"
   }
 }
+
+private var commentFlagHelp = ArgumentHelp(
+  "The granularity of the output",
+  discussion: """
+             Outputs type names with type information by deafult. If enabled,
+             also outputs comments associated with each of these types
+             """)

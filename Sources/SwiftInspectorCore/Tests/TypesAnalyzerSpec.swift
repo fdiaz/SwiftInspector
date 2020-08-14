@@ -60,74 +60,112 @@ final class TypesAnalyzerSpec: QuickSpec {
       }
 
       context("struct is present") {
+        var result: [TypeInfo]?
+
         beforeEach {
           let content =
           """
           struct Foo { }
           """
           fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
         }
 
-        it("returns the type information for the struct") {
-          let result = try? sut.analyze(fileURL: fileURL)
+        it("has a non-empty result") {
           expect(result).notTo(beEmpty())
-          expect(result!.first!.name) == "Foo"
-          expect(result!.first!.type) == .struct
+        }
+        it("returns the type's name") {
+          expect(result?[0].name) == "Foo"
+        }
+        it("returns the type's Type") {
+          expect(result?[0].type) == .struct
+        }
+        it("has empty comments") {
+          expect(result?[0].comment.isEmpty) == true
         }
       }
 
       context("enum is present") {
+        var result: [TypeInfo]?
+
         beforeEach {
           let content =
           """
           enum Foo { }
           """
           fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
         }
 
-        it("returns the type information for the enum") {
-          let result = try? sut.analyze(fileURL: fileURL)
+        it("has a non-empty result") {
           expect(result).notTo(beEmpty())
-          expect(result!.first!.name) == "Foo"
-          expect(result!.first!.type) == .enum
+        }
+        it("returns the type's name") {
+          expect(result?[0].name) == "Foo"
+        }
+        it("returns the type's Type") {
+          expect(result?[0].type) == .enum
+        }
+        it("has empty comments") {
+          expect(result?[0].comment.isEmpty) == true
         }
       }
 
       context("class is present") {
+        var result: [TypeInfo]?
+
         beforeEach {
           let content =
           """
           class Foo { }
           """
           fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
         }
 
-        it("returns the type information for the class") {
-          let result = try? sut.analyze(fileURL: fileURL)
+        it("has a non-empty result") {
           expect(result).notTo(beEmpty())
-          expect(result!.first!.name) == "Foo"
-          expect(result!.first!.type) == .class
+        }
+        it("returns the type's name") {
+          expect(result?[0].name) == "Foo"
+        }
+        it("returns the type's Type") {
+          expect(result?[0].type) == .class
+        }
+        it("has empty comments") {
+          expect(result?[0].comment.isEmpty) == true
         }
       }
 
       context("protocol is present") {
+        var result: [TypeInfo]?
+
         beforeEach {
           let content =
           """
           protocol Foo { }
           """
           fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
         }
 
-        it("returns the type information for the protocol") {
-          let result = try? sut.analyze(fileURL: fileURL)
+        it("has a non-empty result") {
           expect(result).notTo(beEmpty())
-          expect(result!.first!.name) == "Foo"
-          expect(result!.first!.type) == .protocol
+        }
+        it("returns the type's name") {
+          expect(result?[0].name) == "Foo"
+        }
+        it("returns the type's Type") {
+          expect(result?[0].type) == .protocol
+        }
+        it("has empty comments") {
+          expect(result?[0].comment.isEmpty) == true
         }
       }
 
       context("struct is present with comment") {
+        var result: [TypeInfo]?
+
         beforeEach {
           let content =
           """
@@ -135,18 +173,26 @@ final class TypesAnalyzerSpec: QuickSpec {
           struct Foo { }
           """
           fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
         }
 
-        it("returns the type information for the struct including the comment") {
-          let result = try? sut.analyze(fileURL: fileURL)
+        it("has a non-empty result") {
           expect(result).notTo(beEmpty())
-          expect(result!.first!.name) == "Foo"
-          expect(result!.first!.type) == .struct
-          expect(result!.first!.comment) == "// This is a comment"
+        }
+        it("returns the type's name") {
+          expect(result?[0].name) == "Foo"
+        }
+        it("returns the type's Type") {
+          expect(result?[0].type) == .struct
+        }
+        it("returns comments associated with the type") {
+          expect(result?[0].comment).to(contain("// This is a comment"))
         }
       }
 
       context("enum is present with comment") {
+        var result: [TypeInfo]?
+
         beforeEach {
           let content =
           """
@@ -154,18 +200,26 @@ final class TypesAnalyzerSpec: QuickSpec {
           enum Foo { }
           """
           fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
         }
 
-        it("returns the type information for the enum including the comment") {
-          let result = try? sut.analyze(fileURL: fileURL)
+        it("has a non-empty result") {
           expect(result).notTo(beEmpty())
-          expect(result!.first!.name) == "Foo"
-          expect(result!.first!.type) == .enum
-          expect(result!.first!.comment) == "// This is a comment"
+        }
+        it("returns the type's name") {
+          expect(result?[0].name) == "Foo"
+        }
+        it("returns the type's Type") {
+          expect(result?[0].type) == .enum
+        }
+        it("returns comments associated with the type") {
+          expect(result?[0].comment).to(contain("// This is a comment"))
         }
       }
 
       context("class is present with comment") {
+        var result: [TypeInfo]?
+
         beforeEach {
           let content =
           """
@@ -173,18 +227,26 @@ final class TypesAnalyzerSpec: QuickSpec {
           class Foo { }
           """
           fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
         }
 
-        it("returns the type information for the class including the comment") {
-          let result = try? sut.analyze(fileURL: fileURL)
+        it("has a non-empty result") {
           expect(result).notTo(beEmpty())
-          expect(result!.first!.name) == "Foo"
-          expect(result!.first!.type) == .class
-          expect(result!.first!.comment) == "// This is a comment"
+        }
+        it("returns the type's name") {
+          expect(result?[0].name) == "Foo"
+        }
+        it("returns the type's Type") {
+          expect(result?[0].type) == .class
+        }
+        it("returns comments associated with the type") {
+          expect(result?[0].comment).to(contain("// This is a comment"))
         }
       }
 
       context("protocol is present with comment") {
+        var result: [TypeInfo]?
+
         beforeEach {
           let content =
           """
@@ -192,18 +254,26 @@ final class TypesAnalyzerSpec: QuickSpec {
           protocol Foo { }
           """
           fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
         }
 
-        it("returns the type information for the protocol including the comment") {
-          let result = try? sut.analyze(fileURL: fileURL)
+        it("has a non-empty result") {
           expect(result).notTo(beEmpty())
-          expect(result!.first!.name) == "Foo"
-          expect(result!.first!.type) == .protocol
-          expect(result!.first!.comment) == "// This is a comment"
+        }
+        it("returns the type's name") {
+          expect(result?[0].name) == "Foo"
+        }
+        it("returns the type's Type") {
+          expect(result?[0].type) == .protocol
+        }
+        it("returns comments associated with the type") {
+          expect(result?[0].comment).to(contain("// This is a comment"))
         }
       }
 
       context("multiple types present") {
+        var result: [TypeInfo]?
+
         beforeEach {
           let content =
           """
@@ -214,21 +284,104 @@ final class TypesAnalyzerSpec: QuickSpec {
           private final class Bar: Foo { }
           """
           fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
         }
 
-        it("returns the type information for both types including the comments") {
-          let result = try? sut.analyze(fileURL: fileURL)
+        it("has a non-empty result") {
           expect(result).notTo(beEmpty())
-          expect(result!.first!.name) == "Foo"
-          expect(result!.first!.type) == .protocol
-          expect(result!.first!.comment) == "// This is a comment"
+        }
+        it("returns the first type's name") {
+          expect(result?[0].name) == "Foo"
+        }
+        it("returns the first type's Type") {
+          expect(result?[0].type) == .protocol
+        }
+        it("returns the comments associated with the first type") {
+          expect(result?[0].comment).to(contain("// This is a comment"))
+        }
 
-          expect(result![1].name) == "Bar"
-          expect(result![1].type) == .class
-          expect(result![1].comment) == "// This is a different comment"
+        it("returns the second type's name") {
+          expect(result?[1].name) == "Bar"
+        }
+        it("returns the second type's Type") {
+          expect(result?[1].type) == .class
+        }
+        it("returns the comments associated with the second type") {
+          expect(result?[1].comment).to(contain("// This is a different comment"))
         }
       }
 
+      context("line comments") {
+        var result: [TypeInfo]?
+
+        beforeEach {
+          let content =
+          """
+          // This is a comment
+          protocol Foo { }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
+        }
+
+        it("contains the comment") {
+          expect(result?[0].comment).to(contain("// This is a comment"))
+        }
+      }
+
+      context("block comments") {
+        var result: [TypeInfo]?
+
+        beforeEach {
+          let content =
+          """
+          /* This is a comment */
+          protocol Foo { }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
+        }
+
+        it("contains the comment") {
+          expect(result?[0].comment).to(contain("/* This is a comment */"))
+        }
+      }
+
+      context("doc line comments") {
+        var result: [TypeInfo]?
+
+        beforeEach {
+          let content =
+          """
+          /// This is a comment
+          protocol Foo { }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
+        }
+
+        it("contains the comment") {
+          expect(result?[0].comment).to(contain("/// This is a comment"))
+        }
+      }
+
+      context("doc block comments") {
+        var result: [TypeInfo]?
+
+        beforeEach {
+          let content =
+          """
+          /** This is a comment */
+          protocol Foo { }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+          result = try? sut.analyze(fileURL: fileURL)
+        }
+
+        it("contains the comment") {
+          expect(result?[0].comment).to(contain("/** This is a comment */"))
+        }
+      }
 
     }
   }
