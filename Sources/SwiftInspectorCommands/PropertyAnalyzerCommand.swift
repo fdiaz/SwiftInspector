@@ -65,7 +65,7 @@ final class PropertyAnalyzerCommand: ParsableCommand {
 
   private func outputString(from statement: TypeProperties) -> String {
     statement.properties.map { propInfo in
-      "\(propInfo.name),\(propInfo.modifier)"
+      "\(propInfo.name),\(propInfo.modifiers)"
     }.joined(separator: "\n")
   }
 }

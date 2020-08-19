@@ -38,7 +38,7 @@ final class TypePropertiesSpec: QuickSpec {
             name: "thing",
             typeAnnotation: "String",
             comment: "",
-            modifier: [.public, .instance])
+            modifiers: [.public, .instance])
       ])
       let type2 = TypeProperties(
         name: "MyType",
@@ -47,7 +47,7 @@ final class TypePropertiesSpec: QuickSpec {
             name: "foo",
             typeAnnotation: "Int",
             comment: "",
-            modifier: [.public, .instance])
+            modifiers: [.public, .instance])
       ])
       let type3 = TypeProperties(
         name: "AnotherType",
@@ -56,7 +56,7 @@ final class TypePropertiesSpec: QuickSpec {
             name: "foo",
             typeAnnotation: "Int",
             comment: "",
-            modifier: [.public, .instance])
+            modifiers: [.public, .instance])
       ])
 
       context("when both types have the same name") {
@@ -72,12 +72,12 @@ final class TypePropertiesSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.public, .instance]),
+              modifiers: [.public, .instance]),
             TypeProperties.PropertyData(
               name: "foo",
               typeAnnotation: "Int",
               comment: "",
-              modifier: [.public, .instance])
+              modifiers: [.public, .instance])
           ]
           expect(set) == expectedSet
         }

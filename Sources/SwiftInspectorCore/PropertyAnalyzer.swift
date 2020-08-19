@@ -143,7 +143,7 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
             name: identifier.identifier.text,
             typeAnnotation: simpleTypeIdentifier.name.text,
             comment: comment(from: leadingTrivia),
-            modifier: modifier))
+            modifiers: modifier))
           return
         }
         // no type annotation was found. In this case it's much more complicated to get
@@ -156,7 +156,7 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
           name: identifier.identifier.text,
           typeAnnotation: nil,
           comment: comment(from: leadingTrivia),
-          modifier: modifier))
+          modifiers: modifier))
       }
     }
 
@@ -206,7 +206,10 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
     }
 
     // If there are no explicit modifiers, this is an internal property
-    if modifier.isEmpty {
+    if !modifier.contains(.public) &&
+      !modifier.contains(.fileprivate) &&
+      !modifier.contains(.private)
+    {
       modifier = modifier.union(.internal)
     }
 
@@ -260,7 +263,7 @@ public struct TypeProperties: Hashable {
     /// Any comments associated with the property
     public let comment: String
     /// Modifier set for this type
-    public let modifier: Modifier
+    public let modifiers: Modifier
   }
 
   /// The name of the type.

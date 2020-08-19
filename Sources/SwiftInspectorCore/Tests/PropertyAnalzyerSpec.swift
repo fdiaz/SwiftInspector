@@ -87,8 +87,52 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.public, .instance])
+              modifiers: [.public, .instance])
           ]
+        }
+      }
+
+      context("when there is a property in a nested type with the same type name") {
+        beforeEach {
+          let content = """
+          public final class FakeType {
+            public var thing: String = "Hello, World"
+
+            enum FakeType {
+              static let foo: String = "Hola"
+            }
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        it("detects the type name") {
+          let result = try? sut.analyze(fileURL: fileURL)
+          expect(result?.name) == "FakeType"
+        }
+
+        /*
+         This is actually not the ideal result of this and is a limitation of the implementation
+         Ideally you would have to pass in `FakeType.FakeType` to get this nested type's property
+         information. For now we are accepting this limitation and have this test to showcase
+         what happens in this scenario.
+         */
+        it("detects and merges the properties") {
+          let result = try? sut.analyze(fileURL: fileURL)
+          let propSet = Set(result?.properties ?? [])
+          let expectedPropSet: Set<TypeProperties.PropertyData> = [
+            .init(
+              name: "thing",
+              typeAnnotation: "String",
+              comment: "",
+              modifiers: [.public, .instance]),
+            .init(
+              name: "foo",
+              typeAnnotation: "String",
+              comment: "",
+              modifiers: [.internal, .static])
+          ]
+          expect(propSet) == expectedPropSet
         }
       }
 
@@ -114,7 +158,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.public, .instance])
+              modifiers: [.public, .instance])
           ]
         }
       }
@@ -141,7 +185,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.public, .instance])
+              modifiers: [.public, .instance])
           ]
         }
       }
@@ -168,7 +212,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.internal, .instance])
+              modifiers: [.internal, .instance])
           ]
         }
       }
@@ -197,7 +241,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.internal, .instance])
+              modifiers: [.internal, .instance])
           ]
         }
       }
@@ -221,12 +265,12 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.public, .instance]),
+              modifiers: [.public, .instance]),
             .init(
               name: "foo",
               typeAnnotation: "Int",
               comment: "",
-              modifier: [.internal, .instance])
+              modifiers: [.internal, .instance])
           ]
           expect(propSet) == expectedPropSet
         }
@@ -250,12 +294,12 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.public, .instance]),
+              modifiers: [.public, .instance]),
             .init(
               name: "foo",
               typeAnnotation: "Int",
               comment: "",
-              modifier: [.public, .instance])
+              modifiers: [.public, .instance])
           ]
           expect(propSet) == expectedPropSet
         }
@@ -278,7 +322,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.public, .static])
+              modifiers: [.public, .static])
           ]
         }
       }
@@ -300,7 +344,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.public, .static])
+              modifiers: [.public, .static])
           ]
         }
       }
@@ -322,7 +366,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.private, .static])
+              modifiers: [.private, .static])
           ]
         }
       }
@@ -344,7 +388,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.public, .privateSet, .instance])
+              modifiers: [.public, .privateSet, .instance])
           ]
         }
       }
@@ -366,7 +410,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifier: [.fileprivate, .static])
+              modifiers: [.fileprivate, .static])
           ]
         }
       }
@@ -388,7 +432,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: nil,
               comment: "",
-              modifier: [.private, .static])
+              modifiers: [.private, .static])
           ]
         }
       }
@@ -410,7 +454,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: nil,
               comment: "",
-              modifier: [.public, .instance])
+              modifiers: [.public, .instance])
           ]
         }
       }
@@ -433,7 +477,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "// The thing",
-              modifier: [.public, .instance])
+              modifiers: [.public, .instance])
           ]
         }
       }
@@ -457,7 +501,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "// The thing\n// is such a thing",
-              modifier: [.public, .instance])
+              modifiers: [.public, .instance])
           ]
         }
       }
@@ -480,7 +524,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "/// The thing",
-              modifier: [.public, .instance])
+              modifiers: [.public, .instance])
           ]
         }
       }
@@ -503,7 +547,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "/* The thing */",
-              modifier: [.public, .instance])
+              modifiers: [.public, .instance])
           ]
         }
       }
@@ -526,7 +570,7 @@ final class PropertyAnalyzerSpec: QuickSpec {
               name: "thing",
               typeAnnotation: "String",
               comment: "/** The thing */",
-              modifier: [.public, .instance])
+              modifiers: [.public, .instance])
           ]
         }
       }
