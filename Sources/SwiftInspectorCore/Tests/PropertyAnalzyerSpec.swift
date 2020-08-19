@@ -393,6 +393,50 @@ final class PropertyAnalyzerSpec: QuickSpec {
         }
       }
 
+      context("when there is a public internal(set) property") {
+        beforeEach {
+          let content = """
+          public final class FakeType {
+            public internal(set) var thing: String = "Hello, World"
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        it("detects the property") {
+          let result = try? sut.analyze(fileURL: fileURL)
+          expect(result?.properties) == [
+            TypeProperties.PropertyData(
+              name: "thing",
+              typeAnnotation: "String",
+              comment: "",
+              modifiers: [.public, .internalSet, .instance])
+          ]
+        }
+      }
+
+      context("when there is a internal public(set) property") {
+        beforeEach {
+          let content = """
+          public final class FakeType {
+            internal public(set) var thing: String = "Hello, World"
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        it("detects the property") {
+          let result = try? sut.analyze(fileURL: fileURL)
+          expect(result?.properties) == [
+            TypeProperties.PropertyData(
+              name: "thing",
+              typeAnnotation: "String",
+              comment: "",
+              modifiers: [.publicSet, .internal, .instance])
+          ]
+        }
+      }
+
       context("when there is a fileprivate property") {
         beforeEach {
           let content = """

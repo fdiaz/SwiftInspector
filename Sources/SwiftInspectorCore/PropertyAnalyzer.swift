@@ -230,13 +230,18 @@ public struct TypeProperties: Hashable {
   public struct Modifier: Hashable, OptionSet {
     public let rawValue: Int
 
+    // general accessors
     public static let `internal` = Modifier(rawValue: 1 << 0)
     public static let `public` = Modifier(rawValue: 1 << 1)
     public static let `private` = Modifier(rawValue: 1 << 2)
-    public static let privateSet = Modifier(rawValue: 1 << 3)
-    public static let `fileprivate` = Modifier(rawValue: 1 << 4)
-    public static let `instance` = Modifier(rawValue: 1 << 5)
-    public static let `static` = Modifier(rawValue: 1 << 6)
+    public static let `fileprivate` = Modifier(rawValue: 1 << 3)
+    // set accessors
+    public static let privateSet = Modifier(rawValue: 1 << 4)
+    public static let internalSet = Modifier(rawValue: 1 << 5)
+    public static let publicSet = Modifier(rawValue: 1 << 6)
+    // access control
+    public static let `instance` = Modifier(rawValue: 1 << 7)
+    public static let `static` = Modifier(rawValue: 1 << 8)
 
     public init(rawValue: Int)  {
       self.rawValue = rawValue
@@ -246,8 +251,10 @@ public struct TypeProperties: Hashable {
       switch stringValue {
       case "public": self = .public
       case "private": self = .private
-      case "private(set)": self = .privateSet
       case "fileprivate": self = .fileprivate
+      case "private(set)": self = .privateSet
+      case "internal(set)": self = .internalSet
+      case "public(set)": self = .publicSet
       case "internal": self = .internal
       case "static": self = .static
       default: self = []
@@ -302,23 +309,4 @@ extension TypeProperties {
       name: name,
       properties: Array(Set(properties).union(Set(other.properties))))
   }
-}
-
-extension TypeProperties.Modifier: CustomStringConvertible, CustomDebugStringConvertible {
-  public var description: String {
-    var outputValues: [String] = []
-    // Order is important here! Access control modifiers should always go before scope modifiers
-    // Access control modifiers
-    if contains(.public) { outputValues.append("public") }
-    if contains(.private) { outputValues.append("private") }
-    if contains(.privateSet) { outputValues.append("private(set)") }
-    if contains(.fileprivate) { outputValues.append("fileprivate") }
-    if contains(.internal) { outputValues.append("internal") }
-    // Scope modifiers
-    if contains(.static) { outputValues.append("static") }
-    if contains(.instance) { outputValues.append("instance") }
-    return outputValues.joined(separator: ",")
-  }
-
-  public var debugDescription: String { description }
 }

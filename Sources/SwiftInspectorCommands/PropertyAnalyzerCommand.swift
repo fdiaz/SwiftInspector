@@ -65,7 +65,7 @@ final class PropertyAnalyzerCommand: ParsableCommand {
 
   private func outputString(from statement: TypeProperties) -> String {
     statement.properties.map { propInfo in
-      "\(propInfo.name),\(propInfo.modifiers)"
+      "\(statement.name),\(propInfo.name),\(propInfo.modifiers)"
     }.joined(separator: "\n")
   }
 }
@@ -73,3 +73,24 @@ final class PropertyAnalyzerCommand: ParsableCommand {
 private let nameArgumentHelp = ArgumentHelp(
   "The name of the type to find property information on",
   discussion: "This may be a enum, class, struct, or protocol.")
+
+extension TypeProperties.Modifier: CustomStringConvertible, CustomDebugStringConvertible {
+  public var description: String {
+    var outputValues: [String] = []
+    // Order is important here! Access control modifiers should always go before scope modifiers
+    // Access control modifiers
+    if contains(.public) { outputValues.append("public") }
+    if contains(.private) { outputValues.append("private") }
+    if contains(.fileprivate) { outputValues.append("fileprivate") }
+    if contains(.internal) { outputValues.append("internal") }
+    if contains(.privateSet) { outputValues.append("private(set)") }
+    if contains(.internalSet) { outputValues.append("internal(set)") }
+    if contains(.publicSet) { outputValues.append("public(set)") }
+    // Scope modifiers
+    if contains(.static) { outputValues.append("static") }
+    if contains(.instance) { outputValues.append("instance") }
+    return outputValues.joined(separator: ",")
+  }
+
+  public var debugDescription: String { description }
+}
