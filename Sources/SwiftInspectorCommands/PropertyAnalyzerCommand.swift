@@ -63,11 +63,10 @@ final class PropertyAnalyzerCommand: ParsableCommand {
     }
   }
 
-  private func outputString(from statement: TypeWithPropInfo) -> String {
-    let propString = statement.properties.map { propInfo in
-      "(\(propInfo.name)|\(propInfo.access)|\(propInfo.scope))"
-    }.joined(separator: ",")
-    return "\(statement.name):\(propString)"
+  private func outputString(from statement: TypeProperties) -> String {
+    statement.properties.map { propInfo in
+      "\(propInfo.name),\(propInfo.modifier)"
+    }.joined(separator: "\n")
   }
 }
 

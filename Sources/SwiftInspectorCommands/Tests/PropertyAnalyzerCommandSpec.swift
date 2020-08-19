@@ -98,7 +98,7 @@ final class PropertyAnalyzerCommandSpec: QuickSpec {
 
         it("returns the type name with property information including the name, access, and scope") {
           let result = try? TestTask.run(withArguments: ["properties", "--path", fileURL.path, "--name", "Some"])
-          expect(result?.outputMessage).to(contain("Some:(thing|public|instance)"))
+          expect(result?.outputMessage).to(contain("thing,public,instance"))
         }
       }
     }

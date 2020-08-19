@@ -1,4 +1,4 @@
-// Created by Tyler Hedrick on 3/27/20.
+// Created by Tyler Hedrick on 8/18/20.
 //
 // Copyright (c) 2020 Tyler Hedrick
 //
@@ -44,52 +44,6 @@ final class PropertyAnalyzerSpec: QuickSpec {
       try? Temporary.removeItem(at: fileURL)
     }
 
-    describe("TypeWithPropInfo.merge(other:)") {
-      let type1 = TypeWithPropInfo(
-        name: "MyType",
-        properties: [
-          TypeWithPropInfo.PropInfo(name: "thing", typeAnnotation: "String", comment: "", access: .public, scope: .instance)
-      ])
-      let type2 = TypeWithPropInfo(
-        name: "MyType",
-        properties: [
-          TypeWithPropInfo.PropInfo(name: "foo", typeAnnotation: "Int", comment: "", access: .public, scope: .instance)
-      ])
-      let type3 = TypeWithPropInfo(
-        name: "AnotherType",
-        properties: [
-          TypeWithPropInfo.PropInfo(name: "foo", typeAnnotation: "Int", comment: "", access: .public, scope: .instance)
-      ])
-
-      context("when both types have the same name") {
-        let result = try? type1.merge(with: type2)
-        it("succeeds") {
-          expect(result?.name) == "MyType"
-        }
-
-        it("has merged props") {
-          let set = Set(result?.properties ?? [])
-          let expectedSet: Set<TypeWithPropInfo.PropInfo> = [
-            TypeWithPropInfo.PropInfo(name: "thing", typeAnnotation: "String", comment: "", access: .public, scope: .instance),
-            TypeWithPropInfo.PropInfo(name: "foo", typeAnnotation: "Int", comment: "", access: .public, scope: .instance)
-          ]
-          expect(set) == expectedSet
-        }
-      }
-
-      context("when the types don't match") {
-        it("fails to merge and asserts") {
-          expect { try type1.merge(with: type3) }.to(throwError())
-        }
-      }
-
-      context("when the other type is nil") {
-        it("returns the original") {
-          expect(try? type1.merge(with: nil)) == type1
-        }
-      }
-    }
-
     describe("analyze(fileURL:)") {
       context("when there are no properties") {
         beforeEach {
@@ -129,12 +83,11 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              access: .public,
-              scope: .instance)
+              modifier: [.public, .instance])
           ]
         }
       }
@@ -157,12 +110,11 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              access: .public,
-              scope: .instance)
+              modifier: [.public, .instance])
           ]
         }
       }
@@ -185,12 +137,11 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              access: .public,
-              scope: .instance)
+              modifier: [.public, .instance])
           ]
         }
       }
@@ -213,12 +164,11 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              access: .internal,
-              scope: .instance)
+              modifier: [.internal, .instance])
           ]
         }
       }
@@ -243,17 +193,16 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              access: .internal,
-              scope: .instance)
+              modifier: [.internal, .instance])
           ]
         }
       }
 
-      context("when there are multiple properites") {
+      context("when there are multiple properties") {
         beforeEach {
           let content = """
           public final class FakeType {
@@ -267,9 +216,46 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
           let propSet = Set(result?.properties ?? [])
-          let expectedPropSet: Set<TypeWithPropInfo.PropInfo> = [
-            .init(name: "thing", typeAnnotation: "String", comment: "", access: .public, scope: .instance),
-            .init(name: "foo", typeAnnotation: "Int", comment: "", access: .internal, scope: .instance)
+          let expectedPropSet: Set<TypeProperties.PropertyData> = [
+            .init(
+              name: "thing",
+              typeAnnotation: "String",
+              comment: "",
+              modifier: [.public, .instance]),
+            .init(
+              name: "foo",
+              typeAnnotation: "Int",
+              comment: "",
+              modifier: [.internal, .instance])
+          ]
+          expect(propSet) == expectedPropSet
+        }
+      }
+
+      context("when there are multiple properties on the same line") {
+        beforeEach {
+          let content = """
+          public final class FakeType {
+            public var thing: String, foo: Int
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        it("detects the properties") {
+          let result = try? sut.analyze(fileURL: fileURL)
+          let propSet = Set(result?.properties ?? [])
+          let expectedPropSet: Set<TypeProperties.PropertyData> = [
+            .init(
+              name: "thing",
+              typeAnnotation: "String",
+              comment: "",
+              modifier: [.public, .instance]),
+            .init(
+              name: "foo",
+              typeAnnotation: "Int",
+              comment: "",
+              modifier: [.public, .instance])
           ]
           expect(propSet) == expectedPropSet
         }
@@ -288,12 +274,33 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the property") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              access: .public,
-              scope: .static)
+              modifier: [.public, .static])
+          ]
+        }
+      }
+
+      context("when there is a static property in reverse order") {
+        beforeEach {
+          let content = """
+          public final class FakeType {
+            static public var thing: String = "Hello, World"
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        it("detects the property") {
+          let result = try? sut.analyze(fileURL: fileURL)
+          expect(result?.properties) == [
+            TypeProperties.PropertyData(
+              name: "thing",
+              typeAnnotation: "String",
+              comment: "",
+              modifier: [.public, .static])
           ]
         }
       }
@@ -311,12 +318,33 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the property") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              access: .private,
-              scope: .static)
+              modifier: [.private, .static])
+          ]
+        }
+      }
+
+      context("when there is a public private(set) property") {
+        beforeEach {
+          let content = """
+          public final class FakeType {
+            public private(set) var thing: String = "Hello, World"
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        it("detects the property") {
+          let result = try? sut.analyze(fileURL: fileURL)
+          expect(result?.properties) == [
+            TypeProperties.PropertyData(
+              name: "thing",
+              typeAnnotation: "String",
+              comment: "",
+              modifier: [.public, .privateSet, .instance])
           ]
         }
       }
@@ -334,12 +362,11 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the property") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
-              access: .fileprivate,
-              scope: .static)
+              modifier: [.fileprivate, .static])
           ]
         }
       }
@@ -357,12 +384,33 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the property with no type information") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: nil,
               comment: "",
-              access: .private,
-              scope: .static)
+              modifier: [.private, .static])
+          ]
+        }
+      }
+
+      context("when there is a property attribute") {
+        beforeEach {
+          let content = """
+          public final class FakeType {
+            @objc public var thing = "Hello, World"
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        it("detects the property with no type information") {
+          let result = try? sut.analyze(fileURL: fileURL)
+          expect(result?.properties) == [
+            TypeProperties.PropertyData(
+              name: "thing",
+              typeAnnotation: nil,
+              comment: "",
+              modifier: [.public, .instance])
           ]
         }
       }
@@ -381,12 +429,35 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the property with the comment") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "// The thing",
-              access: .public,
-              scope: .instance)
+              modifier: [.public, .instance])
+          ]
+        }
+      }
+
+      context("when there is a multi-line comment") {
+        beforeEach {
+          let content = """
+          public final class FakeType {
+            // The thing
+            // is such a thing
+            public var thing: String = "Hello, World"
+          }
+          """
+          fileURL = try? Temporary.makeFile(content: content)
+        }
+
+        it("detects the property with the comment") {
+          let result = try? sut.analyze(fileURL: fileURL)
+          expect(result?.properties) == [
+            TypeProperties.PropertyData(
+              name: "thing",
+              typeAnnotation: "String",
+              comment: "// The thing\n// is such a thing",
+              modifier: [.public, .instance])
           ]
         }
       }
@@ -405,12 +476,11 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the property with the comment") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "/// The thing",
-              access: .public,
-              scope: .instance)
+              modifier: [.public, .instance])
           ]
         }
       }
@@ -429,12 +499,11 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the property with the comment") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "/* The thing */",
-              access: .public,
-              scope: .instance)
+              modifier: [.public, .instance])
           ]
         }
       }
@@ -453,12 +522,11 @@ final class PropertyAnalyzerSpec: QuickSpec {
         it("detects the property with the comment") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
-            TypeWithPropInfo.PropInfo(
+            TypeProperties.PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "/** The thing */",
-              access: .public,
-              scope: .instance)
+              modifier: [.public, .instance])
           ]
         }
       }
