@@ -9,7 +9,7 @@ let package = Package(
     .macOS(.v10_13)
   ],
   products: [
-    .executable(name: "SwiftInspector", targets: ["SwiftInspector"]),
+    .executable(name: "swift-inspector", targets: ["SwiftInspector"]),
     .library(name: "SwiftInspectorCommands", targets: ["SwiftInspectorCommands"]),
     .library(name: "SwiftInspectorCore", targets: ["SwiftInspectorCore"])
   ],
