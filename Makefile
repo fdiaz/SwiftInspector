@@ -11,13 +11,12 @@ build:
 	swift build -c release
 
 .PHONY: install
-install: build
-	mv ".build/release/SwiftInspector" ".build/release/swift-inspector" 
-	install ".build/release/swift-inspector" "$(bindir)"
+install: build 
+	install ".build/release/swiftinspector" "$(bindir)"
 
 .PHONY: uninstall
 uninstall:
-	rm -rf "$(bindir)/swift-inspector"
+	rm -rf "$(bindir)/swiftinspector"
 
 .PHONY: clean
 clean:
