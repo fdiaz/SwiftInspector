@@ -31,7 +31,7 @@ struct TestTask {
   /// - Parameter arguments: A set of arguments to pass to the Swift Inspector executable
   static func run(withArguments arguments: [String]) throws -> TaskStatus {
     let process = Process()
-    process.executableURL = productsDirectory.appendingPathComponent("swift-inspector")
+    process.executableURL = productsDirectory.appendingPathComponent("swiftinspector")
     process.arguments = arguments
 
     let standardOutputPipe = Pipe()
