@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
   name: "SwiftInspector",
   platforms: [
-    .macOS(.v10_13)
+    .macOS(.v10_14)
   ],
   products: [
     .executable(name: "swiftinspector", targets: ["SwiftInspector"]),
@@ -14,7 +14,7 @@ let package = Package(
     .library(name: "SwiftInspectorCore", targets: ["SwiftInspectorCore"])
   ],
   dependencies: [
-    .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.0.4")),
+    .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.3.0")),
     .package(name: "SwiftSyntax", url: "https://github.com/apple/swift-syntax.git", .branch("release/5.3")),
     .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "8.0.1")),
     .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "3.0.0")),
