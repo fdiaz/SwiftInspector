@@ -35,8 +35,8 @@ final class ImportsCommand: ParsableCommand {
   @Option(help: "The absolute path to the file or directory to inspect")
   var path: String
 
-  @Option(default: .main, help: OutputMode.help)
-  var mode: OutputMode
+  @Option(help: OutputMode.help)
+  var mode: OutputMode = .main
 
   /// Runs the command
   func run() throws {
