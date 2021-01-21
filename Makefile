@@ -3,7 +3,7 @@ bindir ?= $(prefix)/bin
 
 .PHONY: develop
 develop:
-	swift package generate-xcodeproj
+	swift package generate-xcodeproj --xcconfig-overrides settings.xcconfig
 	open SwiftInspector.xcodeproj 
 
 .PHONY: build
