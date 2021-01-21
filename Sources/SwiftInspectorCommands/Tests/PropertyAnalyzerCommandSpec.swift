@@ -87,7 +87,7 @@ final class PropertyAnalyzerCommandSpec: QuickSpec {
         }
 
         it("fails when path is empty") {
-          let result = try? TestTask.run(withArguments: ["properties", "--name", "Some"])
+          let result = try? TestTask.run(withArguments: ["properties", "--name", "Some", "--path", ""])
           expect(result?.didFail) == true
         }
 

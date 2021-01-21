@@ -38,11 +38,11 @@ final class InitializerCommand: ParsableCommand {
   @Option(help: "The name of the type whose initializer information we'll be looking for")
   var name: String
 
-  @Flag(name: .shortAndLong, default: true, inversion: .prefixedEnableDisable, help: typeOnlyHelp)
-  var typeOnly: Bool
+  @Flag(name: .shortAndLong, inversion: .prefixedEnableDisable, help: typeOnlyHelp)
+  var typeOnly: Bool = true
 
   @Option(parsing: .upToNextOption, help: argumentNameHelp)
-  var parameterName: [String]
+  var parameterName: [String] = []
 
   /// Runs the command
   func run() throws {

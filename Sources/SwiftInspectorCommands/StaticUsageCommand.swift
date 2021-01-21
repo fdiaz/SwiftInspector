@@ -53,9 +53,6 @@ final class StaticUsageCommand: ParsableCommand {
 
   /// Validates if the arguments of this command are valid
   func validate() throws {
-    guard !statics.isEmpty else {
-      throw InspectorError.emptyArgument(argumentName: "--statics")
-    }
     guard !path.isEmpty else {
       throw InspectorError.emptyArgument(argumentName: "--path")
     }

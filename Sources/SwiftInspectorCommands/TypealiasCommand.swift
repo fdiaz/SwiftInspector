@@ -32,8 +32,8 @@ final class TypealiasCommand: ParsableCommand {
     abstract: "Finds information related to the declaration of a typelias"
   )
 
-  @Option(default: "", help: Help.name)
-  var name: String
+  @Option(help: Help.name)
+  var name: String = ""
 
   @Option(help: "The absolute path to the file to inspect")
   var path: String
