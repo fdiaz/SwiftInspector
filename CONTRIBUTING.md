@@ -61,7 +61,26 @@ Refer to the [tests in the Commands target](https://github.com/fdiaz/SwiftInspec
 
 I suggest relying on the [Swift AST Explorer](https://swift-ast-explorer.com/) to understand the AST better and play around with different use cases.
 
-When you're ready to write some code, I suggest you to start by writing unit tests by relying on the [Temporary.swift](https://github.com/fdiaz/SwiftInspector/blob/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCore/Temporary.swift) file to create fake files for testing. Refer to the [tests in the Core target](https://github.com/fdiaz/SwiftInspector/tree/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCore/Tests) for examples.
+When you're ready to write some code, I suggest you to start by writing unit tests by relying on the [Temporary.swift](https://github.com/fdiaz/SwiftInspector/blob/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCore/Temporary.swift) file to create fake files for testing. 
+
+```swift
+context("when something happens") {
+  beforeEach {
+    fileURL = try! Temporary.makeFile(
+      content: """
+               typealias SomeTypealias = TypeA & TypeB
+               """
+    )
+  }
+
+  it("something happens") {
+    let result = try? sut.analyze(fileURL: fileURL)
+    expect(result) == Something
+  }
+}
+```
+
+Refer to the [tests in the Core target](https://github.com/fdiaz/SwiftInspector/tree/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCore/Tests) for examples.
 
 ### Things to consider:
 - We use Quick and Nimble in this repo, we rely on the following convention:
