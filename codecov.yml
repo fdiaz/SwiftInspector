@@ -1,3 +1,9 @@
+coverage:
+  status:
+    # PRs only
+    patch:
+      default:
+        threshold: 0.1%
 ignore:
   - "Sources/SwiftInspectorCommands/Tests"
   - "Sources/SwiftInspectorCore/Tests"
