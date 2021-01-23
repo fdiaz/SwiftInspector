@@ -41,12 +41,12 @@ final class InitializerCommandSpec: QuickSpec {
 
       context("when path is invalid") {
         it("fails when empty") {
-          let result = try? TestTask.run(withArguments: ["initializer", "--path", ""])
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", "", "--name", "FakeName"])
           expect(result?.didFail) == true
         }
 
         it("fails when it doesn't exist") {
-          let result = try? TestTask.run(withArguments: ["initializer", "--path", "/fake/path"])
+          let result = try? TestTask.run(withArguments: ["initializer", "--path", "/fake/path", "--name", "FakeName"])
           expect(result?.didFail) == true
         }
       }

@@ -85,7 +85,7 @@ final class TypePropertiesSpec: QuickSpec {
 
       context("when the types don't match") {
         it("fails to merge and asserts") {
-          expect { try type1.merge(with: type3) }.to(throwError())
+          expect(try type1.merge(with: type3)).to(throwError())
         }
       }
 

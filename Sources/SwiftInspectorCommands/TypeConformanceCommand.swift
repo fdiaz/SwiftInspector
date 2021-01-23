@@ -53,9 +53,6 @@ final class TypeConformanceCommand: ParsableCommand {
 
   /// Validates if the arguments of this command are valid
   func validate() throws {
-    guard !typeNames.isEmpty else {
-      throw InspectorError.emptyArgument(argumentName: "--type-names")
-    }
     guard !path.isEmpty else {
       throw InspectorError.emptyArgument(argumentName: "--path")
     }
