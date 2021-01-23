@@ -32,10 +32,54 @@ Contains all the files for managing commands and options for these commands. We 
 
 Is the *core* or *backend* of this project. In here is where the magic happens. You should put any file that's related to analyzing Swift code in here.
 
-### Adding a new Command
+## Suggested workflow
+
+### Writing a new Command
 
 To add a new command create a `YourCommand.swift` file inside `SwiftInspectorCommand`  and add it to the `InspectorCommand` subcommands. Your command should delegate to `SwiftInspectorCore` for all the logic related to analyzing Swift code.
 
-### Adding new functionality
+When you're ready to write a new command, I suggest you start by writing unit tests by relying on the [TestTask.swift](https://github.com/fdiaz/SwiftInspector/blob/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCommands/Tests/TestTask.swift) file to create fake commands with arguments:
+
+```swift
+private struct YourNewCommand {
+  fileprivate static func run(path: String, arguments: [String] = []) throws -> TaskStatus {
+    let arguments = ["newcommand", "--path", path] + arguments
+    return try TestTask.run(withArguments: arguments)
+  }
+}
+```
+
+Refer to the [tests in the Commands target](https://github.com/fdiaz/SwiftInspector/tree/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCommands/Tests) for examples.
+
+### Writing a new Core functionality
 
 Since we want to separate the commands from the core functionality, you should abstract your core functionality in a class that lives in `SwiftInspectorCore`.
+
+I suggest relying on the [Swift AST Explorer](https://swift-ast-explorer.com/) to understand the AST better and play around with different use cases.
+
+When you're ready to write some code, I suggest you to start by writing unit tests by relying on the [Temporary.swift](https://github.com/fdiaz/SwiftInspector/blob/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCore/Temporary.swift) file to create fake files for testing. 
+
+```swift
+context("when something happens") {
+  beforeEach {
+    fileURL = try! Temporary.makeFile(
+      content: """
+               typealias SomeTypealias = TypeA & TypeB
+               """
+    )
+  }
+
+  it("something happens") {
+    let result = try? sut.analyze(fileURL: fileURL)
+    expect(result) == Something
+  }
+}
+```
+
+Refer to the [tests in the Core target](https://github.com/fdiaz/SwiftInspector/tree/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCore/Tests) for examples.
+
+### Things to consider:
+- We use Quick and Nimble in this repo, we rely on the following convention:
+  - Use `describe` blocks for each internal and public method
+  - Use `context` to setup different scenarios (e.g. "when A happens")
+  - Only use one assert per test whenever possible
