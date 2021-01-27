@@ -47,7 +47,7 @@ final class VisitorExecutorSpec: QuickSpec {
   }
 
   override func spec() {
-    describe("walkVisitor(_:overContent:)") {
+    describe("walk(:)") {
       context("with a visitor") {
         it("walks the visitor over the content") {
           let visitor = MockVisitor()
