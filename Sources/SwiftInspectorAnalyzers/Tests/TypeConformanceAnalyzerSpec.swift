@@ -25,6 +25,7 @@
 import Nimble
 import Quick
 import Foundation
+import SwiftInspectorTestHelpers
 
 @testable import SwiftInspectorAnalyzers
 

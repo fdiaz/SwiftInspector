@@ -26,7 +26,7 @@ import Foundation
 import Nimble
 import Quick
 
-@testable import SwiftInspectorAnalyzers
+@testable import SwiftInspectorTestHelpers
 
 final class TemporarySpec: QuickSpec {
   override func spec() {

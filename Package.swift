@@ -37,6 +37,7 @@ let package = Package(
       name: "SwiftInspectorCommandsTests",
       dependencies: [
         "SwiftInspectorCommands",
+        "SwiftInspectorTestHelpers",
         "Nimble",
         "Quick",
     ], path: "Sources/SwiftInspectorCommands/Tests"),
@@ -52,10 +53,23 @@ let package = Package(
       name: "SwiftInspectorAnalyzersTests",
       dependencies: [
         "SwiftInspectorAnalyzers",
+        "SwiftInspectorTestHelpers",
         "SwiftInspectorVisitors",
         "Nimble",
         "Quick",
     ], path: "Sources/SwiftInspectorAnalyzers/Tests"),
+
+    .target(
+      name: "SwiftInspectorTestHelpers",
+      dependencies: ["SwiftSyntax"],
+      exclude: ["Tests"]),
+    .testTarget(
+      name: "SwiftInspectorTestHelpersTests",
+      dependencies: [
+        "SwiftInspectorTestHelpers",
+        "Nimble",
+        "Quick",
+    ], path: "Sources/SwiftInspectorTestHelpers/Tests"),
 
     .target(
       name: "SwiftInspectorVisitors",
@@ -64,6 +78,7 @@ let package = Package(
     .testTarget(
       name: "SwiftInspectorVisitorsTests",
       dependencies: [
+        "SwiftInspectorTestHelpers",
         "SwiftInspectorVisitors",
         "Nimble",
         "Quick",
