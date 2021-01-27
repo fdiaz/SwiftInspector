@@ -56,12 +56,14 @@ public struct GenericRequirement: Codable, Equatable {
   }
 
   init(node: SameTypeRequirementSyntax) {
+    // There is no known case where these identifiers can not be cast to SimpleTypeIdentifierSyntax.
     leftType = node.leftTypeIdentifier.as(SimpleTypeIdentifierSyntax.self)!.name.text
     rightType = node.rightTypeIdentifier.as(SimpleTypeIdentifierSyntax.self)!.name.text
     relationship = .equals
   }
 
   init(node: ConformanceRequirementSyntax) {
+    // There is no known case where these identifiers can not be cast to SimpleTypeIdentifierSyntax.
     leftType = node.leftTypeIdentifier.as(SimpleTypeIdentifierSyntax.self)!.name.text
     rightType = node.rightTypeIdentifier.as(SimpleTypeIdentifierSyntax.self)!.name.text
     relationship = .conformsTo
