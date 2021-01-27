@@ -5,6 +5,7 @@ coverage:
       default:
         threshold: 0.1%
 ignore:
-  - "Sources/SwiftInspectorCommands/Tests"
   - "Sources/SwiftInspectorAnalyzers/Tests"
+  - "Sources/SwiftInspectorCommands/Tests"
+  - "Sources/SwiftInspectorTestHelpers/Tests"
   - "Sources/SwiftInspectorVisitors/Tests"
