@@ -65,7 +65,7 @@ Code that visits Swift syntax nodes should be live in the `SwiftInspectorVisitor
 
 I suggest relying on the [Swift AST Explorer](https://swift-ast-explorer.com/) to understand the AST better and play around with different use cases.
 
-When you're ready to write some code, I suggest you to start by writing unit tests by relying on the [Temporary.swift](https://github.com/fdiaz/SwiftInspector/blob/407f34bb93df750d95cedaa10f656f0586d0769e/Sources/SwiftInspectorAnalyzers/Temporary.swift) file to create fake files for testing. 
+When you're ready to write some code, I suggest you to start by writing unit tests by relying on the [Temporary.swift](https://github.com/fdiaz/SwiftInspector/blob/be2efb40fb1d085e69ae92a873c64fab9b66fa9a/Sources/SwiftInspectorTestHelpers/Temporary.swift) file to create fake files for testing.
 
 ```swift
 context("when something happens") {
