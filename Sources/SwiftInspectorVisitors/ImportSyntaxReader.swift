@@ -27,7 +27,7 @@ import SwiftSyntax
 
 // TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
 public final class ImportSyntaxReader: SyntaxRewriter {
-  public var imports: [ImportStatement] = []
+  public private(set) var imports: [ImportStatement] = []
 
   public override func visit(_ node: ImportDeclSyntax) -> DeclSyntax {
     let statement = importStatement(from: node)
