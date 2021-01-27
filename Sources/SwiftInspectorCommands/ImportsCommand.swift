@@ -25,6 +25,7 @@
 import ArgumentParser
 import Foundation
 import SwiftInspectorAnalyzers
+import SwiftInspectorVisitors
 
 final class ImportsCommand: ParsableCommand {
   static var configuration = CommandConfiguration(
@@ -41,13 +42,14 @@ final class ImportsCommand: ParsableCommand {
   /// Runs the command
   func run() throws {
     let cachedSyntaxTree = CachedSyntaxTree()
-    let analyzer = ImportsAnalyzer(cachedSyntaxTree: cachedSyntaxTree)
+    let analyzer = StandardAnalyzer(cachedSyntaxTree: cachedSyntaxTree)
     let fileURL = URL(fileURLWithPath: path)
 
     let outputArray = try FileManager.default.swiftFiles(at: fileURL)
       .reduce(Set<String>()) { result, url in
-        let importStatements = try analyzer.analyze(fileURL: url)
-        let output = importStatements.map { outputString(from: $0) }
+        let reader = ImportSyntaxReader()
+        try analyzer.analyze(fileURL: url, withVisitor: reader)
+        let output = reader.imports.map { outputString(from: $0) }
         return result.union(output)
     }
 

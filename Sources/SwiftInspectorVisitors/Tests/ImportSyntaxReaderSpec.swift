@@ -27,37 +27,33 @@ import Quick
 import Foundation
 import SwiftInspectorTestHelpers
 
-@testable import SwiftInspectorAnalyzers
+@testable import SwiftInspectorVisitors
 
-final class ImportsAnalyzerSpec: QuickSpec {
-  private var fileURL: URL!
+final class ImportSyntaxReaderSpec: QuickSpec {
+  private var sut = ImportSyntaxReader()
 
   override func spec() {
-    afterEach {
-      guard let fileURL = self.fileURL else {
-        return
-      }
-      try? Temporary.removeItem(at: fileURL)
+    beforeEach {
+      self.sut = ImportSyntaxReader()
     }
 
-    describe("analyze(fileURL:)") {
+    describe("visit") {
       context("when there is no import statement") {
         let content = """
                       public final class Some {
                       }
                       """
-        self.fileURL = try? Temporary.makeFile(content: content)
 
         it("returns an empty array") {
-          let sut = ImportsAnalyzer()
-          let result = try? sut.analyze(fileURL: self.fileURL)
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
 
-          expect(result).to(beEmpty())
+          expect(self.sut.imports).to(beEmpty())
         }
       }
 
       context("with a simple import statements") {
-        var sut: [ImportStatement]? = []
         beforeEach {
           let content = """
                         import SomeModule
@@ -65,43 +61,43 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeFile(content: content)
-          sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
+          try? VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
         }
 
         it("returns the appropriate main module name") {
-          expect(sut?.first?.mainModule) == "SomeModule"
+          expect(self.sut.imports.first?.mainModule) == "SomeModule"
         }
 
         it("returns an empty String for the submodule name") {
-          expect(sut?.first?.submodule) == ""
+          expect(self.sut.imports.first?.submodule) == ""
         }
 
         it("returns an empty String for the kind") {
-          expect(sut?.first?.kind) == ""
+          expect(self.sut.imports.first?.kind) == ""
         }
 
       }
 
       context("with an  import statement with an attribute") {
-        var sut: [ImportStatement]? = []
         beforeEach {
           let content = """
                         @_export import SomeModule
 
                         public final class Some {}
                         """
-          self.fileURL = try? Temporary.makeFile(content: content)
-          sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
+          try? VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
         }
 
         it("returns the appropriate attribute name") {
-          expect(sut?.first?.attribute) == "_export"
+          expect(self.sut.imports.first?.attribute) == "_export"
         }
       }
 
       context("with an import statement with a submodule") {
-        var sut: [ImportStatement]? = []
         beforeEach {
           let content = """
                         import SomeModule.Submodule
@@ -109,26 +105,26 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeFile(content: content)
-          sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
+          try? VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
         }
 
         it("returns the appropriate main module name") {
-          expect(sut?.first?.mainModule) == "SomeModule"
+          expect(self.sut.imports.first?.mainModule) == "SomeModule"
         }
 
         it("returns the appropriate submodule name") {
-          expect(sut?.first?.submodule) == "Submodule"
+          expect(self.sut.imports.first?.submodule) == "Submodule"
         }
 
         it("returns the appropriate kind") {
-          expect(sut?.first?.kind) == ""
+          expect(self.sut.imports.first?.kind) == ""
         }
 
       }
 
       context("with an import statement with a kind and a submodule") {
-        var sut: [ImportStatement]? = []
         beforeEach {
           let content = """
                         import struct SomeModule.Submodule
@@ -136,26 +132,26 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeFile(content: content)
-          sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
+          try? VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
         }
 
         it("returns the appropriate main module name") {
-          expect(sut?.first?.mainModule) == "SomeModule"
+          expect(self.sut.imports.first?.mainModule) == "SomeModule"
         }
 
         it("returns the appropriate submodule name") {
-          expect(sut?.first?.submodule) == "Submodule"
+          expect(self.sut.imports.first?.submodule) == "Submodule"
         }
 
         it("returns the appropriate kind") {
-          expect(sut?.first?.kind) == "struct"
+          expect(self.sut.imports.first?.kind) == "struct"
         }
 
       }
 
       context("with multiple import statements with a kind and a submodule") {
-        var sut: [ImportStatement]? = []
         beforeEach {
           let content = """
                         import struct SomeModule.Submodule
@@ -164,23 +160,24 @@ final class ImportsAnalyzerSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          self.fileURL = try? Temporary.makeFile(content: content)
-          sut = try? ImportsAnalyzer().analyze(fileURL: self.fileURL)
+          try? VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
         }
 
         it("returns the appropriate main module name for all imports") {
-          expect(sut?.first?.mainModule) == "SomeModule"
-          expect(sut?.last?.mainModule) == "Another"
+          expect(self.sut.imports.first?.mainModule) == "SomeModule"
+          expect(self.sut.imports.last?.mainModule) == "Another"
         }
 
         it("returns the appropriate submodule name for all imports") {
-          expect(sut?.first?.submodule) == "Submodule"
-          expect(sut?.last?.submodule) == "AnotherSubmodule"
+          expect(self.sut.imports.first?.submodule) == "Submodule"
+          expect(self.sut.imports.last?.submodule) == "AnotherSubmodule"
         }
 
         it("returns the appropriate kind for all imports") {
-          expect(sut?.first?.kind) == "struct"
-          expect(sut?.last?.kind) == "class"
+          expect(self.sut.imports.first?.kind) == "struct"
+          expect(self.sut.imports.last?.kind) == "class"
         }
 
       }
