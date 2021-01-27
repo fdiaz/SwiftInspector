@@ -30,88 +30,67 @@ import SwiftSyntax
 @testable import SwiftInspectorTestHelpers
 
 final class VisitorExecutorSpec: QuickSpec {
+
   private final class MockVisitor: SyntaxVisitor {
-    var ifSyntaxVisitCount = 0
+    var ifStatementSyntaxVisitCount = 0
     override func visitPost(_ node: IfStmtSyntax) {
-      ifSyntaxVisitCount += 1
+      ifStatementSyntaxVisitCount += 1
     }
   }
+
   private final class MockRewriter: SyntaxRewriter {
-    var ifSyntaxVisitCount = 0
+    var ifStatementSyntaxVisitCount = 0
     override func visit(_ node: IfStmtSyntax) -> StmtSyntax {
-      ifSyntaxVisitCount += 1
+      ifStatementSyntaxVisitCount += 1
       return super.visit(node)
     }
   }
 
   override func spec() {
-    describe("createFile(withContent:andWalk:) with visitor") {
-      it("creates a file") {
-        do {
+    describe("createFile(withContent:andWalk:)") {
+      context("with a visitor") {
+        it("creates a file") {
           let savedURL = try VisitorExecutor.createFile(withContent: "abc", andWalk: MockVisitor())
           expect(FileManager.default.fileExists(atPath: savedURL.path)) == true
-        } catch {
-          fail("Encountered error \(error)")
         }
-      }
 
-      it("saves the correct content") {
-        do {
+        it("saves the correct content") {
           let content = "protocol Some { }"
           let savedURL = try VisitorExecutor.createFile(withContent: content, andWalk: MockVisitor())
 
           let savedContent = try String(contentsOf: savedURL, encoding: .utf8)
           expect(savedContent) == "protocol Some { }"
-        } catch {
-          fail("Encountered error \(error)")
         }
-      }
 
-      it("walks the visitor over the content") {
-        do {
+        it("walks the visitor over the content") {
           let visitor = MockVisitor()
           _ = try VisitorExecutor.createFile(withContent: "if true {}", andWalk: visitor)
 
-          expect(visitor.ifSyntaxVisitCount) == 1
-        } catch {
-          fail("Encountered error \(error)")
+          expect(visitor.ifStatementSyntaxVisitCount) == 1
         }
       }
-    }
 
-    describe("createFile(withContent:andWalk:) with rewriter") {
-      it("creates a file") {
-        do {
+      context("with a rewriter") {
+        it("creates a file") {
           let savedURL = try VisitorExecutor.createFile(withContent: "abc", andWalk: MockRewriter())
           expect(FileManager.default.fileExists(atPath: savedURL.path)) == true
-        } catch {
-          fail("Encountered error \(error)")
         }
-      }
 
-      it("saves the correct content") {
-        do {
+        it("saves the correct content") {
           let content = "protocol Some { }"
           let savedURL = try VisitorExecutor.createFile(withContent: content, andWalk: MockRewriter())
 
           let savedContent = try String(contentsOf: savedURL, encoding: .utf8)
           expect(savedContent) == "protocol Some { }"
-        } catch {
-          fail("Encountered error \(error)")
         }
-      }
 
-      it("walks the rewriter over the content") {
-        do {
+        it("walks the rewriter over the content") {
           let visitor = MockRewriter()
           _ = try VisitorExecutor.createFile(withContent: "if true {}", andWalk: visitor)
 
-          expect(visitor.ifSyntaxVisitCount) == 1
-        } catch {
-          fail("Encountered error \(error)")
+          expect(visitor.ifStatementSyntaxVisitCount) == 1
         }
       }
-
     }
   }
 }
