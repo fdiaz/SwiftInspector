@@ -24,7 +24,7 @@
 
 import ArgumentParser
 import Foundation
-import SwiftInspectorCore
+import SwiftInspectorAnalyzers
 
 final class InitializerCommand: ParsableCommand {
   static var configuration = CommandConfiguration(

@@ -26,7 +26,7 @@ import Nimble
 import Quick
 import Foundation
 
-@testable import SwiftInspectorCore
+@testable import SwiftInspectorAnalyzers
 
 final class TypealiasAnalyzerSpec: QuickSpec {
   override func spec() {

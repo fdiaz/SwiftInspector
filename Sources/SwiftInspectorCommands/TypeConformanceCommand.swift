@@ -24,7 +24,7 @@
 
 import ArgumentParser
 import Foundation
-import SwiftInspectorCore
+import SwiftInspectorAnalyzers
 
 final class TypeConformanceCommand: ParsableCommand {
 

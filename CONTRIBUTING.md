@@ -28,17 +28,21 @@ Contains the main executable for this command line tool. It only contains the en
 
 Contains all the files for managing commands and options for these commands. We can think of this as the *frontend* of this project.
 
-#### SwiftInspectorCore
+#### SwiftInspectorAnalyzers
 
-Is the *core* or *backend* of this project. In here is where the magic happens. You should put any file that's related to analyzing Swift code in here.
+Comprises this project's analyzers. Any file related to analyzing Swift code should be put here. This is the layer that the Command interacts with directly.
+
+#### SwiftInspectorVisitors
+
+Comprises this project's syntax visitors. Any file that visits Swift syntax nodes should be put here. Analyzers should use the visitors in this module.
 
 ## Suggested workflow
 
 ### Writing a new Command
 
-To add a new command create a `YourCommand.swift` file inside `SwiftInspectorCommand`  and add it to the `InspectorCommand` subcommands. Your command should delegate to `SwiftInspectorCore` for all the logic related to analyzing Swift code.
+To add a new command create a `YourCommand.swift` file inside `SwiftInspectorCommand`  and add it to the `InspectorCommand` subcommands. Your command should delegate to `SwiftInspectorAnalyzer` for all the logic related to analyzing Swift code.
 
-When you're ready to write a new command, I suggest you start by writing unit tests by relying on the [TestTask.swift](https://github.com/fdiaz/SwiftInspector/blob/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCommands/Tests/TestTask.swift) file to create fake commands with arguments:
+When you're ready to write a new command, I suggest you start by writing unit tests by relying on the [TestTask.swift](https://github.com/fdiaz/SwiftInspector/blob/407f34bb93df750d95cedaa10f656f0586d0769e/Sources/SwiftInspectorCommands/Tests/TestTask.swift) file to create fake commands with arguments:
 
 ```swift
 private struct YourNewCommand {
@@ -49,15 +53,19 @@ private struct YourNewCommand {
 }
 ```
 
-Refer to the [tests in the Commands target](https://github.com/fdiaz/SwiftInspector/tree/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCommands/Tests) for examples.
+Refer to the [tests in the Commands target](https://github.com/fdiaz/SwiftInspector/tree/407f34bb93df750d95cedaa10f656f0586d0769e/Sources/SwiftInspectorCommands/Tests) for examples.
 
-### Writing a new Core functionality
+### Writing new Analyzer functionality
 
-Since we want to separate the commands from the core functionality, you should abstract your core functionality in a class that lives in `SwiftInspectorCore`.
+Since we want to separate the commands from the analyzer functionality, you should abstract your analyzer functionality in a class that lives in `SwiftInspectorAnalyzer`. Analyzers are a thin bridge between commands and syntax visitors – they are responsible for kicking off syntax visitation and then packaging up and returning the information gathered from syntax visitors.
+
+### Writing new Visitor functionality
+
+Code that visits Swift syntax nodes should be live in the `SwiftInspectorVisitors` module.
 
 I suggest relying on the [Swift AST Explorer](https://swift-ast-explorer.com/) to understand the AST better and play around with different use cases.
 
-When you're ready to write some code, I suggest you to start by writing unit tests by relying on the [Temporary.swift](https://github.com/fdiaz/SwiftInspector/blob/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCore/Temporary.swift) file to create fake files for testing. 
+When you're ready to write some code, I suggest you to start by writing unit tests by relying on the [Temporary.swift](https://github.com/fdiaz/SwiftInspector/blob/407f34bb93df750d95cedaa10f656f0586d0769e/Sources/SwiftInspectorAnalyzers/Temporary.swift) file to create fake files for testing. 
 
 ```swift
 context("when something happens") {
@@ -76,7 +84,7 @@ context("when something happens") {
 }
 ```
 
-Refer to the [tests in the Core target](https://github.com/fdiaz/SwiftInspector/tree/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCore/Tests) for examples.
+Refer to the [tests in the Analyzer target](https://github.com/fdiaz/SwiftInspector/tree/407f34bb93df750d95cedaa10f656f0586d0769e/Sources/SwiftInspectorAnalyzers/Tests) for examples.
 
 ### Things to consider:
 - We use Quick and Nimble in this repo, we rely on the following convention:
