@@ -26,8 +26,9 @@ import Foundation
 import Nimble
 import Quick
 import SwiftSyntax
+import SwiftInspectorTestHelpers
 
-@testable import SwiftInspectorTestHelpers
+@testable import SwiftInspectorAnalyzers
 
 final class StandardAnalyzerSpec: QuickSpec {
 
@@ -47,11 +48,21 @@ final class StandardAnalyzerSpec: QuickSpec {
   }
 
   override func spec() {
+    var fileURL: URL!
     describe("analyze(fileURL:withVisitor:)") {
+      beforeEach {
+        fileURL = try? Temporary.makeFile(content: "if true {}")
+      }
+      afterEach {
+        guard let fileURL = fileURL else {
+          return
+        }
+        try? Temporary.removeItem(at: fileURL)
+      }
       context("with a visitor") {
         it("walks the visitor over the content") {
           let visitor = MockVisitor()
-          try VisitorExecutor.walkVisitor(visitor, overContent: "if true {}")
+          try StandardAnalyzer().analyze(fileURL: fileURL, withVisitor: visitor)
 
           expect(visitor.ifStatementSyntaxVisitCount) == 1
         }
@@ -60,7 +71,7 @@ final class StandardAnalyzerSpec: QuickSpec {
       context("with a rewriter") {
         it("walks the rewriter over the content") {
           let visitor = MockRewriter()
-          try VisitorExecutor.walkVisitor(visitor, overContent: "if true {}")
+          try StandardAnalyzer().analyze(fileURL: fileURL, withVisitor: visitor)
 
           expect(visitor.ifStatementSyntaxVisitCount) == 1
         }
