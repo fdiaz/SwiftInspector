@@ -25,6 +25,8 @@
 import Foundation
 import Nimble
 import Quick
+import SwiftInspectorTestHelpers
+
 @testable import SwiftInspectorAnalyzers
 
 final class TypealiasCommandSpec: QuickSpec {

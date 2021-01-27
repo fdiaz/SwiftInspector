@@ -47,7 +47,7 @@ public final class CachedSyntaxTree {
   /// 
   /// - Parameter fileURL: The location of the Swift file to parse
   private func memoizeSyntaxTree(at fileURL: URL) throws -> SourceFileSyntax {
-    let cached =  try SyntaxParser.parse(fileURL)
+    let cached = try SyntaxParser.parse(fileURL)
     cachedSyntax[fileURL] = cached
     return cached
   }
