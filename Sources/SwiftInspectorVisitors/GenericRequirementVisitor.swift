@@ -30,12 +30,16 @@ public final class GenericRequirementVisitor: SyntaxVisitor {
   public var genericRequirements = [GenericRequirement]()
 
   public override func visit(_ node: SameTypeRequirementSyntax) -> SyntaxVisitorContinueKind {
-    genericRequirements.append(GenericRequirement(node: node))
+    if let requirement = GenericRequirement(node: node) {
+      genericRequirements.append(requirement)
+    }
     return .visitChildren
   }
 
   public override func visit(_ node: ConformanceRequirementSyntax) -> SyntaxVisitorContinueKind {
-    genericRequirements.append(GenericRequirement(node: node))
+    if let requirement = GenericRequirement(node: node) {
+      genericRequirements.append(requirement)
+    }
     return .visitChildren
   }
 
@@ -55,15 +59,29 @@ public struct GenericRequirement: Codable, Equatable {
     self.relationship = relationship
   }
 
-  init(node: SameTypeRequirementSyntax) {
-    leftType = node.leftTypeIdentifier.description.trimmingCharacters(in: .whitespacesAndNewlines)
-    rightType = node.rightTypeIdentifier.description.trimmingCharacters(in: .whitespacesAndNewlines)
+  init?(node: SameTypeRequirementSyntax) {
+    guard
+      let leftType = node.leftTypeIdentifier.as(SimpleTypeIdentifierSyntax.self)?.name.text,
+      let rightType = node.rightTypeIdentifier.as(SimpleTypeIdentifierSyntax.self)?.name.text
+    else {
+      return nil
+    }
+
+    self.leftType = leftType
+    self.rightType = rightType
     relationship = .equals
   }
 
-  init(node: ConformanceRequirementSyntax) {
-    leftType = node.leftTypeIdentifier.description.trimmingCharacters(in: .whitespacesAndNewlines)
-    rightType = node.rightTypeIdentifier.description.trimmingCharacters(in: .whitespacesAndNewlines)
+  init?(node: ConformanceRequirementSyntax) {
+    guard
+      let leftType = node.leftTypeIdentifier.as(SimpleTypeIdentifierSyntax.self)?.name.text,
+      let rightType = node.rightTypeIdentifier.as(SimpleTypeIdentifierSyntax.self)?.name.text
+    else {
+      return nil
+    }
+
+    self.leftType = leftType
+    self.rightType = rightType
     relationship = .conformsTo
   }
 
