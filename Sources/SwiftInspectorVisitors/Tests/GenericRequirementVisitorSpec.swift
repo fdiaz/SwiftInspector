@@ -37,8 +37,8 @@ final class GenericRequirementVisitorSpec: QuickSpec {
       self.sut = GenericRequirementVisitor()
     }
 
-    describe("visiting a syntax tree involving a protocol") {
-      context("that has no generic constraints") {
+    describe("visit(_:)") {
+      context("visiting a syntax tree involving a protocol that has no generic constraints") {
         it("finds no generic requirements") {
           let content = """
             public protocol SomeGenericProtocol: GenericProtocol {}
@@ -52,7 +52,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
         }
       }
 
-      context("that has one generic constraint") {
+      context("visiting a syntax tree involving a protocol that has one generic constraint") {
         it("finds the generic requirements") {
           let content = """
             public protocol SomeGenericProtocol: GenericProtocol where
@@ -71,8 +71,8 @@ final class GenericRequirementVisitorSpec: QuickSpec {
         }
       }
 
-      context("that has two generic constraints") {
-        it("finds both requirements") {
+      context("visiting a syntax tree involving a protocol that has two generic constraints") {
+        beforeEach {
           let content = """
             public protocol SomeGenericProtocol: GenericProtocol where
               LeftType1 == RightType1,
@@ -80,24 +80,27 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          try VisitorExecutor.walkVisitor(
+          try? VisitorExecutor.walkVisitor(
             self.sut,
             overContent: content)
+        }
 
+        it("finds the first requirement") {
           expect(self.sut.genericRequirements.first) == GenericRequirement(
             leftType: "LeftType1",
             rightType: "RightType1",
             relationship: .equals)
+        }
+
+        it("finds the second requirement") {
           expect(self.sut.genericRequirements.last) == GenericRequirement(
             leftType: "LeftType2",
             rightType: "RightType2",
             relationship: .conformsTo)
         }
       }
-    }
 
-    describe("visiting a syntax tree involving an extension") {
-      context("that has no generic constraints") {
+      context("visiting a syntax tree involving an extension that has no generic constraints") {
         it("finds no generic requirements") {
           let content = """
             extension Array {}
@@ -111,7 +114,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
         }
       }
 
-      context("that has one generic constraint") {
+      context("visiting a syntax tree involving an extension that has one generic constraint") {
         it("finds the generic requirements") {
           let content = """
             extension Array where
@@ -130,8 +133,8 @@ final class GenericRequirementVisitorSpec: QuickSpec {
         }
       }
 
-      context("that has two generic constraints") {
-        it("finds both requirements") {
+      context("visiting a syntax tree involving an extension that has two generic constraints") {
+        beforeEach {
           let content = """
             extension Dictionary where
               Key: AnyObject,
@@ -139,24 +142,26 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          try VisitorExecutor.walkVisitor(
+          try? VisitorExecutor.walkVisitor(
             self.sut,
             overContent: content)
-
+        }
+        it("finds the first requirement") {
           expect(self.sut.genericRequirements.first) == GenericRequirement(
             leftType: "Key",
             rightType: "AnyObject",
             relationship: .conformsTo)
+        }
+
+        it("finds the second requirement") {
           expect(self.sut.genericRequirements.last) == GenericRequirement(
             leftType: "Value",
             rightType: "CustomStringConvertible",
             relationship: .equals)
         }
       }
-    }
 
-    describe("visiting a syntax tree involving an associatedtype") {
-      context("that has no generic constraints") {
+      context("visiting a syntax tree involving an associatedtype that has no generic constraints") {
         it("finds no generic requirements") {
           let content = """
             public protocol Test {
@@ -172,7 +177,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
         }
       }
 
-      context("that has one generic constraint") {
+      context("visiting a syntax tree involving an associatedtype that has one generic constraint") {
         it("finds the generic requirements") {
           let content = """
             public protocol Test {
@@ -192,8 +197,8 @@ final class GenericRequirementVisitorSpec: QuickSpec {
         }
       }
 
-      context("that has two generic constraints") {
-        it("finds both requirements") {
+      context("visiting a syntax tree involving an associatedtype that has two generic constraints") {
+        beforeEach {
           let content = """
             public protocol Test {
               associatedtype SomeType: SomeProtocol where
@@ -202,14 +207,19 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             }
             """
 
-          try VisitorExecutor.walkVisitor(
+          try? VisitorExecutor.walkVisitor(
             self.sut,
             overContent: content)
+        }
 
+        it("finds the first requirement") {
           expect(self.sut.genericRequirements.first) == GenericRequirement(
             leftType: "Key",
             rightType: "AnyObject",
             relationship: .conformsTo)
+        }
+
+        it("finds the second requirement") {
           expect(self.sut.genericRequirements.last) == GenericRequirement(
             leftType: "Value",
             rightType: "CustomStringConvertible",
@@ -217,10 +227,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
         }
       }
 
-      describe("visiting a syntax tree involving a contextual where clause") {
-        context("that has one generic constraint") {
-          it("finds the generic requirements") {
-            let content = """
+      context("visiting a syntax tree involving a contextual where clause that has one generic constraint") {
+        it("finds the generic requirements") {
+          let content = """
               extension Array
               {
                 func print() where Element: CustomStringConvertible {
@@ -229,15 +238,14 @@ final class GenericRequirementVisitorSpec: QuickSpec {
               }
               """
 
-            try VisitorExecutor.walkVisitor(
-              self.sut,
-              overContent: content)
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
 
-            expect(self.sut.genericRequirements.first) == GenericRequirement(
-              leftType: "Element",
-              rightType: "CustomStringConvertible",
-              relationship: .conformsTo)
-          }
+          expect(self.sut.genericRequirements.first) == GenericRequirement(
+            leftType: "Element",
+            rightType: "CustomStringConvertible",
+            relationship: .conformsTo)
         }
       }
     }
