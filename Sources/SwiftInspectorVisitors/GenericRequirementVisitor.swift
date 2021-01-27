@@ -30,12 +30,12 @@ public final class GenericRequirementVisitor: SyntaxVisitor {
   public var genericRequirements = [GenericRequirement]()
 
   public override func visit(_ node: SameTypeRequirementSyntax) -> SyntaxVisitorContinueKind {
-    genericRequirements.append(GenericRequirement(from: node))
+    genericRequirements.append(GenericRequirement(node: node))
     return .visitChildren
   }
 
   public override func visit(_ node: ConformanceRequirementSyntax) -> SyntaxVisitorContinueKind {
-    genericRequirements.append(GenericRequirement(from: node))
+    genericRequirements.append(GenericRequirement(node: node))
     return .visitChildren
   }
 
@@ -55,13 +55,13 @@ public struct GenericRequirement: Codable, Equatable {
     self.relationship = relationship
   }
 
-  init(from node: SameTypeRequirementSyntax) {
+  init(node: SameTypeRequirementSyntax) {
     leftType = node.leftTypeIdentifier.description.trimmingCharacters(in: .whitespacesAndNewlines)
     rightType = node.rightTypeIdentifier.description.trimmingCharacters(in: .whitespacesAndNewlines)
     relationship = .equals
   }
 
-  init(from node: ConformanceRequirementSyntax) {
+  init(node: ConformanceRequirementSyntax) {
     leftType = node.leftTypeIdentifier.description.trimmingCharacters(in: .whitespacesAndNewlines)
     rightType = node.rightTypeIdentifier.description.trimmingCharacters(in: .whitespacesAndNewlines)
     relationship = .conformsTo

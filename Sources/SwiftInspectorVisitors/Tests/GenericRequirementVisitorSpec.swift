@@ -55,7 +55,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             withContent: content,
             andWalk: self.sut)
 
-          expect(self.sut.genericRequirements.first).to(beNil())
+          expect(self.sut.genericRequirements).to(beEmpty())
         }
       }
 
