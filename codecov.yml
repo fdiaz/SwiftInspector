@@ -4,6 +4,9 @@ coverage:
     patch:
       default:
         threshold: 0.1%
+    project:
+      default:
+        threshold: 0.1%
 ignore:
   - "Sources/SwiftInspectorAnalyzers/Tests"
   - "Sources/SwiftInspectorCommands/Tests"
