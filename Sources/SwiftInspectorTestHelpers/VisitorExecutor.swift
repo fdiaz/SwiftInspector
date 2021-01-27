@@ -27,40 +27,36 @@ import SwiftSyntax
 
 public final class VisitorExecutor {
 
-  /// Creates a Swift file in the temporary directory with the provided content, and then walks the provided visitor along the content's syntax.
+  /// Walks the provided visitor along the content's syntax.
   ///
   /// - Parameters:
-  ///   - content: The content to turn into source and walk.
   ///   - visitor: The visitor to walk along the content syntax.
-  /// - Returns: The location of the file with content written to it.
-  public static func createFile<Visitor: SyntaxVisitor>(
-    withContent content: String,
-    andWalk visitor: Visitor)
+  ///   - content: The content to turn into source and walk.
+  public static func walkVisitor<Visitor: SyntaxVisitor>(
+    _ visitor: Visitor,
+    overContent content: String)
   throws
-  -> URL
   {
     let fileURL = try Temporary.makeFile(content: content)
     let syntax: SourceFileSyntax = try SyntaxParser.parse(fileURL)
     visitor.walk(syntax)
-    return fileURL
+    try Temporary.removeItem(at: fileURL)
   }
 
-  /// Creates a Swift file in the temporary directory with the provided content, and then walks the provided syntax rewriter along the content's syntax.
+  /// Walks the provided syntax rewriter along the content's syntax.
   ///
   /// - Parameters:
-  ///   - content: The content to turn into source and walk.
   ///   - rewriter: The syntax rewriter to walk along the content syntax.
-  /// - Returns: The location of the file with content written to it.
+  ///   - content: The content to turn into source and walk.
   /// - Note: Use a visitor when possible. Rewriters should be used to work around this bug: https://bugs.swift.org/browse/SR-11591
-  public static func createFile<Rewriter: SyntaxRewriter>(
-    withContent content: String,
-    andWalk rewriter: Rewriter)
+  public static func walkVisitor<Rewriter: SyntaxRewriter>(
+    _ rewriter: Rewriter,
+    overContent content: String)
   throws
-  -> URL
   {
     let fileURL = try Temporary.makeFile(content: content)
     let syntax: SourceFileSyntax = try SyntaxParser.parse(fileURL)
     _ = rewriter.visit(syntax)
-    return fileURL
+    try Temporary.removeItem(at: fileURL)
   }
 }

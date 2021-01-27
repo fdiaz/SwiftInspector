@@ -30,18 +30,11 @@ import SwiftInspectorTestHelpers
 @testable import SwiftInspectorVisitors
 
 final class GenericRequirementVisitorSpec: QuickSpec {
-  private var fileURL: URL!
   private var sut = GenericRequirementVisitor()
 
   override func spec() {
     beforeEach {
       self.sut = GenericRequirementVisitor()
-    }
-    afterEach {
-      guard let fileURL = self.fileURL else {
-        return
-      }
-      try? Temporary.removeItem(at: fileURL)
     }
 
     describe("visiting a syntax tree involving a protocol") {
@@ -51,9 +44,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             public protocol SomeGenericProtocol: GenericProtocol {}
             """
 
-          self.fileURL = try VisitorExecutor.createFile(
-            withContent: content,
-            andWalk: self.sut)
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
 
           expect(self.sut.genericRequirements).to(beEmpty())
         }
@@ -67,9 +60,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          self.fileURL = try VisitorExecutor.createFile(
-            withContent: content,
-            andWalk: self.sut)
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
 
           expect(self.sut.genericRequirements.first) == GenericRequirement(
             leftType: "LeftType",
@@ -87,9 +80,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          self.fileURL = try VisitorExecutor.createFile(
-            withContent: content,
-            andWalk: self.sut)
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
 
           expect(self.sut.genericRequirements.first) == GenericRequirement(
             leftType: "LeftType1",
@@ -110,9 +103,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             extension Array {}
             """
 
-          self.fileURL = try VisitorExecutor.createFile(
-            withContent: content,
-            andWalk: self.sut)
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
 
           expect(self.sut.genericRequirements.first).to(beNil())
         }
@@ -126,9 +119,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          self.fileURL = try VisitorExecutor.createFile(
-            withContent: content,
-            andWalk: self.sut)
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
 
           expect(self.sut.genericRequirements.first) == GenericRequirement(
             leftType: "Element",
@@ -146,9 +139,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          self.fileURL = try VisitorExecutor.createFile(
-            withContent: content,
-            andWalk: self.sut)
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
 
           expect(self.sut.genericRequirements.first) == GenericRequirement(
             leftType: "Key",
@@ -171,9 +164,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             }
             """
 
-          self.fileURL = try VisitorExecutor.createFile(
-            withContent: content,
-            andWalk: self.sut)
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
 
           expect(self.sut.genericRequirements.first).to(beNil())
         }
@@ -188,9 +181,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             }
             """
 
-          self.fileURL = try VisitorExecutor.createFile(
-            withContent: content,
-            andWalk: self.sut)
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
 
           expect(self.sut.genericRequirements.first) == GenericRequirement(
             leftType: "Element",
@@ -209,9 +202,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             }
             """
 
-          self.fileURL = try VisitorExecutor.createFile(
-            withContent: content,
-            andWalk: self.sut)
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
 
           expect(self.sut.genericRequirements.first) == GenericRequirement(
             leftType: "Key",
@@ -236,9 +229,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
               }
               """
 
-            self.fileURL = try VisitorExecutor.createFile(
-              withContent: content,
-              andWalk: self.sut)
+            try VisitorExecutor.walkVisitor(
+              self.sut,
+              overContent: content)
 
             expect(self.sut.genericRequirements.first) == GenericRequirement(
               leftType: "Element",

@@ -47,46 +47,20 @@ final class VisitorExecutorSpec: QuickSpec {
   }
 
   override func spec() {
-    describe("createFile(withContent:andWalk:)") {
+    describe("walkVisitor(_:overContent:)") {
       context("with a visitor") {
-        it("creates a file") {
-          let savedURL = try VisitorExecutor.createFile(withContent: "abc", andWalk: MockVisitor())
-          expect(FileManager.default.fileExists(atPath: savedURL.path)) == true
-        }
-
-        it("saves the correct content") {
-          let content = "protocol Some { }"
-          let savedURL = try VisitorExecutor.createFile(withContent: content, andWalk: MockVisitor())
-
-          let savedContent = try String(contentsOf: savedURL, encoding: .utf8)
-          expect(savedContent) == "protocol Some { }"
-        }
-
         it("walks the visitor over the content") {
           let visitor = MockVisitor()
-          _ = try VisitorExecutor.createFile(withContent: "if true {}", andWalk: visitor)
+          try VisitorExecutor.walkVisitor(visitor, overContent: "if true {}")
 
           expect(visitor.ifStatementSyntaxVisitCount) == 1
         }
       }
 
       context("with a rewriter") {
-        it("creates a file") {
-          let savedURL = try VisitorExecutor.createFile(withContent: "abc", andWalk: MockRewriter())
-          expect(FileManager.default.fileExists(atPath: savedURL.path)) == true
-        }
-
-        it("saves the correct content") {
-          let content = "protocol Some { }"
-          let savedURL = try VisitorExecutor.createFile(withContent: content, andWalk: MockRewriter())
-
-          let savedContent = try String(contentsOf: savedURL, encoding: .utf8)
-          expect(savedContent) == "protocol Some { }"
-        }
-
         it("walks the rewriter over the content") {
           let visitor = MockRewriter()
-          _ = try VisitorExecutor.createFile(withContent: "if true {}", andWalk: visitor)
+          try VisitorExecutor.walkVisitor(visitor, overContent: "if true {}")
 
           expect(visitor.ifStatementSyntaxVisitCount) == 1
         }
