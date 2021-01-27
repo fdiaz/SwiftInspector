@@ -30,7 +30,7 @@ Contains all the files for managing commands and options for these commands. We 
 
 #### SwiftInspectorAnalyzers
 
-Comprises this project's analyzers. Any file related to analyzing Swift code should be put here.
+Comprises this project's analyzers. Any file related to analyzing Swift code should be put here. This is the layer that the Command interacts with directly.
 
 #### SwiftInspectorVisitors
 
