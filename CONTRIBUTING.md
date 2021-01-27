@@ -42,7 +42,7 @@ Comprises this project's syntax visitors. Any file that visits Swift syntax node
 
 To add a new command create a `YourCommand.swift` file inside `SwiftInspectorCommand`  and add it to the `InspectorCommand` subcommands. Your command should delegate to `SwiftInspectorAnalyzer` for all the logic related to analyzing Swift code.
 
-When you're ready to write a new command, I suggest you start by writing unit tests by relying on the [TestTask.swift](https://github.com/fdiaz/SwiftInspector/blob/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCommands/Tests/TestTask.swift) file to create fake commands with arguments:
+When you're ready to write a new command, I suggest you start by writing unit tests by relying on the [TestTask.swift](https://github.com/fdiaz/SwiftInspector/blob/407f34bb93df750d95cedaa10f656f0586d0769e/Sources/SwiftInspectorCommands/Tests/TestTask.swift) file to create fake commands with arguments:
 
 ```swift
 private struct YourNewCommand {
@@ -53,7 +53,7 @@ private struct YourNewCommand {
 }
 ```
 
-Refer to the [tests in the Commands target](https://github.com/fdiaz/SwiftInspector/tree/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCommands/Tests) for examples.
+Refer to the [tests in the Commands target](https://github.com/fdiaz/SwiftInspector/tree/407f34bb93df750d95cedaa10f656f0586d0769e/Sources/SwiftInspectorCommands/Tests) for examples.
 
 ### Writing new Analyzer functionality
 
@@ -65,7 +65,7 @@ Code that visits Swift syntax nodes should be live in the `SwiftInspectorVisitor
 
 I suggest relying on the [Swift AST Explorer](https://swift-ast-explorer.com/) to understand the AST better and play around with different use cases.
 
-When you're ready to write some code, I suggest you to start by writing unit tests by relying on the [Temporary.swift](https://github.com/fdiaz/SwiftInspector/blob/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCore/Temporary.swift) file to create fake files for testing. 
+When you're ready to write some code, I suggest you to start by writing unit tests by relying on the [Temporary.swift](https://github.com/fdiaz/SwiftInspector/blob/407f34bb93df750d95cedaa10f656f0586d0769e/Sources/SwiftInspectorAnalyzers/Temporary.swift) file to create fake files for testing. 
 
 ```swift
 context("when something happens") {
@@ -84,7 +84,7 @@ context("when something happens") {
 }
 ```
 
-Refer to the [tests in the Analyzer target](https://github.com/fdiaz/SwiftInspector/tree/aba9c842c01905cdb672aff3153fcbec7807a412/Sources/SwiftInspectorCore/Tests) for examples.
+Refer to the [tests in the Analyzer target](https://github.com/fdiaz/SwiftInspector/tree/407f34bb93df750d95cedaa10f656f0586d0769e/Sources/SwiftInspectorAnalyzers/Tests) for examples.
 
 ### Things to consider:
 - We use Quick and Nimble in this repo, we rely on the following convention:
