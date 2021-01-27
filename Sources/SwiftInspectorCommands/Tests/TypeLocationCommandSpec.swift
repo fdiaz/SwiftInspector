@@ -27,7 +27,7 @@ import Quick
 import Foundation
 
 @testable import SwiftInspectorCommands
-@testable import SwiftInspectorCore
+@testable import SwiftInspectorAnalyzers
 
 final class TypeLocationCommandSpec: QuickSpec {
 

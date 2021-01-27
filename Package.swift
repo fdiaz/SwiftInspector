@@ -11,7 +11,8 @@ let package = Package(
   products: [
     .executable(name: "swiftinspector", targets: ["SwiftInspector"]),
     .library(name: "SwiftInspectorCommands", targets: ["SwiftInspectorCommands"]),
-    .library(name: "SwiftInspectorCore", targets: ["SwiftInspectorCore"])
+    .library(name: "SwiftInspectorAnalyzers", targets: ["SwiftInspectorAnalyzers"]),
+    .library(name: "SwiftInspectorVisitors", targets: ["SwiftInspectorVisitors"]),
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.3.1")),
@@ -29,7 +30,7 @@ let package = Package(
     .target(
       name: "SwiftInspectorCommands",
       dependencies: [
-        "SwiftInspectorCore",
+        "SwiftInspectorAnalyzers",
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
     ], exclude: ["Tests"]),
     .testTarget(
@@ -41,15 +42,31 @@ let package = Package(
     ], path: "Sources/SwiftInspectorCommands/Tests"),
 
     .target(
-      name: "SwiftInspectorCore",
+      name: "SwiftInspectorAnalyzers",
+      dependencies: [
+        "SwiftSyntax",
+        "SwiftInspectorVisitors",
+      ],
+      exclude: ["Tests"]),
+    .testTarget(
+      name: "SwiftInspectorAnalyzersTests",
+      dependencies: [
+        "SwiftInspectorAnalyzers",
+        "SwiftInspectorVisitors",
+        "Nimble",
+        "Quick",
+    ], path: "Sources/SwiftInspectorAnalyzers/Tests"),
+
+    .target(
+      name: "SwiftInspectorVisitors",
       dependencies: ["SwiftSyntax"],
       exclude: ["Tests"]),
     .testTarget(
-      name: "SwiftInspectorCoreTests",
+      name: "SwiftInspectorVisitorsTests",
       dependencies: [
-        "SwiftInspectorCore",
+        "SwiftInspectorVisitors",
         "Nimble",
         "Quick",
-    ], path: "Sources/SwiftInspectorCore/Tests"),
+    ], path: "Sources/SwiftInspectorVisitors/Tests"),
   ]
 )

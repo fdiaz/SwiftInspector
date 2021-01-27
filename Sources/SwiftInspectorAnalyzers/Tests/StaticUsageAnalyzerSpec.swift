@@ -26,7 +26,7 @@ import Nimble
 import Quick
 import Foundation
 
-@testable import SwiftInspectorCore
+@testable import SwiftInspectorAnalyzers
 
 final class StaticUsageAnalyzerSpec: QuickSpec {
   private var fileURL: URL!
