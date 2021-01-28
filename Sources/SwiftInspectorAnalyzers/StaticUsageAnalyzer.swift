@@ -42,7 +42,7 @@ public final class StaticUsageAnalyzer: Analyzer {
     let reader = StaticUsageReader() { [unowned self] node in
       isUsed = isUsed || self.isSyntaxNode(node, ofType: self.staticMember)
     }
-    _ = reader.visit(syntax)
+    reader.walk(syntax)
 
     return StaticUsage(staticMember: self.staticMember, isUsed: isUsed)
   }
@@ -80,15 +80,14 @@ public struct StaticUsage: Equatable {
   public let isUsed: Bool
 }
 
-// TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
-private final class StaticUsageReader: SyntaxRewriter {
+private final class StaticUsageReader: SyntaxVisitor {
   init(onNodeVisit: @escaping (MemberAccessExprSyntax) -> Void) {
     self.onNodeVisit = onNodeVisit
   }
 
-  override func visit(_ node: MemberAccessExprSyntax) -> ExprSyntax {
+  override func visit(_ node: MemberAccessExprSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(node)
-    return super.visit(node)
+    return .visitChildren
   }
 
   private let onNodeVisit: (MemberAccessExprSyntax) -> Void
