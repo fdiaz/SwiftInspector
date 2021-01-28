@@ -43,17 +43,6 @@ public struct StandardAnalyzer {
     visitor.walk(syntax)
   }
 
-  /// Analyzes a Swift file with the provide visitor
-  /// - Parameters:
-  ///   - fileURL: The fileURL where the Swift file is located
-  ///   - visitor: A Swift syntax rewriter to use to analyze the provided file
-  /// - Note: Use a visitor when possible. Rewriters should be used to work around this bug: https://bugs.swift.org/browse/SR-11591
-  func analyze(fileURL: URL, withVisitor visitor: SyntaxRewriter) throws
-  {
-    let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
-    _ = visitor.visit(syntax)
-  }
-
   // MARK: Private
 
   private let cachedSyntaxTree: CachedSyntaxTree
