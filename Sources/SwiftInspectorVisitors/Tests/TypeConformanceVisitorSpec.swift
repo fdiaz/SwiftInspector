@@ -33,6 +33,9 @@ final class TypeConformanceVisitorSpec: QuickSpec {
   private var sut = TypeConformanceVisitor()
   
   override func spec() {
+    beforeEach {
+      self.sut = TypeConformanceVisitor()
+    }
 
     describe("visit(_:)") {
       context("when a type conforms to a protocol") {
@@ -41,7 +44,6 @@ final class TypeConformanceVisitorSpec: QuickSpec {
             let content = """
             class SomeObject: Foo {}
             """
-            self.sut = TypeConformanceVisitor()
             try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
           }
 
@@ -55,7 +57,6 @@ final class TypeConformanceVisitorSpec: QuickSpec {
             let content = """
             class SomeObject: Foo, Bar, FooBar {}
             """
-            self.sut = TypeConformanceVisitor()
             try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
           }
 
@@ -70,7 +71,6 @@ final class TypeConformanceVisitorSpec: QuickSpec {
             class SomeObject: Foo, Bar,
               FooBar {}
             """
-            self.sut = TypeConformanceVisitor()
             try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
           }
 
@@ -87,7 +87,6 @@ final class TypeConformanceVisitorSpec: QuickSpec {
             struct SomeStruct: Foo {}
           }
           """
-          self.sut = TypeConformanceVisitor()
           try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
         }
 
@@ -103,7 +102,6 @@ final class TypeConformanceVisitorSpec: QuickSpec {
             struct SomeStruct: Foo {}
           }
           """
-          self.sut = TypeConformanceVisitor()
           try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
         }
 
