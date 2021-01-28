@@ -47,9 +47,8 @@ final class ImportsCommand: ParsableCommand {
 
     let outputArray = try FileManager.default.swiftFiles(at: fileURL)
       .reduce(Set<String>()) { result, url in
-        let reader = ImportSyntaxReader()
-        try analyzer.analyze(fileURL: url, withVisitor: reader)
-        let output = reader.imports.map { outputString(from: $0) }
+        let output = try analyzer.analyzeImports(fileURL: url)
+          .map { outputString(from: $0) }
         return result.union(output)
     }
 
