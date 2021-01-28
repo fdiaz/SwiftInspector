@@ -180,10 +180,8 @@ final class GenericRequirementVisitorSpec: QuickSpec {
       context("visiting a syntax tree involving an associatedtype that has one generic constraint") {
         it("finds the generic requirements") {
           let content = """
-            public protocol Test {
-              associatedtype SomeType: SomeProtocol where
-                Element: AnyObject
-            }
+            associatedtype SomeType: SomeProtocol where
+              Element: AnyObject
             """
 
           try VisitorExecutor.walkVisitor(
@@ -200,11 +198,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
       context("visiting a syntax tree involving an associatedtype that has two generic constraints") {
         beforeEach {
           let content = """
-            public protocol Test {
-              associatedtype SomeType: SomeProtocol where
-                Key: AnyObject,
-                Value == CustomStringConvertible
-            }
+            associatedtype SomeType: SomeProtocol where
+              Key: AnyObject,
+              Value == CustomStringConvertible
             """
 
           try? VisitorExecutor.walkVisitor(
@@ -230,11 +226,8 @@ final class GenericRequirementVisitorSpec: QuickSpec {
       context("visiting a syntax tree involving a contextual where clause that has one generic constraint") {
         it("finds the generic requirements") {
           let content = """
-              extension Array
-              {
-                func print() where Element: CustomStringConvertible {
-                  forEach { print($0) }
-                }
+              func print() where Element: CustomStringConvertible {
+                forEach { print($0) }
               }
               """
 
