@@ -31,14 +31,21 @@ public final class GenericRequirementVisitor: SyntaxVisitor {
 
   public override func visit(_ node: SameTypeRequirementSyntax) -> SyntaxVisitorContinueKind {
     genericRequirements.append(GenericRequirement(node: node))
-    return .visitChildren
+    // Children don't have any more information about generic requirements, so don't visit them.
+    return .skipChildren
   }
 
   public override func visit(_ node: ConformanceRequirementSyntax) -> SyntaxVisitorContinueKind {
     genericRequirements.append(GenericRequirement(node: node))
-    return .visitChildren
+    // Children don't have any more information about generic requirements, so don't visit them.
+    return .skipChildren
   }
 
+  public override func visit(_ node: MemberDeclBlockSyntax) -> SyntaxVisitorContinueKind {
+    // A member declaration block means we've found the body of the type.
+    // There's nothing in this body that would help us determine generic requirements.
+    .skipChildren
+  }
 }
 
 public struct GenericRequirement: Codable, Equatable {
