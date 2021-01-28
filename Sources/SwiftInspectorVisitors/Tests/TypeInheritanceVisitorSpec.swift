@@ -29,12 +29,12 @@ import SwiftInspectorTestHelpers
 
 @testable import SwiftInspectorVisitors
 
-final class TypeConformanceVisitorSpec: QuickSpec {
-  private var sut = TypeConformanceVisitor()
+final class TypeInheritanceVisitorSpec: QuickSpec {
+  private var sut = TypeInheritanceVisitor()
   
   override func spec() {
     beforeEach {
-      self.sut = TypeConformanceVisitor()
+      self.sut = TypeInheritanceVisitor()
     }
 
     describe("visit(_:)") {
@@ -48,7 +48,7 @@ final class TypeConformanceVisitorSpec: QuickSpec {
           }
 
           it("returns the conforming type name") {
-            expect(self.sut.conformsToTypes) == ["Foo"]
+            expect(self.sut.inheritsFromTypes) == ["Foo"]
           }
         }
 
@@ -61,7 +61,7 @@ final class TypeConformanceVisitorSpec: QuickSpec {
           }
 
           it("returns the conforming type names") {
-            expect(self.sut.conformsToTypes) == ["Foo", "Bar", "FooBar"]
+            expect(self.sut.inheritsFromTypes) == ["Foo", "Bar", "FooBar"]
           }
         }
 
@@ -75,7 +75,7 @@ final class TypeConformanceVisitorSpec: QuickSpec {
           }
 
           it("returns the conforming type names") {
-            expect(self.sut.conformsToTypes) == ["Foo", "Bar", "FooBar"]
+            expect(self.sut.inheritsFromTypes) == ["Foo", "Bar", "FooBar"]
           }
         }
       }
@@ -91,7 +91,7 @@ final class TypeConformanceVisitorSpec: QuickSpec {
         }
 
         it("does not find the inner type's conformance the conforming type names") {
-          expect(self.sut.conformsToTypes).to(beEmpty())
+          expect(self.sut.inheritsFromTypes).to(beEmpty())
         }
       }
 
@@ -106,7 +106,7 @@ final class TypeConformanceVisitorSpec: QuickSpec {
         }
 
         it("only finds the outer type's conformance") {
-          expect(self.sut.conformsToTypes) == ["Bar"]
+          expect(self.sut.inheritsFromTypes) == ["Bar"]
         }
       }
     }

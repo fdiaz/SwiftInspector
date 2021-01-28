@@ -25,12 +25,12 @@
 import Foundation
 import SwiftSyntax
 
-public final class TypeConformanceVisitor: SyntaxVisitor {
+public final class TypeInheritanceVisitor: SyntaxVisitor {
 
-  public private(set) var conformsToTypes = [String]()
+  public private(set) var inheritsFromTypes = [String]()
 
   public override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {
-    conformsToTypes.append(node.typeName.description.trimmingCharacters(in: .whitespacesAndNewlines))
+    inheritsFromTypes.append(node.typeName.description.trimmingCharacters(in: .whitespacesAndNewlines))
     return .visitChildren
   }
 
