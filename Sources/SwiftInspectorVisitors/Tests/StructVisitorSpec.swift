@@ -93,7 +93,7 @@ final class StructVisitorSpec: QuickSpec {
 
       context("visiting a code block with nested declarations") {
         context("visiting a struct with nested structs") {
-          it("finds all nested structs") {
+          beforeEach {
             let content = """
               public struct FooStruct {
                 public struct BarFooStruct: Equatable {
@@ -110,45 +110,91 @@ final class StructVisitorSpec: QuickSpec {
               }
               """
 
-            try VisitorExecutor.walkVisitor(
+            try? VisitorExecutor.walkVisitor(
               self.sut,
               overContent: content)
+          }
 
-            expect(self.sut.structs) == [
-              StructInfo(
-                name: "FooStruct",
-                inheritsFromTypes: [],
-                parentTypeName: nil),
-              StructInfo(
-                name: "BarFooStruct",
-                inheritsFromTypes: ["Equatable"],
-                parentTypeName: "FooStruct"),
-              StructInfo(
-                name: "BarBarFooStruct",
-                inheritsFromTypes: ["Hashable"],
-                parentTypeName: "FooStruct.BarFooStruct"),
-              StructInfo(
-                name: "FooFooStruct",
-                inheritsFromTypes: [],
-                parentTypeName: "FooStruct"),
-              StructInfo(
-                name: "BarFooFoo1Struct",
-                inheritsFromTypes: ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"],
-                parentTypeName: "FooStruct.FooFooStruct"),
-              StructInfo(
-                name: "BarBarFooFoo1Struct",
-                inheritsFromTypes: [],
-                parentTypeName: "FooStruct.FooFooStruct.BarFooFoo1Struct"),
-              StructInfo(
-                name: "BarFooFoo2Struct",
-                inheritsFromTypes: [],
-                parentTypeName: "FooStruct.FooFooStruct"),
-            ]
+          it("finds FooStruct") {
+            guard self.sut.structs.count > 0 else {
+              fail("FooStruct not found at expected index")
+              return
+            }
+            let structInfo = self.sut.structs[0]
+            expect(structInfo.name) == "FooStruct"
+            expect(structInfo.inheritsFromTypes) == []
+            expect(structInfo.parentTypeName).to(beNil())
+          }
+
+          it("finds BarFooStruct") {
+            guard self.sut.structs.count > 1 else {
+              fail("BarFooStruct not found at expected index")
+              return
+            }
+            let structInfo = self.sut.structs[1]
+            expect(structInfo.name) == "BarFooStruct"
+            expect(structInfo.inheritsFromTypes) == ["Equatable"]
+            expect(structInfo.parentTypeName) == "FooStruct"
+          }
+
+          it("finds BarBarFooStruct") {
+            guard self.sut.structs.count > 2 else {
+              fail("BarBarFooStruct not found at expected index")
+              return
+            }
+            let structInfo = self.sut.structs[2]
+            expect(structInfo.name) == "BarBarFooStruct"
+            expect(structInfo.inheritsFromTypes) == ["Hashable"]
+            expect(structInfo.parentTypeName) == "FooStruct.BarFooStruct"
+          }
+
+          it("finds FooFooStruct") {
+            guard self.sut.structs.count > 3 else {
+              fail("FooFooStruct not found at expected index")
+              return
+            }
+            let structInfo = self.sut.structs[3]
+            expect(structInfo.name) == "FooFooStruct"
+            expect(structInfo.inheritsFromTypes) == []
+            expect(structInfo.parentTypeName) == "FooStruct"
+          }
+
+          it("finds BarFooFoo1Struct") {
+            guard self.sut.structs.count > 4 else {
+              fail("BarFooFoo1Struct not found at expected index")
+              return
+            }
+            let structInfo = self.sut.structs[4]
+            expect(structInfo.name) == "BarFooFoo1Struct"
+            expect(structInfo.inheritsFromTypes) == ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"]
+            expect(structInfo.parentTypeName) == "FooStruct.FooFooStruct"
+          }
+
+          it("finds BarBarFooFoo1Struct") {
+            guard self.sut.structs.count > 5 else {
+              fail("BarBarFooFoo1Struct not found at expected index")
+              return
+            }
+            let structInfo = self.sut.structs[5]
+            expect(structInfo.name) == "BarBarFooFoo1Struct"
+            expect(structInfo.inheritsFromTypes) == []
+            expect(structInfo.parentTypeName) == "FooStruct.FooFooStruct.BarFooFoo1Struct"
+          }
+
+          it("finds BarFooFoo2Struct") {
+            guard self.sut.structs.count > 6 else {
+              fail("BarFooFoo2Struct not found at expected index")
+              return
+            }
+            let structInfo = self.sut.structs[6]
+            expect(structInfo.name) == "BarFooFoo2Struct"
+            expect(structInfo.inheritsFromTypes) == []
+            expect(structInfo.parentTypeName) == "FooStruct.FooFooStruct"
           }
         }
 
         context("visiting a struct with nested structs, classes, and enums") {
-          it("finds all nested structs") { // TODO: find classes and enums as well
+          beforeEach { // TODO: find classes and enums as well
             let content = """
               public struct FooStruct {
                 public class BarFooClass: Equatable {
@@ -163,24 +209,42 @@ final class StructVisitorSpec: QuickSpec {
               }
               """
 
-            try VisitorExecutor.walkVisitor(
+            try? VisitorExecutor.walkVisitor(
               self.sut,
               overContent: content)
+          }
 
-            expect(self.sut.structs) == [
-              StructInfo(
-                name: "FooStruct",
-                inheritsFromTypes: [],
-                parentTypeName: nil),
-              StructInfo(
-                name: "FooFooStruct",
-                inheritsFromTypes: [],
-                parentTypeName: "FooStruct"),
-              StructInfo(
-                name: "BarFooFooStruct",
-                inheritsFromTypes: [],
-                parentTypeName: "FooStruct.FooFooStruct"),
-            ]
+          it("finds FooStruct") {
+            guard self.sut.structs.count > 0 else {
+              fail("FooStruct not found at expected index")
+              return
+            }
+            let structInfo = self.sut.structs[0]
+            expect(structInfo.name) == "FooStruct"
+            expect(structInfo.inheritsFromTypes) == []
+            expect(structInfo.parentTypeName).to(beNil())
+          }
+
+          it("finds FooFooStruct") {
+            guard self.sut.structs.count > 1 else {
+              fail("FooFooStruct not found at expected index")
+              return
+            }
+            let structInfo = self.sut.structs[1]
+            expect(structInfo.name) == "FooFooStruct"
+            expect(structInfo.inheritsFromTypes) == []
+            expect(structInfo.parentTypeName) == "FooStruct"
+          }
+
+          it("finds BarFooFooStruct") {
+            guard self.sut.structs.count > 2 else {
+              fail("BarFooFooStruct not found at expected index")
+              return
+            }
+            let structInfo = self.sut.structs[2]
+            expect(structInfo.name) == "BarFooFooStruct"
+            expect(structInfo.inheritsFromTypes) == []
+            expect(structInfo.parentTypeName) == "FooStruct.FooFooStruct"
           }
         }
       }
