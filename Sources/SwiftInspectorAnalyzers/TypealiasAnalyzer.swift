@@ -41,7 +41,7 @@ public final class TypealiasAnalyzer: Analyzer {
       let statement = self.typealiasStatement(from: node)
       allTypealias.append(statement)
     }
-    _ = reader.visit(syntax)
+    reader.walk(syntax)
 
     return allTypealias
   }
@@ -73,15 +73,14 @@ public final class TypealiasAnalyzer: Analyzer {
   }
 }
 
-// TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
-private final class TypealiasSyntaxReader: SyntaxRewriter {
+private final class TypealiasSyntaxReader: SyntaxVisitor {
   init(onNodeVisit: @escaping (TypealiasDeclSyntax) -> Void) {
     self.onNodeVisit = onNodeVisit
   }
 
-  override func visit(_ node: TypealiasDeclSyntax) -> DeclSyntax {
+  override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
     onNodeVisit(node)
-    return super.visit(node)
+    return .visitChildren
   }
 
   let onNodeVisit: (TypealiasDeclSyntax) -> Void
