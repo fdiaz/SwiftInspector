@@ -31,6 +31,7 @@ public final class StructVisitor: SyntaxVisitor {
     self.parentTypeName = parentTypeName
   }
 
+  /// All of the structs found by this visitor.
   public var structs: [StructInfo] {
     [structInfo].compactMap { $0 } + innerStructs
   }
