@@ -49,10 +49,10 @@ final class StructVisitorSpec: QuickSpec {
               self.sut,
               overContent: content)
 
-            expect(self.sut.structs.first) == StructInfo(
-              name: "SomeStruct",
-              inheritsFromTypes: [],
-              parentTypeName: nil)
+            let structInfo = self.sut.structs.first
+            expect(structInfo?.name) == "SomeStruct"
+            expect(structInfo?.inheritsFromTypes) == []
+            expect(structInfo?.parentTypeName).to(beNil())
           }
         }
 
@@ -66,10 +66,10 @@ final class StructVisitorSpec: QuickSpec {
               self.sut,
               overContent: content)
 
-            expect(self.sut.structs.first) == StructInfo(
-              name: "SomeStruct",
-              inheritsFromTypes: ["Equatable"],
-              parentTypeName: nil)
+            let structInfo = self.sut.structs.first
+            expect(structInfo?.name) == "SomeStruct"
+            expect(structInfo?.inheritsFromTypes) == ["Equatable"]
+            expect(structInfo?.parentTypeName).to(beNil())
           }
         }
 
@@ -83,10 +83,10 @@ final class StructVisitorSpec: QuickSpec {
               self.sut,
               overContent: content)
 
-            expect(self.sut.structs.first) == StructInfo(
-              name: "SomeStruct",
-              inheritsFromTypes: ["Foo", "Bar"],
-              parentTypeName: nil)
+            let structInfo = self.sut.structs.first
+            expect(structInfo?.name) == "SomeStruct"
+            expect(structInfo?.inheritsFromTypes) == ["Foo", "Bar"]
+            expect(structInfo?.parentTypeName).to(beNil())
           }
         }
       }
@@ -322,6 +322,22 @@ final class StructVisitorSpec: QuickSpec {
         it("asserts") {
           let content = """
             public enum FooEnum {}
+            """
+
+          // The StructVisitor is only meant to be used over a single struct.
+          // Using a StructVisitor over a block that has a top-level enum
+          // is API misuse.
+          expect(try VisitorExecutor.walkVisitor(
+                  self.sut,
+                  overContent: content))
+            .to(throwAssertion())
+        }
+      }
+
+      context("visiting a code block with a protocol declaration") {
+        it("asserts") {
+          let content = """
+            public protocol FooProtocol {}
             """
 
           // The StructVisitor is only meant to be used over a single struct.

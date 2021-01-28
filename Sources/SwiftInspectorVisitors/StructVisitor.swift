@@ -100,10 +100,15 @@ public final class StructVisitor: SyntaxVisitor {
       // TODO: Utilize enum visitor to find inner enum information, utilizing parent information from structInfo
     } else {
       // We've encountered a class declaration before encountering a struct declaration. Something is wrong.
-      assertionFailure("Encountered a top-level class. This is a usage error: a single StructVisitor instance should start walking only over a node of type `StructDeclSyntax`")
+      assertionFailure("Encountered a top-level enum. This is a usage error: a single StructVisitor instance should start walking only over a node of type `StructDeclSyntax`")
     }
     return .skipChildren
+  }
 
+  public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
+    // We've encountered a protocol declaration, which can only be defined at the top-level. Something is wrong.
+    assertionFailure("Encountered a protocol. This is a usage error: a single StructVisitor instance should start walking only over a node of type `StructDeclSyntax`")
+    return .skipChildren
   }
 
   // MARK: Private
