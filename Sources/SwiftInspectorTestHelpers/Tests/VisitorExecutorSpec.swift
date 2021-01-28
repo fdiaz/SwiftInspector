@@ -38,32 +38,13 @@ final class VisitorExecutorSpec: QuickSpec {
     }
   }
 
-  private final class MockRewriter: SyntaxRewriter {
-    var ifStatementSyntaxVisitCount = 0
-    override func visit(_ node: IfStmtSyntax) -> StmtSyntax {
-      ifStatementSyntaxVisitCount += 1
-      return super.visit(node)
-    }
-  }
-
   override func spec() {
     describe("walk(:)") {
-      context("with a visitor") {
-        it("walks the visitor over the content") {
-          let visitor = MockVisitor()
-          try VisitorExecutor.walkVisitor(visitor, overContent: "if true {}")
+      it("walks the visitor over the content") {
+        let visitor = MockVisitor()
+        try VisitorExecutor.walkVisitor(visitor, overContent: "if true {}")
 
-          expect(visitor.ifStatementSyntaxVisitCount) == 1
-        }
-      }
-
-      context("with a rewriter") {
-        it("walks the rewriter over the content") {
-          let visitor = MockRewriter()
-          try VisitorExecutor.walkVisitor(visitor, overContent: "if true {}")
-
-          expect(visitor.ifStatementSyntaxVisitCount) == 1
-        }
+        expect(visitor.ifStatementSyntaxVisitCount) == 1
       }
     }
   }
