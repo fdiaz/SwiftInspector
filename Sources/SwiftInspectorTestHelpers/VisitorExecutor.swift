@@ -42,21 +42,4 @@ public final class VisitorExecutor {
     visitor.walk(syntax)
     try Temporary.removeItem(at: fileURL)
   }
-
-  /// Walks the provided syntax rewriter along the content's syntax.
-  ///
-  /// - Parameters:
-  ///   - rewriter: The syntax rewriter to walk along the content syntax.
-  ///   - content: The content to turn into source and walk.
-  /// - Note: Use a visitor when possible. Rewriters should be used to work around this bug: https://bugs.swift.org/browse/SR-11591
-  public static func walkVisitor<Rewriter: SyntaxRewriter>(
-    _ rewriter: Rewriter,
-    overContent content: String)
-  throws
-  {
-    let fileURL = try Temporary.makeFile(content: content)
-    let syntax: SourceFileSyntax = try SyntaxParser.parse(fileURL)
-    _ = rewriter.visit(syntax)
-    try Temporary.removeItem(at: fileURL)
-  }
 }

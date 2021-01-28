@@ -59,23 +59,14 @@ final class StandardAnalyzerSpec: QuickSpec {
         }
         try? Temporary.removeItem(at: fileURL)
       }
-      context("with a visitor") {
-        it("walks the visitor over the content") {
-          let visitor = MockVisitor()
-          try StandardAnalyzer().analyze(fileURL: fileURL, withVisitor: visitor)
 
-          expect(visitor.ifStatementSyntaxVisitCount) == 1
-        }
+      it("walks the visitor over the content") {
+        let visitor = MockVisitor()
+        try StandardAnalyzer().analyze(fileURL: fileURL, withVisitor: visitor)
+
+        expect(visitor.ifStatementSyntaxVisitCount) == 1
       }
 
-      context("with a rewriter") {
-        it("walks the rewriter over the content") {
-          let visitor = MockRewriter()
-          try StandardAnalyzer().analyze(fileURL: fileURL, withVisitor: visitor)
-
-          expect(visitor.ifStatementSyntaxVisitCount) == 1
-        }
-      }
     }
   }
 }

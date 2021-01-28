@@ -25,14 +25,13 @@
 import Foundation
 import SwiftSyntax
 
-// TODO: Update to use SyntaxVisitor when this bug is resolved (https://bugs.swift.org/browse/SR-11591)
-public final class ImportSyntaxReader: SyntaxRewriter {
+public final class ImportSyntaxReader: SyntaxVisitor {
   public private(set) var imports: [ImportStatement] = []
 
-  public override func visit(_ node: ImportDeclSyntax) -> DeclSyntax {
+  public override func visit(_ node: ImportDeclSyntax) -> SyntaxVisitorContinueKind {
     let statement = importStatement(from: node)
     imports.append(statement)
-    return super.visit(node)
+    return .visitChildren
   }
 
   private func importStatement(from syntaxNode: ImportDeclSyntax) -> ImportStatement {
