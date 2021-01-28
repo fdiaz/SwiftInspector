@@ -31,12 +31,13 @@ public final class TypeInheritanceVisitor: SyntaxVisitor {
 
   public override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {
     inheritsFromTypes.append(node.typeName.description.trimmingCharacters(in: .whitespacesAndNewlines))
-    // We care about sibling types but not children
+    // Children don't have any more information about inheritance, so don't visit them.
     return .skipChildren
   }
 
   public override func visit(_ node: MemberDeclBlockSyntax) -> SyntaxVisitorContinueKind {
-    // We don't care about the internals of this type.
+    // A member declaration block means we've found the body of the type.
+    // There's nothing in this body that would help us determine type inheritance.
     .skipChildren
   }
 }
