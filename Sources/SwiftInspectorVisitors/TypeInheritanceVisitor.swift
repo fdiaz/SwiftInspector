@@ -31,7 +31,8 @@ public final class TypeInheritanceVisitor: SyntaxVisitor {
 
   public override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {
     inheritsFromTypes.append(node.typeName.description.trimmingCharacters(in: .whitespacesAndNewlines))
-    return .visitChildren
+    // We care about sibling types but not children
+    return .skipChildren
   }
 
   public override func visit(_ node: MemberDeclBlockSyntax) -> SyntaxVisitorContinueKind {
