@@ -27,7 +27,7 @@ import SwiftSyntax
 
 public final class GenericRequirementVisitor: SyntaxVisitor {
 
-  public var genericRequirements = [GenericRequirement]()
+  public private(set) var genericRequirements = [GenericRequirement]()
 
   public override func visit(_ node: SameTypeRequirementSyntax) -> SyntaxVisitorContinueKind {
     genericRequirements.append(GenericRequirement(node: node))
