@@ -94,7 +94,7 @@ public final class ClassVisitor: SyntaxVisitor {
       innerStructs += structVisitor.structs
       innerClasses += structVisitor.innerClasses
     } else {
-      // We've encountered a class declaration before encountering a class declaration. Something is wrong.
+      // We've encountered a struct declaration before encountering a class declaration. Something is wrong.
       assertionFailure("Encountered a top-level struct. This is a usage error: a single ClassVisitor instance should start walking only over a node of type `ClassDeclSyntax`")
     }
     return .skipChildren
