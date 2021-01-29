@@ -59,7 +59,7 @@ public final class FileVisitor: SyntaxVisitor {
     structVisitor.walk(node)
 
     fileInfo.appendStructs(structVisitor.structs)
-    // TODO: append classes
+    fileInfo.appendClasses(structVisitor.innerClasses)
     // TODO: append enums
 
     // We don't need to visit children because our visitor just did that for us.
@@ -67,8 +67,11 @@ public final class FileVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    // TODO: find an append classes
-    // TODO: append structs
+    let classVisitor = ClassVisitor()
+    classVisitor.walk(node)
+
+    fileInfo.appendClasses(classVisitor.classes)
+    fileInfo.appendStructs(classVisitor.innerStructs)
     // TODO: append enums
 
     // We don't need to visit children because our visitor just did that for us.
@@ -90,7 +93,8 @@ public struct FileInfo: Codable, Equatable {
   public private(set) var imports = [ImportStatement]()
   public private(set) var protocols = [ProtocolInfo]()
   public private(set) var structs = [StructInfo]()
-  // TODO: also find classes and enums
+  public private(set) var classes = [ClassInfo]()
+  // TODO: also find enums
 
   mutating func appendImports(_ imports: [ImportStatement]) {
     self.imports.append(contentsOf: imports)
@@ -100,5 +104,8 @@ public struct FileInfo: Codable, Equatable {
   }
   mutating func appendStructs(_ structs: [StructInfo]) {
     self.structs.append(contentsOf: structs)
+  }
+  mutating func appendClasses(_ classes: [ClassInfo]) {
+    self.classes.append(contentsOf: classes)
   }
 }
