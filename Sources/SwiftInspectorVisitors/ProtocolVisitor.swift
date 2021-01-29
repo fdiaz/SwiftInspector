@@ -27,7 +27,7 @@ import SwiftSyntax
 
 public final class ProtocolVisitor: SyntaxVisitor {
 
-  public var protocolInfo: ProtocolInfo?
+  public private(set) var protocolInfo: ProtocolInfo?
 
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
 
