@@ -179,11 +179,28 @@ final class ExtensionVisitorSpec: QuickSpec {
           }
         }
 
-        context("with a top-level enum after a top-level class") {
+        context("with a top-level class after an extension") {
           it("asserts") {
             let content = """
             public extension Array {}
-            public struct FooEnum {}
+            public class FooClass {}
+            """
+
+            // The ExtensionVisitor is only meant to be used over a single extension.
+            // Using a ExtensionVisitor over a block that has a top-level class
+            // is API misuse.
+            expect(try VisitorExecutor.walkVisitor(
+                    self.sut,
+                    overContent: content))
+              .to(throwAssertion())
+          }
+        }
+
+        context("with a top-level enum after an extension") {
+          it("asserts") {
+            let content = """
+            public extension Array {}
+            public enum FooEnum {}
             """
 
             // The ExtensionVisitor is only meant to be used over a single extension.
@@ -204,7 +221,7 @@ final class ExtensionVisitorSpec: QuickSpec {
             """
 
           // The ExtensionVisitor is only meant to be used over a single extension.
-          // Using a ExtensionVisitor over a block that has a top-level class
+          // Using a ExtensionVisitor over a block that has a top-level struct
           // is API misuse.
           expect(try VisitorExecutor.walkVisitor(
                   self.sut,
@@ -252,7 +269,7 @@ final class ExtensionVisitorSpec: QuickSpec {
             """
 
           // The ExtensionVisitor is only meant to be used over a single extension.
-          // Using a ExtensionVisitor over a block that has a top-level enum
+          // Using a ExtensionVisitor over a block that has a top-level protocol
           // is API misuse.
           expect(try VisitorExecutor.walkVisitor(
                   self.sut,
