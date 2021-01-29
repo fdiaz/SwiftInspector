@@ -360,6 +360,22 @@ final class ClassVisitorSpec: QuickSpec {
             .to(throwAssertion())
         }
       }
+
+      context("visiting a code block with an extension declaration") {
+        it("asserts") {
+          let content = """
+            public extension Array {}
+            """
+
+          // The ClassVisitor is only meant to be used over a single class.
+          // Using a ClassVisitor over a block that has an extension
+          // is API misuse.
+          expect(try VisitorExecutor.walkVisitor(
+                  self.sut,
+                  overContent: content))
+            .to(throwAssertion())
+        }
+      }
     }
   }
 }
