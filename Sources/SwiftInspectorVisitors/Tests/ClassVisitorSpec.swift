@@ -116,80 +116,73 @@ final class ClassVisitorSpec: QuickSpec {
           }
 
           it("finds FooClass") {
-            guard self.sut.classes.count > 0 else {
-              fail("FooClass not found at expected index")
-              return
+            let matching = self.sut.classes.filter {
+              $0.name == "FooClass"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == nil
             }
-            let classInfo = self.sut.classes[0]
-            expect(classInfo.name) == "FooClass"
-            expect(classInfo.inheritsFromTypes) == []
-            expect(classInfo.parentTypeName).to(beNil())
+
+            expect(matching.count) == 1
           }
 
           it("finds BarFooClass") {
-            guard self.sut.classes.count > 1 else {
-              fail("BarFooClass not found at expected index")
-              return
+            let matching = self.sut.classes.filter {
+              $0.name == "BarFooClass"
+                && $0.inheritsFromTypes == ["Equatable"]
+                && $0.parentTypeName == "FooClass"
             }
-            let classInfo = self.sut.classes[1]
-            expect(classInfo.name) == "BarFooClass"
-            expect(classInfo.inheritsFromTypes) == ["Equatable"]
-            expect(classInfo.parentTypeName) == "FooClass"
+
+            expect(matching.count) == 1
           }
 
           it("finds BarBarFooClass") {
-            guard self.sut.classes.count > 2 else {
-              fail("BarBarFooClass not found at expected index")
-              return
+            let matching = self.sut.classes.filter {
+              $0.name == "BarBarFooClass"
+                && $0.inheritsFromTypes == ["Hashable"]
+                && $0.parentTypeName == "FooClass.BarFooClass"
             }
-            let classInfo = self.sut.classes[2]
-            expect(classInfo.name) == "BarBarFooClass"
-            expect(classInfo.inheritsFromTypes) == ["Hashable"]
-            expect(classInfo.parentTypeName) == "FooClass.BarFooClass"
+
+            expect(matching.count) == 1
           }
 
           it("finds FooFooClass") {
-            guard self.sut.classes.count > 3 else {
-              fail("FooFooClass not found at expected index")
-              return
+            let matching = self.sut.classes.filter {
+              $0.name == "FooFooClass"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooClass"
             }
-            let classInfo = self.sut.classes[3]
-            expect(classInfo.name) == "FooFooClass"
-            expect(classInfo.inheritsFromTypes) == []
-            expect(classInfo.parentTypeName) == "FooClass"
+
+            expect(matching.count) == 1
           }
 
           it("finds BarFooFoo1Class") {
-            guard self.sut.classes.count > 4 else {
-              fail("BarFooFoo1Class not found at expected index")
-              return
+            let matching = self.sut.classes.filter {
+              $0.name == "BarFooFoo1Class"
+                && $0.inheritsFromTypes == ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"]
+                && $0.parentTypeName == "FooClass.FooFooClass"
             }
-            let classInfo = self.sut.classes[4]
-            expect(classInfo.name) == "BarFooFoo1Class"
-            expect(classInfo.inheritsFromTypes) == ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"]
-            expect(classInfo.parentTypeName) == "FooClass.FooFooClass"
+
+            expect(matching.count) == 1
           }
 
           it("finds BarBarFooFoo1Class") {
-            guard self.sut.classes.count > 5 else {
-              fail("BarBarFooFoo1Class not found at expected index")
-              return
+            let matching = self.sut.classes.filter {
+              $0.name == "BarBarFooFoo1Class"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooClass.FooFooClass.BarFooFoo1Class"
             }
-            let classInfo = self.sut.classes[5]
-            expect(classInfo.name) == "BarBarFooFoo1Class"
-            expect(classInfo.inheritsFromTypes) == []
-            expect(classInfo.parentTypeName) == "FooClass.FooFooClass.BarFooFoo1Class"
+
+            expect(matching.count) == 1
           }
 
           it("finds BarFooFoo2Class") {
-            guard self.sut.classes.count > 6 else {
-              fail("BarFooFoo2Class not found at expected index")
-              return
+            let matching = self.sut.classes.filter {
+              $0.name == "BarFooFoo2Class"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooClass.FooFooClass"
             }
-            let classInfo = self.sut.classes[6]
-            expect(classInfo.name) == "BarFooFoo2Class"
-            expect(classInfo.inheritsFromTypes) == []
-            expect(classInfo.parentTypeName) == "FooClass.FooFooClass"
+
+            expect(matching.count) == 1
           }
         }
 
@@ -215,47 +208,43 @@ final class ClassVisitorSpec: QuickSpec {
           }
 
           it("finds FooClass") {
-            guard self.sut.classes.count > 0 else {
-              fail("FooClass not found at expected index")
-              return
+            let matching = self.sut.classes.filter {
+              $0.name == "FooClass"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == nil
             }
-            let classInfo = self.sut.classes[0]
-            expect(classInfo.name) == "FooClass"
-            expect(classInfo.inheritsFromTypes) == []
-            expect(classInfo.parentTypeName).to(beNil())
+
+            expect(matching.count) == 1
           }
 
           it("finds BarBarFooClass") {
-            guard self.sut.classes.count > 1 else {
-              fail("BarBarFooClass not found at expected index")
-              return
+            let matching = self.sut.classes.filter {
+              $0.name == "BarBarFooClass"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooClass.BarFooStruct"
             }
-            let classInfo = self.sut.classes[1]
-            expect(classInfo.name) == "BarBarFooClass"
-            expect(classInfo.inheritsFromTypes) == []
-            expect(classInfo.parentTypeName) == "FooClass.BarFooStruct"
+
+            expect(matching.count) == 1
           }
 
           it("finds FooFooClass") {
-            guard self.sut.classes.count > 2 else {
-              fail("FooFooClass not found at expected index")
-              return
+            let matching = self.sut.classes.filter {
+              $0.name == "FooFooClass"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooClass"
             }
-            let classInfo = self.sut.classes[2]
-            expect(classInfo.name) == "FooFooClass"
-            expect(classInfo.inheritsFromTypes) == []
-            expect(classInfo.parentTypeName) == "FooClass"
+
+            expect(matching.count) == 1
           }
 
           it("finds BarFooFooClass") {
-            guard self.sut.classes.count > 3 else {
-              fail("BarFooFooClass not found at expected index")
-              return
+            let matching = self.sut.classes.filter {
+              $0.name == "BarFooFooClass"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooClass.FooFooClass"
             }
-            let classInfo = self.sut.classes[3]
-            expect(classInfo.name) == "BarFooFooClass"
-            expect(classInfo.inheritsFromTypes) == []
-            expect(classInfo.parentTypeName) == "FooClass.FooFooClass"
+
+            expect(matching.count) == 1
           }
         }
       }
