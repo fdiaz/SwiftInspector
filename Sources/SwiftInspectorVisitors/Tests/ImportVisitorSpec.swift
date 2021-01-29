@@ -80,12 +80,12 @@ final class ImportVisitorSpec: QuickSpec {
 
       }
 
-      context("with an  import statement with an attribute") {
+      context("with an import statement with an attribute") {
         beforeEach {
           let content = """
                         @_export import SomeModule
 
-                        public final class Some {}
+                        public final protocol Some {}
                         """
           try? VisitorExecutor.walkVisitor(
             self.sut,
@@ -102,8 +102,7 @@ final class ImportVisitorSpec: QuickSpec {
           let content = """
                         import SomeModule.Submodule
 
-                        public final class Some {
-                        }
+                        public final struct Some {}
                         """
           try? VisitorExecutor.walkVisitor(
             self.sut,
@@ -129,8 +128,7 @@ final class ImportVisitorSpec: QuickSpec {
           let content = """
                         import struct SomeModule.Submodule
 
-                        public final class Some {
-                        }
+                        public final enum Some {}
                         """
           try? VisitorExecutor.walkVisitor(
             self.sut,
@@ -157,8 +155,7 @@ final class ImportVisitorSpec: QuickSpec {
                         import struct SomeModule.Submodule
                         import class Another.AnotherSubmodule
 
-                        public final class Some {
-                        }
+                        public final class Some {}
                         """
           try? VisitorExecutor.walkVisitor(
             self.sut,
