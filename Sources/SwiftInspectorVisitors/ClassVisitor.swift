@@ -79,7 +79,7 @@ public final class ClassVisitor: SyntaxVisitor {
   }
 
   public override func visitPost(_ node: ClassDeclSyntax) {
-    guard !hasFinishedParsingClass else { return true } 
+    guard !hasFinishedParsingClass else { return } 
     hasFinishedParsingClass = node.identifier.text == classInfo?.name
   }
 
