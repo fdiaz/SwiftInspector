@@ -84,7 +84,7 @@ public final class StructVisitor: SyntaxVisitor {
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
     if !hasFinishedParsingStruct, let structInfo = structInfo {
-      // We've previously found a struct declaration, so this must be an inner struct.
+      // We've previously found a struct declaration, so this must be an inner class.
       let qualifiedParentTypeName = QualifiedParentNameCreator.createNameGiven(
         currentParentTypeName: parentTypeName,
         currentTypeName: structInfo.name)
