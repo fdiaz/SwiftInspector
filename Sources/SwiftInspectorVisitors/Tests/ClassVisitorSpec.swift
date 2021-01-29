@@ -265,7 +265,7 @@ final class ClassVisitorSpec: QuickSpec {
           it("asserts") {
             let content = """
             public class FooClass {}
-            public class FooClass {}
+            public class BarClass {}
             """
 
             // The ClassVisitor is only meant to be used over a single class.
