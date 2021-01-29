@@ -60,7 +60,7 @@ public final class ClassVisitor: SyntaxVisitor {
       innerClassVisitor.walk(node)
 
       self.innerClasses += innerClassVisitor.classes
-      // We've already gotten information from the children from our inner struct visitor.
+      // We've already gotten information from the children from our inner class visitor.
       return .skipChildren
 
     } else {
