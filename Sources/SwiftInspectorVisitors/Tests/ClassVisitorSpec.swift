@@ -320,7 +320,7 @@ final class ClassVisitorSpec: QuickSpec {
             """
 
           // The ClassVisitor is only meant to be used over a single class.
-          // Using a ClassVisitor over a block that has a top-level class
+          // Using a ClassVisitor over a block that has a top-level struct
           // is API misuse.
           expect(try VisitorExecutor.walkVisitor(
                   self.sut,
@@ -352,7 +352,7 @@ final class ClassVisitorSpec: QuickSpec {
             """
 
           // The ClassVisitor is only meant to be used over a single class.
-          // Using a ClassVisitor over a block that has a top-level enum
+          // Using a ClassVisitor over a block that has a protocol
           // is API misuse.
           expect(try VisitorExecutor.walkVisitor(
                   self.sut,
