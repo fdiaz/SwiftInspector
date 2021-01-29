@@ -83,10 +83,6 @@ public final class FileVisitor: SyntaxVisitor {
     // We don't need to visit children because our visitor just did that for us.
     return .skipChildren
   }
-
-  // MARK: Private
-
-  private var hasFinishedParsingProtocol = false
 }
 
 public struct FileInfo: Codable, Equatable {
