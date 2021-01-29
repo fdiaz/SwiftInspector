@@ -29,12 +29,12 @@ import SwiftInspectorTestHelpers
 
 @testable import SwiftInspectorVisitors
 
-final class ImportSyntaxReaderSpec: QuickSpec {
-  private var sut = ImportSyntaxReader()
+final class ImportVisitorSpec: QuickSpec {
+  private var sut = ImportVisitor()
 
   override func spec() {
     beforeEach {
-      self.sut = ImportSyntaxReader()
+      self.sut = ImportVisitor()
     }
 
     describe("visit") {

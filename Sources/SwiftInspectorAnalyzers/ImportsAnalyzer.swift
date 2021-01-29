@@ -28,7 +28,7 @@ import SwiftInspectorVisitors
 extension StandardAnalyzer {
 
   public func analyzeImports(fileURL: URL) throws -> [ImportStatement] {
-    let visitor = ImportSyntaxReader()
+    let visitor = ImportVisitor()
     try analyze(fileURL: fileURL, withVisitor: visitor)
     return visitor.imports
   }
