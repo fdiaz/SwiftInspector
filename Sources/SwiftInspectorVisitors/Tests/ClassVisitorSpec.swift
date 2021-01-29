@@ -268,9 +268,9 @@ final class ClassVisitorSpec: QuickSpec {
             public class FooClass {}
             """
 
-            // The ClassVisitor is only meant to be used over a single struct.
+            // The ClassVisitor is only meant to be used over a single class.
             // Using a ClassVisitor over a block that has multiple top-level
-            // structs is API misuse.
+            // classes is API misuse.
             expect(try VisitorExecutor.walkVisitor(
                     self.sut,
                     overContent: content))
@@ -285,8 +285,8 @@ final class ClassVisitorSpec: QuickSpec {
             public struct FooStruct {}
             """
 
-            // The ClassVisitor is only meant to be used over a single struct.
-            // Using a ClassVisitor over a block that has a top-level class
+            // The ClassVisitor is only meant to be used over a single class.
+            // Using a ClassVisitor over a block that has a top-level struct
             // is API misuse.
             expect(try VisitorExecutor.walkVisitor(
                     self.sut,
@@ -302,7 +302,7 @@ final class ClassVisitorSpec: QuickSpec {
             public struct FooEnum {}
             """
 
-            // The ClassVisitor is only meant to be used over a single struct.
+            // The ClassVisitor is only meant to be used over a single class.
             // Using a ClassVisitor over a block that has a top-level enum
             // is API misuse.
             expect(try VisitorExecutor.walkVisitor(
@@ -319,7 +319,7 @@ final class ClassVisitorSpec: QuickSpec {
             public struct FooStruct {}
             """
 
-          // The ClassVisitor is only meant to be used over a single struct.
+          // The ClassVisitor is only meant to be used over a single class.
           // Using a ClassVisitor over a block that has a top-level class
           // is API misuse.
           expect(try VisitorExecutor.walkVisitor(
@@ -335,7 +335,7 @@ final class ClassVisitorSpec: QuickSpec {
             public enum FooEnum {}
             """
 
-          // The ClassVisitor is only meant to be used over a single struct.
+          // The ClassVisitor is only meant to be used over a single class.
           // Using a ClassVisitor over a block that has a top-level enum
           // is API misuse.
           expect(try VisitorExecutor.walkVisitor(
@@ -351,7 +351,7 @@ final class ClassVisitorSpec: QuickSpec {
             public protocol FooProtocol {}
             """
 
-          // The ClassVisitor is only meant to be used over a single struct.
+          // The ClassVisitor is only meant to be used over a single class.
           // Using a ClassVisitor over a block that has a top-level enum
           // is API misuse.
           expect(try VisitorExecutor.walkVisitor(
