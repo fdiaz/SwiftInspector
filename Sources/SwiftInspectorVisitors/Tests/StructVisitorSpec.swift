@@ -194,11 +194,11 @@ final class StructVisitorSpec: QuickSpec {
         }
 
         context("visiting a struct with nested structs, classes, and enums") {
-          beforeEach { // TODO: find classes and enums as well
+          beforeEach { // TODO: enums as well
             let content = """
               public struct FooStruct {
                 public class BarFooClass: Equatable {
-                  public struct BarBarFooStruct {} // TODO: find this struct
+                  public struct BarBarFooStruct {}
                 }
                 public enum BarFooEnum {
                   public struct BarBarFooStruct {} // TODO: find this struct
@@ -225,23 +225,34 @@ final class StructVisitorSpec: QuickSpec {
             expect(structInfo.parentTypeName).to(beNil())
           }
 
-          it("finds FooFooStruct") {
+          it("finds BarBarFooStruct") {
             guard self.sut.structs.count > 1 else {
-              fail("FooFooStruct not found at expected index")
+              fail("BarBarFooStruct not found at expected index")
               return
             }
             let structInfo = self.sut.structs[1]
+            expect(structInfo.name) == "BarBarFooStruct"
+            expect(structInfo.inheritsFromTypes) == []
+            expect(structInfo.parentTypeName) == "FooStruct.BarFooClass"
+          }
+
+          it("finds FooFooStruct") {
+            guard self.sut.structs.count > 2 else {
+              fail("FooFooStruct not found at expected index")
+              return
+            }
+            let structInfo = self.sut.structs[2]
             expect(structInfo.name) == "FooFooStruct"
             expect(structInfo.inheritsFromTypes) == []
             expect(structInfo.parentTypeName) == "FooStruct"
           }
 
           it("finds BarFooFooStruct") {
-            guard self.sut.structs.count > 2 else {
+            guard self.sut.structs.count > 3 else {
               fail("BarFooFooStruct not found at expected index")
               return
             }
-            let structInfo = self.sut.structs[2]
+            let structInfo = self.sut.structs[3]
             expect(structInfo.name) == "BarFooFooStruct"
             expect(structInfo.inheritsFromTypes) == []
             expect(structInfo.parentTypeName) == "FooStruct.FooFooStruct"
@@ -271,7 +282,7 @@ final class StructVisitorSpec: QuickSpec {
           it("asserts") {
             let content = """
             public struct FooStruct {}
-            public struct FooClass {}
+            public class FooClass {}
             """
 
             // The StructVisitor is only meant to be used over a single struct.
