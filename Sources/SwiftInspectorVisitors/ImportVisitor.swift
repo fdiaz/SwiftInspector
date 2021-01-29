@@ -25,13 +25,33 @@
 import Foundation
 import SwiftSyntax
 
-public final class ImportSyntaxReader: SyntaxVisitor {
+public final class ImportVisitor: SyntaxVisitor {
   public private(set) var imports: [ImportStatement] = []
 
   public override func visit(_ node: ImportDeclSyntax) -> SyntaxVisitorContinueKind {
     let statement = importStatement(from: node)
     imports.append(statement)
     return .visitChildren
+  }
+
+  public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
+    // We don't need to visit children because this code can't have imports.
+    .skipChildren
+  }
+
+  public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
+    // We don't need to visit children because this code can't have imports.
+    .skipChildren
+  }
+
+  public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+    // We don't need to visit children because this code can't have imports.
+    .skipChildren
+  }
+
+  public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
+    // We don't need to visit children because this code can't have imports.
+    .skipChildren
   }
 
   private func importStatement(from syntaxNode: ImportDeclSyntax) -> ImportStatement {
