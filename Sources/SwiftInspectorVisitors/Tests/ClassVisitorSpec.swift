@@ -193,7 +193,7 @@ final class ClassVisitorSpec: QuickSpec {
           }
         }
 
-        context("visiting a struct with nested structs, classes, and enums") {
+        context("visiting a class with nested structs, classes, and enums") {
           beforeEach { // TODO: enums as well
             let content = """
               public class FooClass {
