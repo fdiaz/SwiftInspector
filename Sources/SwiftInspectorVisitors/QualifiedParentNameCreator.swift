@@ -25,6 +25,13 @@
 import Foundation
 
 struct QualifiedParentNameCreator {
+
+  /// Returns a qualified parent name given the current parent type and the just parsed.
+  ///
+  /// - Parameters:
+  ///   - currentParentTypeName: The name of the current parent type.
+  ///   - currentTypeName: The name of the newly parsed type to be added to the parent type.
+  /// - Returns: The fully qualified name given teh current parent type name and the current type name.
   static func createNameGiven(
     currentParentTypeName: String?,
     currentTypeName: String)
