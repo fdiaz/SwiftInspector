@@ -349,6 +349,22 @@ final class StructVisitorSpec: QuickSpec {
             .to(throwAssertion())
         }
       }
+
+      context("visiting a code block with an extension declaration") {
+         it("asserts") {
+           let content = """
+             public extension Array {}
+             """
+
+           // The StructVisitor is only meant to be used over a single struct.
+           // Using a StructVisitor over a block that has an extension
+           // is API misuse.
+           expect(try VisitorExecutor.walkVisitor(
+                   self.sut,
+                   overContent: content))
+             .to(throwAssertion())
+         }
+       }
     }
   }
 }
