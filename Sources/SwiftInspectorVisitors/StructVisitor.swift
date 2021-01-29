@@ -111,6 +111,12 @@ public final class StructVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
+  public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
+     // We've encountered an extension declaration, which can only be defined at the top-level. Something is wrong.
+     assertionFailure("Encountered an extension. This is a usage error: a single ClassVisitor instance should start walking only over a node of type `ClassDeclSyntax`")
+     return .skipChildren
+   }
+
   // MARK: Private
 
   private let parentTypeName: String?
