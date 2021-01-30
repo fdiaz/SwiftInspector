@@ -60,7 +60,7 @@ public final class FileVisitor: SyntaxVisitor {
 
     fileInfo.appendStructs(structVisitor.structs)
     fileInfo.appendClasses(structVisitor.innerClasses)
-    // TODO: append enums
+    fileInfo.appendEnums(structVisitor.innerEnums)
 
     // We don't need to visit children because our visitor just did that for us.
     return .skipChildren
@@ -72,16 +72,34 @@ public final class FileVisitor: SyntaxVisitor {
 
     fileInfo.appendClasses(classVisitor.classes)
     fileInfo.appendStructs(classVisitor.innerStructs)
-    // TODO: append enums
+    fileInfo.appendEnums(classVisitor.innerEnums)
 
     // We don't need to visit children because our visitor just did that for us.
     return .skipChildren
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    // TODO: find an append enums
-    // TODO: append structs
-    // TODO: append classes
+    let enumsVisitor = EnumVisitor()
+    enumsVisitor.walk(node)
+
+    fileInfo.appendEnums(enumsVisitor.enums)
+    fileInfo.appendClasses(enumsVisitor.innerClasses)
+    fileInfo.appendStructs(enumsVisitor.innerStructs)
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+  }
+
+  public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
+    let extensionVisitor = ExtensionVisitor()
+    extensionVisitor.walk(node)
+
+    if let extensionInfo = extensionVisitor.extensionInfo {
+      fileInfo.appendExtension(extensionInfo)
+      fileInfo.appendEnums(extensionVisitor.innerEnums)
+      fileInfo.appendClasses(extensionVisitor.innerClasses)
+      fileInfo.appendStructs(extensionVisitor.innerStructs)
+    }
 
     // We don't need to visit children because our visitor just did that for us.
     return .skipChildren
@@ -94,7 +112,8 @@ public struct FileInfo: Codable, Equatable {
   public private(set) var protocols = [ProtocolInfo]()
   public private(set) var structs = [StructInfo]()
   public private(set) var classes = [ClassInfo]()
-  // TODO: also find enums
+  public private(set) var enums = [EnumInfo]()
+  public private(set) var extensions = [ExtensionInfo]()
 
   mutating func appendImports(_ imports: [ImportStatement]) {
     self.imports.append(contentsOf: imports)
@@ -107,5 +126,11 @@ public struct FileInfo: Codable, Equatable {
   }
   mutating func appendClasses(_ classes: [ClassInfo]) {
     self.classes.append(contentsOf: classes)
+  }
+  mutating func appendEnums(_ enums: [EnumInfo]) {
+    self.enums.append(contentsOf: enums)
+  }
+  mutating func appendExtension(_ extensionInfo: ExtensionInfo) {
+    extensions.append(extensionInfo)
   }
 }

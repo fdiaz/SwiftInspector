@@ -184,13 +184,13 @@ final class EnumVisitorSpec: QuickSpec {
             let content = """
               public enum FooEnum {
                 public struct BarFooStruct {
-                  public enum BarBarFooEnum {} // TODO: find this class
+                  public enum BarBarFooEnum {}
                 }
                 public enum BarFooEnum: Equatable {
                   public enum BarBarFooEnum {}
                 }
-                public class FooFooClass { // TODO: find this class
-                  public enum BarFooFooEnum {} // TODO: find this enum
+                public class FooFooClass {
+                  public enum BarFooFooEnum {}
                 }
               }
               """
@@ -232,6 +232,33 @@ final class EnumVisitorSpec: QuickSpec {
               $0.name == "BarBarFooEnum"
                 && $0.inheritsFromTypes == []
                 && $0.parentTypeName == "FooEnum.BarFooEnum"
+            }
+            expect(matching.count) == 1
+          }
+
+          it("finds BarBarFooEnum") {
+            let matching = self.sut.enums.filter {
+              $0.name == "BarBarFooEnum"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooEnum.BarFooStruct"
+            }
+            expect(matching.count) == 1
+          }
+
+          it("finds FooFooClass") {
+            let matching = self.sut.innerClasses.filter {
+              $0.name == "FooFooClass"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooEnum"
+            }
+            expect(matching.count) == 1
+          }
+
+          it("finds BarFooFooEnum") {
+            let matching = self.sut.enums.filter {
+              $0.name == "BarFooFooEnum"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooEnum.FooFooClass"
             }
             expect(matching.count) == 1
           }

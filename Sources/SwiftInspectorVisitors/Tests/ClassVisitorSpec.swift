@@ -187,14 +187,14 @@ final class ClassVisitorSpec: QuickSpec {
         }
 
         context("visiting a class with nested structs, classes, and enums") {
-          beforeEach { // TODO: enums as well
+          beforeEach {
             let content = """
               public class FooClass {
                 public struct BarFooStruct: Equatable {
                   public class BarBarFooClass {}
                 }
                 public enum BarFooEnum {
-                  public class BarBarFooClass {} // TODO: find this class
+                  public class BarBarFooClass {}
                 }
                 public class FooFooClass {
                   public class BarFooFooClass {}
@@ -242,6 +242,26 @@ final class ClassVisitorSpec: QuickSpec {
               $0.name == "BarFooFooClass"
                 && $0.inheritsFromTypes == []
                 && $0.parentTypeName == "FooClass.FooFooClass"
+            }
+
+            expect(matching.count) == 1
+          }
+
+          it("finds BarFooEnum") {
+            let matching = self.sut.innerEnums.filter {
+              $0.name == "BarFooEnum"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooClass"
+            }
+
+            expect(matching.count) == 1
+          }
+
+          it("finds BarBarFooClass") {
+            let matching = self.sut.classes.filter {
+              $0.name == "BarBarFooClass"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooClass.BarFooEnum"
             }
 
             expect(matching.count) == 1

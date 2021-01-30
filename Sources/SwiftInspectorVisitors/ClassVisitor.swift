@@ -38,8 +38,8 @@ public final class ClassVisitor: SyntaxVisitor {
 
   /// Inner structs found by this visitor.
   public private(set) var innerStructs = [StructInfo]()
-
-  // TODO: also find and nested enums
+  /// Inner enums found by this visitor.
+  public private(set) var innerEnums = [EnumInfo]()
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
 
@@ -59,7 +59,7 @@ public final class ClassVisitor: SyntaxVisitor {
       let innerClassVisitor = ClassVisitor(parentTypeName: qualifiedParentTypeName)
       innerClassVisitor.walk(node)
 
-      self.innerClasses += innerClassVisitor.classes
+      innerClasses += innerClassVisitor.classes
       // We've already gotten information from the children from our inner class visitor.
       return .skipChildren
 
@@ -94,6 +94,8 @@ public final class ClassVisitor: SyntaxVisitor {
       structVisitor.walk(node)
       innerStructs += structVisitor.structs
       innerClasses += structVisitor.innerClasses
+      innerEnums += structVisitor.innerEnums
+
     } else {
       // We've encountered a struct declaration before encountering a class declaration. Something is wrong.
       assertionFailure("Encountered a top-level struct. This is a usage error: a single ClassVisitor instance should start walking only over a node of type `ClassDeclSyntax`")
@@ -102,9 +104,18 @@ public final class ClassVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingClass, let _ = classInfo {
+    if !hasFinishedParsingClass, let classInfo = classInfo {
       // We've previously found a class declaration, so this must be an inner enum.
-      // TODO: Utilize enum visitor to find inner enum information, utilizing parent information from structInfo
+      let qualifiedParentTypeName = QualifiedParentNameCreator.createNameGiven(
+        currentParentTypeName: parentTypeName,
+        currentTypeName: classInfo.name)
+
+      let enumVisitor = EnumVisitor(parentTypeName: qualifiedParentTypeName)
+      enumVisitor.walk(node)
+      innerEnums += enumVisitor.enums
+      innerStructs += enumVisitor.innerStructs
+      innerClasses += enumVisitor.innerClasses
+
     } else {
       // We've encountered an enum declaration before encountering a class declaration. Something is wrong.
       assertionFailure("Encountered a top-level enum. This is a usage error: a single ClassVisitor instance should start walking only over a node of type `ClassDeclSyntax`")
