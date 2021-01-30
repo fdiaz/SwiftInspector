@@ -116,80 +116,73 @@ final class StructVisitorSpec: QuickSpec {
           }
 
           it("finds FooStruct") {
-            guard self.sut.structs.count > 0 else {
-              fail("FooStruct not found at expected index")
-              return
+            let matching = self.sut.structs.filter {
+              $0.name == "FooStruct"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == nil
             }
-            let structInfo = self.sut.structs[0]
-            expect(structInfo.name) == "FooStruct"
-            expect(structInfo.inheritsFromTypes) == []
-            expect(structInfo.parentTypeName).to(beNil())
+
+            expect(matching.count) == 1
           }
 
           it("finds BarFooStruct") {
-            guard self.sut.structs.count > 1 else {
-              fail("BarFooStruct not found at expected index")
-              return
+            let matching = self.sut.structs.filter {
+              $0.name == "BarFooStruct"
+                && $0.inheritsFromTypes == ["Equatable"]
+                && $0.parentTypeName == "FooStruct"
             }
-            let structInfo = self.sut.structs[1]
-            expect(structInfo.name) == "BarFooStruct"
-            expect(structInfo.inheritsFromTypes) == ["Equatable"]
-            expect(structInfo.parentTypeName) == "FooStruct"
+
+            expect(matching.count) == 1
           }
 
           it("finds BarBarFooStruct") {
-            guard self.sut.structs.count > 2 else {
-              fail("BarBarFooStruct not found at expected index")
-              return
+            let matching = self.sut.structs.filter {
+              $0.name == "BarBarFooStruct"
+                && $0.inheritsFromTypes == ["Hashable"]
+                && $0.parentTypeName == "FooStruct.BarFooStruct"
             }
-            let structInfo = self.sut.structs[2]
-            expect(structInfo.name) == "BarBarFooStruct"
-            expect(structInfo.inheritsFromTypes) == ["Hashable"]
-            expect(structInfo.parentTypeName) == "FooStruct.BarFooStruct"
+
+            expect(matching.count) == 1
           }
 
           it("finds FooFooStruct") {
-            guard self.sut.structs.count > 3 else {
-              fail("FooFooStruct not found at expected index")
-              return
+            let matching = self.sut.structs.filter {
+              $0.name == "FooFooStruct"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooStruct"
             }
-            let structInfo = self.sut.structs[3]
-            expect(structInfo.name) == "FooFooStruct"
-            expect(structInfo.inheritsFromTypes) == []
-            expect(structInfo.parentTypeName) == "FooStruct"
+
+            expect(matching.count) == 1
           }
 
           it("finds BarFooFoo1Struct") {
-            guard self.sut.structs.count > 4 else {
-              fail("BarFooFoo1Struct not found at expected index")
-              return
+            let matching = self.sut.structs.filter {
+              $0.name == "BarFooFoo1Struct"
+                && $0.inheritsFromTypes == ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"]
+                && $0.parentTypeName == "FooStruct.FooFooStruct"
             }
-            let structInfo = self.sut.structs[4]
-            expect(structInfo.name) == "BarFooFoo1Struct"
-            expect(structInfo.inheritsFromTypes) == ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"]
-            expect(structInfo.parentTypeName) == "FooStruct.FooFooStruct"
+
+            expect(matching.count) == 1
           }
 
           it("finds BarBarFooFoo1Struct") {
-            guard self.sut.structs.count > 5 else {
-              fail("BarBarFooFoo1Struct not found at expected index")
-              return
+            let matching = self.sut.structs.filter {
+              $0.name == "BarBarFooFoo1Struct"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooStruct.FooFooStruct.BarFooFoo1Struct"
             }
-            let structInfo = self.sut.structs[5]
-            expect(structInfo.name) == "BarBarFooFoo1Struct"
-            expect(structInfo.inheritsFromTypes) == []
-            expect(structInfo.parentTypeName) == "FooStruct.FooFooStruct.BarFooFoo1Struct"
+
+            expect(matching.count) == 1
           }
 
           it("finds BarFooFoo2Struct") {
-            guard self.sut.structs.count > 6 else {
-              fail("BarFooFoo2Struct not found at expected index")
-              return
+            let matching = self.sut.structs.filter {
+              $0.name == "BarFooFoo2Struct"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooStruct.FooFooStruct"
             }
-            let structInfo = self.sut.structs[6]
-            expect(structInfo.name) == "BarFooFoo2Struct"
-            expect(structInfo.inheritsFromTypes) == []
-            expect(structInfo.parentTypeName) == "FooStruct.FooFooStruct"
+
+            expect(matching.count) == 1
           }
         }
 
@@ -215,47 +208,53 @@ final class StructVisitorSpec: QuickSpec {
           }
 
           it("finds FooStruct") {
-            guard self.sut.structs.count > 0 else {
-              fail("FooStruct not found at expected index")
-              return
+            let matching = self.sut.structs.filter {
+              $0.name == "FooStruct"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == nil
             }
-            let structInfo = self.sut.structs[0]
-            expect(structInfo.name) == "FooStruct"
-            expect(structInfo.inheritsFromTypes) == []
-            expect(structInfo.parentTypeName).to(beNil())
-          }
 
-          it("finds BarBarFooStruct") {
-            guard self.sut.structs.count > 1 else {
-              fail("BarBarFooStruct not found at expected index")
-              return
-            }
-            let structInfo = self.sut.structs[1]
-            expect(structInfo.name) == "BarBarFooStruct"
-            expect(structInfo.inheritsFromTypes) == []
-            expect(structInfo.parentTypeName) == "FooStruct.BarFooClass"
+            expect(matching.count) == 1
           }
 
           it("finds FooFooStruct") {
-            guard self.sut.structs.count > 2 else {
-              fail("FooFooStruct not found at expected index")
-              return
+            let matching = self.sut.structs.filter {
+              $0.name == "FooFooStruct"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooStruct"
             }
-            let structInfo = self.sut.structs[2]
-            expect(structInfo.name) == "FooFooStruct"
-            expect(structInfo.inheritsFromTypes) == []
-            expect(structInfo.parentTypeName) == "FooStruct"
+
+            expect(matching.count) == 1
           }
 
           it("finds BarFooFooStruct") {
-            guard self.sut.structs.count > 3 else {
-              fail("BarFooFooStruct not found at expected index")
-              return
+            let matching = self.sut.structs.filter {
+              $0.name == "BarFooFooStruct"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooStruct.FooFooStruct"
             }
-            let structInfo = self.sut.structs[3]
-            expect(structInfo.name) == "BarFooFooStruct"
-            expect(structInfo.inheritsFromTypes) == []
-            expect(structInfo.parentTypeName) == "FooStruct.FooFooStruct"
+
+            expect(matching.count) == 1
+          }
+
+          it("finds BarFooClass") {
+            let matching = self.sut.innerClasses.filter {
+              $0.name == "BarFooClass"
+                && $0.inheritsFromTypes == ["Equatable"]
+                && $0.parentTypeName == "FooStruct"
+            }
+
+            expect(matching.count) == 1
+          }
+
+          it("finds BarBarFooStruct") {
+            let matching = self.sut.structs.filter {
+              $0.name == "BarBarFooStruct"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooStruct.BarFooClass"
+            }
+
+            expect(matching.count) == 1
           }
         }
       }
