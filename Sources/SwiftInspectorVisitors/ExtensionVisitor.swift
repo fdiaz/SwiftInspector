@@ -72,9 +72,9 @@ public final class ExtensionVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingExtension, let _ = extensionInfo {
+    if !hasFinishedParsingExtension, let extensionInfo = extensionInfo {
       // We've previously found an extension declaration, so this must be an inner struct.
-      let structVisitor = StructVisitor(parentTypeName: extensionInfo?.name)
+      let structVisitor = StructVisitor(parentTypeName: extensionInfo.name)
       structVisitor.walk(node)
 
       structs.append(contentsOf: structVisitor.structs)
