@@ -45,16 +45,15 @@ final class FileVisitorSpec: QuickSpec {
 
               struct TestStruct {
                 struct InnerStruct {}
-                // TODO: find this definition
                 class InnerClass {}
                 // TODO: find this definition
                 enum InnerEnum {}
               }
 
-              // TODO: find this definition and inner definitions
               class TestClass {
                 struct InnerStruct {}
                 class InnerClass {}
+                // TODO: find this definition
                 enum InnerEnum {}
               }
 
@@ -87,7 +86,9 @@ final class FileVisitorSpec: QuickSpec {
         }
 
         it("finds TestStruct") {
-          let matchingStructs = self.sut.fileInfo.structs.filter { $0.name == "TestStruct" }
+          let matchingStructs = self.sut.fileInfo.structs.filter {
+            $0.name == "TestStruct"
+          }
           expect(matchingStructs.count) == 1
         }
 
@@ -95,6 +96,37 @@ final class FileVisitorSpec: QuickSpec {
           let matchingStructs = self.sut.fileInfo.structs.filter {
             $0.name == "InnerStruct"
               && $0.parentTypeName == "TestStruct"
+          }
+          expect(matchingStructs.count) == 1
+        }
+
+        it("finds TestStruct.InnerClass") {
+          let matchingStructs = self.sut.fileInfo.classes.filter {
+            $0.name == "InnerClass"
+              && $0.parentTypeName == "TestStruct"
+          }
+          expect(matchingStructs.count) == 1
+        }
+
+        it("finds TestClass") {
+          let matchingStructs = self.sut.fileInfo.classes.filter {
+            $0.name == "TestClass"
+          }
+          expect(matchingStructs.count) == 1
+        }
+
+        it("finds TestClass.InnerStruct") {
+          let matchingStructs = self.sut.fileInfo.structs.filter {
+            $0.name == "InnerStruct"
+              && $0.parentTypeName == "TestClass"
+          }
+          expect(matchingStructs.count) == 1
+        }
+
+        it("finds TestClass.InnerClass") {
+          let matchingStructs = self.sut.fileInfo.classes.filter {
+            $0.name == "InnerClass"
+              && $0.parentTypeName == "TestClass"
           }
           expect(matchingStructs.count) == 1
         }
