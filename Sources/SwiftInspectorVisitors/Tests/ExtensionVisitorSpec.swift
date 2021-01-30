@@ -55,6 +55,21 @@ final class ExtensionVisitorSpec: QuickSpec {
           }
         }
 
+        context("of a fully-qualified type") {
+          beforeEach {
+            let content = """
+              public extension Foundation.NSURL {}
+            """
+            try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+          }
+
+          it("returns the conforming type name") {
+            let extensionInfo = self.sut.extensionInfo
+            expect(extensionInfo?.name) == "Foundation.NSURL"
+            expect(extensionInfo?.inheritsFromTypes) == []
+          }
+        }
+
         context("with a single type conformance") {
           it("finds the type name") {
             let content = """
@@ -68,6 +83,21 @@ final class ExtensionVisitorSpec: QuickSpec {
             let extensionInfo = self.sut.extensionInfo
             expect(extensionInfo?.name) == "Array"
             expect(extensionInfo?.inheritsFromTypes) == ["Foo"]
+          }
+        }
+
+        context("with one fully-qualified conformance") {
+          beforeEach {
+            let content = """
+              public extension Array: Swift.Equatable {}
+            """
+            try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+          }
+
+          it("returns the conforming type name") {
+            let extensionInfo = self.sut.extensionInfo
+            expect(extensionInfo?.name) == "Array"
+            expect(extensionInfo?.inheritsFromTypes) == ["Swift.Equatable"]
           }
         }
 

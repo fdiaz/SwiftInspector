@@ -71,6 +71,44 @@ final class GenericRequirementVisitorSpec: QuickSpec {
         }
       }
 
+      context("visiting a syntax tree involving a protocol that has a left-side fully qualified generic constraint") {
+        it("finds the generic requirements") {
+          let content = """
+            public protocol SomeGenericProtocol: GenericProtocol where
+              FooModule.LeftType == RightType
+            {}
+            """
+
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
+
+          expect(self.sut.genericRequirements.first) == GenericRequirement(
+            leftType: "FooModule.LeftType",
+            rightType: "RightType",
+            relationship: .equals)
+        }
+      }
+
+      context("visiting a syntax tree involving a protocol that has a right-side fully qualified generic constraint") {
+        it("finds the generic requirements") {
+          let content = """
+            public protocol SomeGenericProtocol: GenericProtocol where
+              LeftType == FooModule.RightType
+            {}
+            """
+
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
+
+          expect(self.sut.genericRequirements.first) == GenericRequirement(
+            leftType: "LeftType",
+            rightType: "FooModule.RightType",
+            relationship: .equals)
+        }
+      }
+
       context("visiting a syntax tree involving a protocol that has two generic constraints") {
         beforeEach {
           let content = """

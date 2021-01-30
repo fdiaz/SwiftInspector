@@ -52,6 +52,19 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
           }
         }
 
+        context("with one fully-qualified conformance") {
+          beforeEach {
+            let content = """
+            class SomeObject: Swift.Equatable {}
+            """
+            try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+          }
+
+          it("returns the conforming type name") {
+            expect(self.sut.inheritsFromTypes) == ["Swift.Equatable"]
+          }
+        }
+
         context("with multiple conformances on the same line") {
           beforeEach {
             let content = """
