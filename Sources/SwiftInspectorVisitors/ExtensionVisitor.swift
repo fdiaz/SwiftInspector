@@ -67,9 +67,9 @@ public final class ExtensionVisitor: SyntaxVisitor {
       let classVisitor = ClassVisitor(parentTypeName: extensionInfo.name)
       classVisitor.walk(node)
 
-      innerClasses.append(contentsOf: classVisitor.classes)
-      innerStructs.append(contentsOf: classVisitor.innerStructs)
-      innerEnums.append(contentsOf: classVisitor.innerEnums)
+      innerClasses += classVisitor.classes
+      innerStructs += classVisitor.innerStructs
+      innerEnums += classVisitor.innerEnums
 
     } else {
       // We've encountered a class declaration before encountering an extension declaration. Something is wrong.
@@ -84,9 +84,9 @@ public final class ExtensionVisitor: SyntaxVisitor {
       let structVisitor = StructVisitor(parentTypeName: extensionInfo.name)
       structVisitor.walk(node)
 
-      innerStructs.append(contentsOf: structVisitor.structs)
-      innerClasses.append(contentsOf: structVisitor.innerClasses)
-      innerEnums.append(contentsOf: structVisitor.innerEnums)
+      innerStructs += structVisitor.structs
+      innerClasses += structVisitor.innerClasses
+      innerEnums += structVisitor.innerEnums
 
     } else {
       // We've encountered a class declaration before encountering an extension declaration. Something is wrong.
@@ -102,9 +102,9 @@ public final class ExtensionVisitor: SyntaxVisitor {
       let enumVisitor = EnumVisitor(parentTypeName: extensionInfo.name)
       enumVisitor.walk(node)
 
-      innerEnums.append(contentsOf: enumVisitor.enums)
-      innerStructs.append(contentsOf: enumVisitor.innerStructs)
-      innerClasses.append(contentsOf: enumVisitor.innerClasses)
+      innerEnums += enumVisitor.enums
+      innerStructs += enumVisitor.innerStructs
+      innerClasses += enumVisitor.innerClasses
 
     } else {
       // We've encountered a enum declaration before encountering an extension declaration. Something is wrong.

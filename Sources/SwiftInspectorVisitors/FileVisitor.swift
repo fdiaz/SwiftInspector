@@ -116,19 +116,19 @@ public struct FileInfo: Codable, Equatable {
   public private(set) var extensions = [ExtensionInfo]()
 
   mutating func appendImports(_ imports: [ImportStatement]) {
-    self.imports.append(contentsOf: imports)
+    self.imports += imports
   }
   mutating func appendProtocol(_ protocolInfo: ProtocolInfo) {
     protocols.append(protocolInfo)
   }
   mutating func appendStructs(_ structs: [StructInfo]) {
-    self.structs.append(contentsOf: structs)
+    self.structs += structs
   }
   mutating func appendClasses(_ classes: [ClassInfo]) {
-    self.classes.append(contentsOf: classes)
+    self.classes += classes
   }
   mutating func appendEnums(_ enums: [EnumInfo]) {
-    self.enums.append(contentsOf: enums)
+    self.enums += enums
   }
   mutating func appendExtension(_ extensionInfo: ExtensionInfo) {
     extensions.append(extensionInfo)
