@@ -187,14 +187,14 @@ final class StructVisitorSpec: QuickSpec {
         }
 
         context("visiting a struct with nested structs, classes, and enums") {
-          beforeEach { // TODO: enums as well
+          beforeEach {
             let content = """
               public struct FooStruct {
                 public class BarFooClass: Equatable {
                   public struct BarBarFooStruct {}
                 }
                 public enum BarFooEnum {
-                  public struct BarBarFooStruct {} // TODO: find this struct
+                  public struct BarBarFooStruct {}
                 }
                 public struct FooFooStruct {
                   public struct BarFooFooStruct {}
@@ -217,7 +217,7 @@ final class StructVisitorSpec: QuickSpec {
             expect(matching.count) == 1
           }
 
-          it("finds FooFooStruct") {
+          it("finds FooStruct.FooFooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "FooFooStruct"
                 && $0.inheritsFromTypes == []
@@ -227,7 +227,7 @@ final class StructVisitorSpec: QuickSpec {
             expect(matching.count) == 1
           }
 
-          it("finds BarFooFooStruct") {
+          it("finds FooStruct.FooFooStruct.BarFooFooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "BarFooFooStruct"
                 && $0.inheritsFromTypes == []
@@ -237,7 +237,7 @@ final class StructVisitorSpec: QuickSpec {
             expect(matching.count) == 1
           }
 
-          it("finds BarFooClass") {
+          it("finds FooStruct.BarFooClass") {
             let matching = self.sut.innerClasses.filter {
               $0.name == "BarFooClass"
                 && $0.inheritsFromTypes == ["Equatable"]
@@ -247,11 +247,31 @@ final class StructVisitorSpec: QuickSpec {
             expect(matching.count) == 1
           }
 
-          it("finds BarBarFooStruct") {
+          it("finds FooStruct.BarFooClass.BarBarFooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "BarBarFooStruct"
                 && $0.inheritsFromTypes == []
                 && $0.parentTypeName == "FooStruct.BarFooClass"
+            }
+
+            expect(matching.count) == 1
+          }
+
+          it("finds FooStruct.BarFooEnum") {
+            let matching = self.sut.innerEnums.filter {
+              $0.name == "BarFooEnum"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooStruct"
+            }
+
+            expect(matching.count) == 1
+          }
+
+          it("finds FooStruct.BarFooEnum.BarBarFooStruct") {
+            let matching = self.sut.structs.filter {
+              $0.name == "BarBarFooStruct"
+                && $0.inheritsFromTypes == []
+                && $0.parentTypeName == "FooStruct.BarFooEnum"
             }
 
             expect(matching.count) == 1
