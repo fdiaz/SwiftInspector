@@ -184,7 +184,6 @@ final class StaticUsageAnalyzerSpec: QuickSpec {
         let content = """
         JitneyProducer.shared.publish(
               PaidGrowth.V1.PaidGrowthSignupCompletePixelEvent(
-                // TODO: Use the globalLoggingContext property on an injected LoggingService than accessing a singleton directly.
                 context: EventContext.shared.loggingContext(),
                 device_id: trackingManager.value(forAirEventsSharedKey: deviceIDParamKey) ?? "",
                 user_id: Int64(accountManager.activeAccount?.user.userId ?? "") ?? 0

@@ -46,18 +46,15 @@ final class FileVisitorSpec: QuickSpec {
               struct TestStruct {
                 struct InnerStruct {}
                 class InnerClass {}
-                // TODO: find this definition
                 enum InnerEnum {}
               }
 
               class TestClass {
                 struct InnerStruct {}
                 class InnerClass {}
-                // TODO: find this definition
                 enum InnerEnum {}
               }
 
-              // TODO: find this definition and inner definitions
               enum TestEnum {
                 struct InnerStruct {}
                 class InnerClass {}
@@ -66,7 +63,6 @@ final class FileVisitorSpec: QuickSpec {
 
               protocol TestProtocol {}
 
-              // TODO: find this definition and inner definitions.
               // TODO: find and propogate this generic constraint to inner types.
               extension Array where Element == Int {
                 struct InnerStruct {}
@@ -86,57 +82,140 @@ final class FileVisitorSpec: QuickSpec {
         }
 
         it("finds TestStruct") {
-          let matchingStructs = self.sut.fileInfo.structs.filter {
+          let matching = self.sut.fileInfo.structs.filter {
             $0.name == "TestStruct"
           }
-          expect(matchingStructs.count) == 1
+          expect(matching.count) == 1
         }
 
         it("finds TestStruct.InnerStruct") {
-          let matchingStructs = self.sut.fileInfo.structs.filter {
+          let matching = self.sut.fileInfo.structs.filter {
             $0.name == "InnerStruct"
               && $0.parentTypeName == "TestStruct"
           }
-          expect(matchingStructs.count) == 1
+          expect(matching.count) == 1
         }
 
         it("finds TestStruct.InnerClass") {
-          let matchingStructs = self.sut.fileInfo.classes.filter {
+          let matching = self.sut.fileInfo.classes.filter {
             $0.name == "InnerClass"
               && $0.parentTypeName == "TestStruct"
           }
-          expect(matchingStructs.count) == 1
+          expect(matching.count) == 1
+        }
+
+        it("finds TestStruct.InnerEnum") {
+          let matching = self.sut.fileInfo.enums.filter {
+            $0.name == "InnerEnum"
+              && $0.parentTypeName == "TestStruct"
+          }
+          expect(matching.count) == 1
         }
 
         it("finds TestClass") {
-          let matchingStructs = self.sut.fileInfo.classes.filter {
+          let matching = self.sut.fileInfo.classes.filter {
             $0.name == "TestClass"
           }
-          expect(matchingStructs.count) == 1
+          expect(matching.count) == 1
         }
 
         it("finds TestClass.InnerStruct") {
-          let matchingStructs = self.sut.fileInfo.structs.filter {
+          let matching = self.sut.fileInfo.structs.filter {
             $0.name == "InnerStruct"
               && $0.parentTypeName == "TestClass"
           }
-          expect(matchingStructs.count) == 1
+          expect(matching.count) == 1
         }
 
         it("finds TestClass.InnerClass") {
-          let matchingStructs = self.sut.fileInfo.classes.filter {
+          let matching = self.sut.fileInfo.classes.filter {
             $0.name == "InnerClass"
               && $0.parentTypeName == "TestClass"
           }
-          expect(matchingStructs.count) == 1
+          expect(matching.count) == 1
+        }
+
+        it("finds TestClass.InnerEnum") {
+          let matching = self.sut.fileInfo.enums.filter {
+            $0.name == "InnerEnum"
+              && $0.parentTypeName == "TestClass"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds TestEnum") {
+          let matching = self.sut.fileInfo.enums.filter {
+            $0.name == "TestEnum"
+              && $0.parentTypeName == nil
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds TestEnum.InnerStruct") {
+          let matching = self.sut.fileInfo.structs.filter {
+            $0.name == "InnerStruct"
+              && $0.parentTypeName == "TestEnum"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds TestEnum.InnerClass") {
+          let matching = self.sut.fileInfo.classes.filter {
+            $0.name == "InnerClass"
+              && $0.parentTypeName == "TestEnum"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds TestEnum.InnerEnum") {
+          let matching = self.sut.fileInfo.enums.filter {
+            $0.name == "InnerEnum"
+              && $0.parentTypeName == "TestEnum"
+          }
+          expect(matching.count) == 1
         }
 
         it("finds TestProtocol") {
-          let matchingStructs = self.sut.fileInfo.protocols.filter {
+          let matching = self.sut.fileInfo.protocols.filter {
             $0.name == "TestProtocol"
           }
-          expect(matchingStructs.count) == 1
+          expect(matching.count) == 1
         }
+
+        it("finds Array extension") {
+          let matching = self.sut.fileInfo.extensions.filter {
+            $0.name == "Array"
+              && $0.genericRequirements.first?.leftType == "Element"
+              && $0.genericRequirements.first?.rightType == "Int"
+              && $0.genericRequirements.first?.relationship == .equals
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds Array.InnerStruct") {
+          let matching = self.sut.fileInfo.structs.filter {
+            $0.name == "InnerStruct"
+              && $0.parentTypeName == "Array"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds Array.InnerClass") {
+          let matching = self.sut.fileInfo.classes.filter {
+            $0.name == "InnerClass"
+              && $0.parentTypeName == "Array"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds Array.InnerEnum") {
+          let matching = self.sut.fileInfo.enums.filter {
+            $0.name == "InnerEnum"
+              && $0.parentTypeName == "Array"
+          }
+          expect(matching.count) == 1
+        }
+
       }
     }
   }

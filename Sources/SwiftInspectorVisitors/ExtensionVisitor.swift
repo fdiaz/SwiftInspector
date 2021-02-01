@@ -29,10 +29,12 @@ public final class ExtensionVisitor: SyntaxVisitor {
 
   /// The extension found by this visitor.
   public private(set) var extensionInfo: ExtensionInfo?
-  public private(set) var structs = [StructInfo]()
-
-  // TODO: also find and nested classes
-  // TODO: also find and nested enums
+  /// Inner structs found by this visitor.
+  public private(set) var innerStructs = [StructInfo]()
+  /// Inner classes found by this visitor.
+  public private(set) var innerClasses = [ClassInfo]()
+  /// Inner enums found by this visitor.
+  public private(set) var innerEnums = [EnumInfo]()
 
   public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
 
@@ -51,8 +53,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
     extensionInfo = ExtensionInfo(
       name: name,
       inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
-      genericRequirements: genericRequirementsVisitor.genericRequirements,
-      innerStructs: [])
+      genericRequirements: genericRequirementsVisitor.genericRequirements)
     return .visitChildren
   }
 
@@ -61,9 +62,15 @@ public final class ExtensionVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingExtension, let _ = extensionInfo {
+    if !hasFinishedParsingExtension, let extensionInfo = extensionInfo {
       // We've previously found an extension declaration, so this must be an inner class.
-      // TODO: Utilize class visitor to find inner class information, utilizing parent information from extensionInfo
+      let classVisitor = ClassVisitor(parentTypeName: extensionInfo.name)
+      classVisitor.walk(node)
+
+      innerClasses += classVisitor.classes
+      innerStructs += classVisitor.innerStructs
+      innerEnums += classVisitor.innerEnums
+
     } else {
       // We've encountered a class declaration before encountering an extension declaration. Something is wrong.
       assertionFailure("Encountered a top-level class. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
@@ -77,7 +84,9 @@ public final class ExtensionVisitor: SyntaxVisitor {
       let structVisitor = StructVisitor(parentTypeName: extensionInfo.name)
       structVisitor.walk(node)
 
-      structs.append(contentsOf: structVisitor.structs)
+      innerStructs += structVisitor.structs
+      innerClasses += structVisitor.innerClasses
+      innerEnums += structVisitor.innerEnums
 
     } else {
       // We've encountered a class declaration before encountering an extension declaration. Something is wrong.
@@ -88,9 +97,15 @@ public final class ExtensionVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingExtension, let _ = extensionInfo {
+    if !hasFinishedParsingExtension, let extensionInfo = extensionInfo {
       // We've previously found a extension declaration, so this must be an inner enum.
-      // TODO: Utilize enum visitor to find inner enum information, utilizing parent information from extensionInfo
+      let enumVisitor = EnumVisitor(parentTypeName: extensionInfo.name)
+      enumVisitor.walk(node)
+
+      innerEnums += enumVisitor.enums
+      innerStructs += enumVisitor.innerStructs
+      innerClasses += enumVisitor.innerClasses
+
     } else {
       // We've encountered a enum declaration before encountering an extension declaration. Something is wrong.
       assertionFailure("Encountered a top-level enum. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
@@ -113,8 +128,5 @@ public struct ExtensionInfo: Codable, Equatable {
   public let name: String
   public private(set) var inheritsFromTypes: [String]
   public private(set) var genericRequirements: [GenericRequirement]
-  public private(set) var innerStructs: [StructInfo]
-  // TODO: Also find and expose inner classes
-  // TODO: Also find and expose inner enums
   // TODO: also find and expose computed properties
 }
