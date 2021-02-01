@@ -6,6 +6,7 @@ import SwiftSyntax
 extension TypeSyntax {
 
   /// Returns the the qualified name for the type the receiver represents.
+  /// - Warning: Access this property only on a `SimpleTypeIdentifierSyntax` or `MemberTypeIdentifierSyntax`.
   var qualifiedName: String {
     if let typeIdentifier = self.as(SimpleTypeIdentifierSyntax.self) {
       return typeIdentifier.name.text
