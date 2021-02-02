@@ -91,6 +91,20 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
             expect(self.sut.inheritsFromTypes) == ["Foo", "Bar", "FooBar"]
           }
         }
+
+        context("with a composition conformances on multiple lines") {
+          beforeEach {
+            let content = """
+            protocol Protocol: FooProviding & BarProviding
+              & FooBarProviding {}
+            """
+            try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+          }
+
+          it("returns the conforming type names") {
+            expect(self.sut.inheritsFromTypes) == ["FooProviding", "BarProviding", "FooBarProviding"]
+          }
+        }
       }
 
       context("when an inner type conforms to a protocol but the outer type does not") {

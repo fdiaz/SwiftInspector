@@ -30,7 +30,7 @@ public final class TypeInheritanceVisitor: SyntaxVisitor {
   public private(set) var inheritsFromTypes = [String]()
 
   public override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {
-    inheritsFromTypes.append(node.typeName.qualifiedName)
+    inheritsFromTypes.append(contentsOf: node.typeName.qualifiedNames)
     // Children don't have any more information about inheritance, so don't visit them.
     return .skipChildren
   }

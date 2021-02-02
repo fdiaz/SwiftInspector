@@ -43,7 +43,10 @@ public final class ExtensionVisitor: SyntaxVisitor {
       return .skipChildren
     }
 
-    let name = node.extendedType.qualifiedName
+    guard let name = node.extendedType.qualifiedNames.first else {
+      assertionFailure("Encountered extenson with more than one qualifed name. This is not valid Swift code")
+      return .skipChildren
+    }
     let typeInheritanceVisitor = TypeInheritanceVisitor()
     typeInheritanceVisitor.walk(node)
     let genericRequirementsVisitor = GenericRequirementVisitor()

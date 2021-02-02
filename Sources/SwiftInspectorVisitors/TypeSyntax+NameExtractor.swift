@@ -6,20 +6,23 @@ import SwiftSyntax
 extension TypeSyntax {
 
   /// Returns the the qualified name for the type the receiver represents.
-  /// - Warning: Access this property only on a `SimpleTypeIdentifierSyntax` or `MemberTypeIdentifierSyntax`.
-  var qualifiedName: String {
+  /// - Warning: Access this property only on a `SimpleTypeIdentifierSyntax`, or `MemberTypeIdentifierSyntax`, or `CompositionTypeElementListSyntax`.
+  var qualifiedNames: [String] {
     if let typeIdentifier = self.as(SimpleTypeIdentifierSyntax.self) {
-      return typeIdentifier.name.text
+      return [typeIdentifier.name.text]
 
     } else if let typeIdentifier = self.as(MemberTypeIdentifierSyntax.self) {
-      let baseName = typeIdentifier.baseType.qualifiedName
-      return "\(baseName).\(typeIdentifier.name.text)"
+      let baseNames = typeIdentifier.baseType.qualifiedNames
+      return baseNames.map { "\($0).\(typeIdentifier.name.text)" }
+
+    } else if let typeIdentifiers = self.as(CompositionTypeSyntax.self) {
+      return typeIdentifiers.elements.flatMap { $0.type.qualifiedNames }
 
     } else {
       assertionFailure("TypeSyntax of unexpected type. Defaulting to `description`.")
       // The description is a source-accurate description of this node,
       // so it is a reasonable fallback.
-      return description.trimmingCharacters(in: .whitespacesAndNewlines)
+      return [description.trimmingCharacters(in: .whitespacesAndNewlines)]
     }
   }
 

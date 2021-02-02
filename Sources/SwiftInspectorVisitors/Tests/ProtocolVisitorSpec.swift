@@ -103,8 +103,8 @@ final class ProtocolVisitorSpec: QuickSpec {
             let protocolInfo = self.sut.protocolInfo
             expect(protocolInfo?.name) == "SomeProtocol"
             expect(protocolInfo?.inheritsFromTypes) == ["Collection"]
-            expect(protocolInfo?.genericRequirements.first?.leftType) == "Element"
-            expect(protocolInfo?.genericRequirements.first?.rightType) == "Int"
+            expect(protocolInfo?.genericRequirements.first?.leftTypes.first) == "Element"
+            expect(protocolInfo?.genericRequirements.first?.rightTypes.first) == "Int"
             expect(protocolInfo?.genericRequirements.first?.relationship) == .equals
           }
 
@@ -123,11 +123,11 @@ final class ProtocolVisitorSpec: QuickSpec {
 
               let protocolInfo = self.sut.protocolInfo
               expect(protocolInfo?.name) == "SomeProtocol"
-              expect(protocolInfo?.genericRequirements.first?.leftType) == "Input"
-              expect(protocolInfo?.genericRequirements.first?.rightType) == "Int"
+              expect(protocolInfo?.genericRequirements.first?.leftTypes.first) == "Input"
+              expect(protocolInfo?.genericRequirements.first?.rightTypes.first) == "Int"
               expect(protocolInfo?.genericRequirements.first?.relationship) == .equals
-              expect(protocolInfo?.genericRequirements.last?.leftType) == "Output"
-              expect(protocolInfo?.genericRequirements.last?.rightType) == "AnyObject"
+              expect(protocolInfo?.genericRequirements.last?.leftTypes.first) == "Output"
+              expect(protocolInfo?.genericRequirements.last?.rightTypes.first) == "AnyObject"
               expect(protocolInfo?.genericRequirements.last?.relationship) == .conformsTo
             }
           }
@@ -145,8 +145,8 @@ final class ProtocolVisitorSpec: QuickSpec {
               let protocolInfo = self.sut.protocolInfo
               expect(protocolInfo?.name) == "SomeProtocol"
               expect(protocolInfo?.inheritsFromTypes) == ["Collection"]
-              expect(protocolInfo?.genericRequirements.first?.leftType) == "Element"
-              expect(protocolInfo?.genericRequirements.first?.rightType) == "Int"
+              expect(protocolInfo?.genericRequirements.first?.leftTypes.first) == "Element"
+              expect(protocolInfo?.genericRequirements.first?.rightTypes.first) == "Int"
               expect(protocolInfo?.genericRequirements.first?.relationship) == .conformsTo
             }
           }

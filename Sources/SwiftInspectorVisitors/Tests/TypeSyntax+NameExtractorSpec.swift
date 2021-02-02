@@ -41,9 +41,9 @@ final class TypeSyntaxNameExtractorSpec: QuickSpec {
     describe("qualifiedName") {
       context("when called on a TypeSyntax node representing a SimpleTypeIdentifierSyntax") {
         final class SimpleTypeIdentifierSyntaxVisitor: SyntaxVisitor {
-          var simpleTypeIdentifier: String?
+          var simpleTypeIdentifiers: [String]?
           override func visit(_ node: SimpleTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
-            simpleTypeIdentifier = TypeSyntax(node).qualifiedName
+            simpleTypeIdentifiers = TypeSyntax(node).qualifiedNames
             return .skipChildren
           }
         }
@@ -59,15 +59,15 @@ final class TypeSyntaxNameExtractorSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor?.simpleTypeIdentifier) == "Int"
+          expect(visitor?.simpleTypeIdentifiers?.first) == "Int"
         }
       }
 
       context("when called on a TypeSyntax node representing a MemberTypeIdentifierSyntax") {
         final class MemberTypeIdentifierSyntaxVisitor: SyntaxVisitor {
-          var memberTypeIdentifier: String?
+          var memberTypeIdentifiers: [String]?
           override func visit(_ node: MemberTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
-            memberTypeIdentifier = TypeSyntax(node).qualifiedName
+            memberTypeIdentifiers = TypeSyntax(node).qualifiedNames
             return .skipChildren
           }
         }
@@ -83,7 +83,34 @@ final class TypeSyntaxNameExtractorSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor?.memberTypeIdentifier) == "Swift.Int"
+          expect(visitor?.memberTypeIdentifiers?.first) == "Swift.Int"
+        }
+      }
+
+      context("when called on a TypeSyntax node representing a CompositionTypeSyntax") {
+        final class CompositionTypeSyntaxVisitor: SyntaxVisitor {
+          var composedTypeIdentifiers: [String]?
+          // Note: ideally we'd visit a node of type CompositionTypeElementListSyntax
+          // but there's no easy way to get a TypeSyntax from an object of that type.
+          override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {
+            composedTypeIdentifiers = node.typeName.qualifiedNames
+            return .skipChildren
+          }
+        }
+
+        var visitor: CompositionTypeSyntaxVisitor!
+        beforeEach {
+          let content = """
+            protocol FooBar: Foo & Bar
+            """
+
+          visitor = CompositionTypeSyntaxVisitor()
+          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+        }
+
+        it("Finds the types") {
+          expect(visitor?.composedTypeIdentifiers?.first) == "Foo"
+          expect(visitor?.composedTypeIdentifiers?.last) == "Bar"
         }
       }
 
@@ -91,7 +118,7 @@ final class TypeSyntaxNameExtractorSpec: QuickSpec {
         final class ArraySyntaxVisitor: SyntaxVisitor {
           override func visit(_ node: ArrayTypeSyntax) -> SyntaxVisitorContinueKind {
             // This line should assert.
-            _ = TypeSyntax(node).qualifiedName
+            _ = TypeSyntax(node).qualifiedNames
             fail("This line should never be reached")
             return .skipChildren
           }
