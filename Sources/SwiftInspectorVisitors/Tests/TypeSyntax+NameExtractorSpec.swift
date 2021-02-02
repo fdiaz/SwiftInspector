@@ -114,6 +114,31 @@ final class TypeSyntaxNameExtractorSpec: QuickSpec {
         }
       }
 
+      context("when called on a TypeSyntax node representing a OptionalTypeSyntax") {
+        final class OptionalTypeSyntaxVisitor: SyntaxVisitor {
+          var optionalTypeIdentifiers = [String]()
+          override func visit(_ node: SameTypeRequirementSyntax) -> SyntaxVisitorContinueKind {
+            optionalTypeIdentifiers += node.leftTypeIdentifier.qualifiedNames
+            optionalTypeIdentifiers += node.rightTypeIdentifier.qualifiedNames
+            return .skipChildren
+          }
+        }
+
+        var visitor: OptionalTypeSyntaxVisitor!
+        beforeEach {
+          let content = """
+            protocol FooBar: Foo where Something == AnyObject? {}
+            """
+
+          visitor = OptionalTypeSyntaxVisitor()
+          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+        }
+
+        it("Finds the optional type") {
+          expect(visitor?.optionalTypeIdentifiers.contains("AnyObject?")).to(beTrue())
+        }
+      }
+
       context("when called on a TypeSyntax node representing an Array") {
         final class ArraySyntaxVisitor: SyntaxVisitor {
           override func visit(_ node: ArrayTypeSyntax) -> SyntaxVisitorContinueKind {

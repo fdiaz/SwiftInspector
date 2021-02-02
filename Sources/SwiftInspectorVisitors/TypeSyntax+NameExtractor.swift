@@ -18,6 +18,9 @@ extension TypeSyntax {
     } else if let typeIdentifiers = self.as(CompositionTypeSyntax.self) {
       return typeIdentifiers.elements.flatMap { $0.type.qualifiedNames }
 
+    } else if let typeIdentifier = self.as(OptionalTypeSyntax.self) {
+      return typeIdentifier.wrappedType.qualifiedNames.flatMap { ["\($0)?"] }
+
     } else {
       assertionFailure("TypeSyntax of unexpected type. Defaulting to `description`.")
       // The description is a source-accurate description of this node,
