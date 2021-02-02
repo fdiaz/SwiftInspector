@@ -43,8 +43,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
       return .skipChildren
     }
 
-    // There is no known case where these identifiers can not be cast to SimpleTypeIdentifierSyntax.
-    let name = node.extendedType.as(SimpleTypeIdentifierSyntax.self)!.name.text
+    let name = node.extendedType.qualifiedName
     let typeInheritanceVisitor = TypeInheritanceVisitor()
     typeInheritanceVisitor.walk(node)
     let genericRequirementsVisitor = GenericRequirementVisitor()
