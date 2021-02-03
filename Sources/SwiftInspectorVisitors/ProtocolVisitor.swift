@@ -77,7 +77,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
 
 public struct ProtocolInfo: Codable, Equatable {
   public let name: String
-  public let inheritsFromTypes: [String]
+  public let inheritsFromTypes: [TypeDescription]
   public let genericRequirements: [GenericRequirement]
   // TODO: also find and expose properties on a protocol
 }

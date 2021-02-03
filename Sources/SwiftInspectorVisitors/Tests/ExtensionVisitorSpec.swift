@@ -50,8 +50,8 @@ final class ExtensionVisitorSpec: QuickSpec {
               overContent: content)
 
             let extensionInfo = self.sut.extensionInfo
-            expect(extensionInfo?.name) == "Array"
-            expect(extensionInfo?.inheritsFromTypes) == []
+            expect(extensionInfo?.type.description) == "Array"
+            expect(extensionInfo?.inheritsFromTypes.map { $0.description }) == []
           }
         }
 
@@ -65,8 +65,8 @@ final class ExtensionVisitorSpec: QuickSpec {
 
           it("returns the conforming type name") {
             let extensionInfo = self.sut.extensionInfo
-            expect(extensionInfo?.name) == "Foundation.NSURL"
-            expect(extensionInfo?.inheritsFromTypes) == []
+            expect(extensionInfo?.type.description) == "Foundation.NSURL"
+            expect(extensionInfo?.inheritsFromTypes.map { $0.description }) == []
           }
         }
 
@@ -81,8 +81,8 @@ final class ExtensionVisitorSpec: QuickSpec {
               overContent: content)
 
             let extensionInfo = self.sut.extensionInfo
-            expect(extensionInfo?.name) == "Array"
-            expect(extensionInfo?.inheritsFromTypes) == ["Foo"]
+            expect(extensionInfo?.type.description) == "Array"
+            expect(extensionInfo?.inheritsFromTypes.map { $0.description }) == ["Foo"]
           }
         }
 
@@ -96,8 +96,8 @@ final class ExtensionVisitorSpec: QuickSpec {
 
           it("returns the conforming type name") {
             let extensionInfo = self.sut.extensionInfo
-            expect(extensionInfo?.name) == "Array"
-            expect(extensionInfo?.inheritsFromTypes) == ["Swift.Equatable"]
+            expect(extensionInfo?.type.description) == "Array"
+            expect(extensionInfo?.inheritsFromTypes.map { $0.description }) == ["Swift.Equatable"]
           }
         }
 
@@ -112,8 +112,8 @@ final class ExtensionVisitorSpec: QuickSpec {
               overContent: content)
 
             let extensionInfo = self.sut.extensionInfo
-            expect(extensionInfo?.name) == "Array"
-            expect(extensionInfo?.inheritsFromTypes) == ["Foo", "Bar"]
+            expect(extensionInfo?.type.description) == "Array"
+            expect(extensionInfo?.inheritsFromTypes.map { $0.description }) == ["Foo", "Bar"]
           }
         }
       }
@@ -149,13 +149,13 @@ final class ExtensionVisitorSpec: QuickSpec {
           }
 
           it("finds extension") {
-            expect(self.sut.extensionInfo?.name) == "Array"
+            expect(self.sut.extensionInfo?.type.description) == "Array"
           }
 
           it("finds Array.TestStruct") {
             let matching = self.sut.innerStructs.filter {
               $0.name == "TestStruct"
-                && $0.parentTypeName == "Array"
+                && $0.parentType?.description == "Array"
             }
             expect(matching.count) == 1
           }
@@ -163,7 +163,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestStruct.InnerStruct") {
             let matching = self.sut.innerStructs.filter {
               $0.name == "InnerStruct"
-                && $0.parentTypeName == "Array.TestStruct"
+                && $0.parentType?.description == "Array.TestStruct"
             }
             expect(matching.count) == 1
           }
@@ -171,7 +171,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestStruct.InnerClass") {
             let matching = self.sut.innerClasses.filter {
               $0.name == "InnerClass"
-                && $0.parentTypeName == "Array.TestStruct"
+                && $0.parentType?.description == "Array.TestStruct"
             }
             expect(matching.count) == 1
           }
@@ -179,7 +179,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestStruct.InnerEnum") {
             let matching = self.sut.innerEnums.filter {
               $0.name == "InnerEnum"
-                && $0.parentTypeName == "Array.TestStruct"
+                && $0.parentType?.description == "Array.TestStruct"
             }
             expect(matching.count) == 1
           }
@@ -187,7 +187,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestClass") {
             let matching = self.sut.innerClasses.filter {
               $0.name == "TestClass"
-                && $0.parentTypeName == "Array"
+                && $0.parentType?.description == "Array"
             }
             expect(matching.count) == 1
           }
@@ -195,7 +195,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestClass.InnerStruct") {
             let matching = self.sut.innerStructs.filter {
               $0.name == "InnerStruct"
-                && $0.parentTypeName == "Array.TestClass"
+                && $0.parentType?.description == "Array.TestClass"
             }
             expect(matching.count) == 1
           }
@@ -203,7 +203,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestClass.InnerClass") {
             let matching = self.sut.innerClasses.filter {
               $0.name == "InnerClass"
-                && $0.parentTypeName == "Array.TestClass"
+                && $0.parentType?.description == "Array.TestClass"
             }
             expect(matching.count) == 1
           }
@@ -211,7 +211,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestClass.InnerEnum") {
             let matching = self.sut.innerEnums.filter {
               $0.name == "InnerEnum"
-                && $0.parentTypeName == "Array.TestClass"
+                && $0.parentType?.description == "Array.TestClass"
             }
             expect(matching.count) == 1
           }
@@ -219,7 +219,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestEnum") {
             let matching = self.sut.innerEnums.filter {
               $0.name == "TestEnum"
-                && $0.parentTypeName == "Array"
+                && $0.parentType?.description == "Array"
             }
             expect(matching.count) == 1
           }
@@ -227,7 +227,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestEnum.InnerStruct") {
             let matching = self.sut.innerStructs.filter {
               $0.name == "InnerStruct"
-                && $0.parentTypeName == "Array.TestEnum"
+                && $0.parentType?.description == "Array.TestEnum"
             }
             expect(matching.count) == 1
           }
@@ -235,7 +235,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestEnum.InnerClass") {
             let matching = self.sut.innerClasses.filter {
               $0.name == "InnerClass"
-                && $0.parentTypeName == "Array.TestEnum"
+                && $0.parentType?.description == "Array.TestEnum"
             }
             expect(matching.count) == 1
           }
@@ -243,7 +243,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestEnum.InnerEnum") {
             let matching = self.sut.innerEnums.filter {
               $0.name == "InnerEnum"
-                && $0.parentTypeName == "Array.TestEnum"
+                && $0.parentType?.description == "Array.TestEnum"
             }
             expect(matching.count) == 1
           }

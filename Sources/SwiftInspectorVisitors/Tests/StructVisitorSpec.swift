@@ -51,8 +51,8 @@ final class StructVisitorSpec: QuickSpec {
 
             let structInfo = self.sut.structs.first
             expect(structInfo?.name) == "SomeStruct"
-            expect(structInfo?.inheritsFromTypes) == []
-            expect(structInfo?.parentTypeName).to(beNil())
+            expect(structInfo?.inheritsFromTypes.map { $0.description }) == []
+            expect(structInfo?.parentType).to(beNil())
           }
         }
 
@@ -68,8 +68,8 @@ final class StructVisitorSpec: QuickSpec {
 
             let structInfo = self.sut.structs.first
             expect(structInfo?.name) == "SomeStruct"
-            expect(structInfo?.inheritsFromTypes) == ["Equatable"]
-            expect(structInfo?.parentTypeName).to(beNil())
+            expect(structInfo?.inheritsFromTypes.map { $0.description }) == ["Equatable"]
+            expect(structInfo?.parentType).to(beNil())
           }
         }
 
@@ -85,8 +85,8 @@ final class StructVisitorSpec: QuickSpec {
 
             let structInfo = self.sut.structs.first
             expect(structInfo?.name) == "SomeStruct"
-            expect(structInfo?.inheritsFromTypes) == ["Foo", "Bar"]
-            expect(structInfo?.parentTypeName).to(beNil())
+            expect(structInfo?.inheritsFromTypes.map { $0.description }) == ["Foo", "Bar"]
+            expect(structInfo?.parentType).to(beNil())
           }
         }
       }
@@ -118,8 +118,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds FooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "FooStruct"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == nil
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == nil
             }
 
             expect(matching.count) == 1
@@ -128,8 +128,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds BarFooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "BarFooStruct"
-                && $0.inheritsFromTypes == ["Equatable"]
-                && $0.parentTypeName == "FooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == ["Equatable"]
+                && $0.parentType?.description == "FooStruct"
             }
 
             expect(matching.count) == 1
@@ -138,8 +138,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds BarBarFooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "BarBarFooStruct"
-                && $0.inheritsFromTypes == ["Hashable"]
-                && $0.parentTypeName == "FooStruct.BarFooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == ["Hashable"]
+                && $0.parentType?.description == "FooStruct.BarFooStruct"
             }
 
             expect(matching.count) == 1
@@ -148,8 +148,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds FooFooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "FooFooStruct"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooStruct"
             }
 
             expect(matching.count) == 1
@@ -158,8 +158,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds BarFooFoo1Struct") {
             let matching = self.sut.structs.filter {
               $0.name == "BarFooFoo1Struct"
-                && $0.inheritsFromTypes == ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"]
-                && $0.parentTypeName == "FooStruct.FooFooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"]
+                && $0.parentType?.description == "FooStruct.FooFooStruct"
             }
 
             expect(matching.count) == 1
@@ -168,8 +168,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds BarBarFooFoo1Struct") {
             let matching = self.sut.structs.filter {
               $0.name == "BarBarFooFoo1Struct"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooStruct.FooFooStruct.BarFooFoo1Struct"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooStruct.FooFooStruct.BarFooFoo1Struct"
             }
 
             expect(matching.count) == 1
@@ -178,8 +178,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds BarFooFoo2Struct") {
             let matching = self.sut.structs.filter {
               $0.name == "BarFooFoo2Struct"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooStruct.FooFooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooStruct.FooFooStruct"
             }
 
             expect(matching.count) == 1
@@ -210,8 +210,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds FooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "FooStruct"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == nil
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == nil
             }
 
             expect(matching.count) == 1
@@ -220,8 +220,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds FooStruct.FooFooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "FooFooStruct"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooStruct"
             }
 
             expect(matching.count) == 1
@@ -230,8 +230,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds FooStruct.FooFooStruct.BarFooFooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "BarFooFooStruct"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooStruct.FooFooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooStruct.FooFooStruct"
             }
 
             expect(matching.count) == 1
@@ -240,8 +240,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds FooStruct.BarFooClass") {
             let matching = self.sut.innerClasses.filter {
               $0.name == "BarFooClass"
-                && $0.inheritsFromTypes == ["Equatable"]
-                && $0.parentTypeName == "FooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == ["Equatable"]
+                && $0.parentType?.description == "FooStruct"
             }
 
             expect(matching.count) == 1
@@ -250,8 +250,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds FooStruct.BarFooClass.BarBarFooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "BarBarFooStruct"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooStruct.BarFooClass"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooStruct.BarFooClass"
             }
 
             expect(matching.count) == 1
@@ -260,8 +260,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds FooStruct.BarFooEnum") {
             let matching = self.sut.innerEnums.filter {
               $0.name == "BarFooEnum"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooStruct"
             }
 
             expect(matching.count) == 1
@@ -270,8 +270,8 @@ final class StructVisitorSpec: QuickSpec {
           it("finds FooStruct.BarFooEnum.BarBarFooStruct") {
             let matching = self.sut.structs.filter {
               $0.name == "BarBarFooStruct"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooStruct.BarFooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooStruct.BarFooEnum"
             }
 
             expect(matching.count) == 1

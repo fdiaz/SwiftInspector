@@ -51,8 +51,8 @@ final class EnumVisitorSpec: QuickSpec {
 
             let classInfo = self.sut.enums.first
             expect(classInfo?.name) == "SomeEnum"
-            expect(classInfo?.inheritsFromTypes) == []
-            expect(classInfo?.parentTypeName).to(beNil())
+            expect(classInfo?.inheritsFromTypes.map { $0.description }) == []
+            expect(classInfo?.parentType).to(beNil())
           }
         }
 
@@ -68,8 +68,8 @@ final class EnumVisitorSpec: QuickSpec {
 
             let classInfo = self.sut.enums.first
             expect(classInfo?.name) == "SomeEnum"
-            expect(classInfo?.inheritsFromTypes) == ["Equatable"]
-            expect(classInfo?.parentTypeName).to(beNil())
+            expect(classInfo?.inheritsFromTypes.map { $0.description }) == ["Equatable"]
+            expect(classInfo?.parentType).to(beNil())
           }
         }
 
@@ -85,8 +85,8 @@ final class EnumVisitorSpec: QuickSpec {
 
             let classInfo = self.sut.enums.first
             expect(classInfo?.name) == "SomeEnum"
-            expect(classInfo?.inheritsFromTypes) == ["Foo", "Bar"]
-            expect(classInfo?.parentTypeName).to(beNil())
+            expect(classInfo?.inheritsFromTypes.map { $0.description }) == ["Foo", "Bar"]
+            expect(classInfo?.parentType).to(beNil())
           }
         }
       }
@@ -118,8 +118,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds FooEnum") {
             let matching = self.sut.enums.filter {
               $0.name == "FooEnum"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == nil
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == nil
             }
             expect(matching.count) == 1
           }
@@ -127,8 +127,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds BarFooEnum") {
             let matching = self.sut.enums.filter {
               $0.name == "BarFooEnum"
-                && $0.inheritsFromTypes == ["Equatable"]
-                && $0.parentTypeName == "FooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == ["Equatable"]
+                && $0.parentType?.description == "FooEnum"
             }
             expect(matching.count) == 1
           }
@@ -136,8 +136,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds BarBarFooEnum") {
             let matching = self.sut.enums.filter {
               $0.name == "BarBarFooEnum"
-                && $0.inheritsFromTypes == ["Hashable"]
-                && $0.parentTypeName == "FooEnum.BarFooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == ["Hashable"]
+                && $0.parentType?.description == "FooEnum.BarFooEnum"
             }
             expect(matching.count) == 1
           }
@@ -145,8 +145,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds FooFooEnum") {
             let matching = self.sut.enums.filter {
               $0.name == "FooFooEnum"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooEnum"
             }
             expect(matching.count) == 1
           }
@@ -154,8 +154,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds BarFooFoo1Enum") {
             let matching = self.sut.enums.filter {
               $0.name == "BarFooFoo1Enum"
-                && $0.inheritsFromTypes == ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"]
-                && $0.parentTypeName == "FooEnum.FooFooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"]
+                && $0.parentType?.description == "FooEnum.FooFooEnum"
             }
             expect(matching.count) == 1
           }
@@ -163,8 +163,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds BarBarFooFoo1Enum") {
             let matching = self.sut.enums.filter {
               $0.name == "BarBarFooFoo1Enum"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooEnum.FooFooEnum.BarFooFoo1Enum"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooEnum.FooFooEnum.BarFooFoo1Enum"
             }
             expect(matching.count) == 1
           }
@@ -172,8 +172,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds BarFooFoo2Enum") {
             let matching = self.sut.enums.filter {
               $0.name == "BarFooFoo2Enum"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooEnum.FooFooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooEnum.FooFooEnum"
             }
             expect(matching.count) == 1
           }
@@ -203,8 +203,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds FooEnum") {
             let matching = self.sut.enums.filter {
               $0.name == "FooEnum"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == nil
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == nil
             }
             expect(matching.count) == 1
           }
@@ -212,8 +212,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds FooEnum.BarFooStruct") {
             let matching = self.sut.innerStructs.filter {
               $0.name == "BarFooStruct"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooEnum"
             }
             expect(matching.count) == 1
           }
@@ -221,8 +221,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds FooEnum.BarFooEnum") {
             let matching = self.sut.enums.filter {
               $0.name == "BarFooEnum"
-                && $0.inheritsFromTypes == ["Equatable"]
-                && $0.parentTypeName == "FooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == ["Equatable"]
+                && $0.parentType?.description == "FooEnum"
             }
             expect(matching.count) == 1
           }
@@ -230,8 +230,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds FooEnum.BarFooEnum.BarBarFooEnum") {
             let matching = self.sut.enums.filter {
               $0.name == "BarBarFooEnum"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooEnum.BarFooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooEnum.BarFooEnum"
             }
             expect(matching.count) == 1
           }
@@ -239,8 +239,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds FooEnum.BarFooStruct.BarBarFooEnum") {
             let matching = self.sut.enums.filter {
               $0.name == "BarBarFooEnum"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooEnum.BarFooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooEnum.BarFooStruct"
             }
             expect(matching.count) == 1
           }
@@ -248,8 +248,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds FooEnum.FooFooClass") {
             let matching = self.sut.innerClasses.filter {
               $0.name == "FooFooClass"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooEnum"
             }
             expect(matching.count) == 1
           }
@@ -257,8 +257,8 @@ final class EnumVisitorSpec: QuickSpec {
           it("finds FooEnum.FooFooClass.BarFooFooEnum") {
             let matching = self.sut.enums.filter {
               $0.name == "BarFooFooEnum"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooEnum.FooFooClass"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooEnum.FooFooClass"
             }
             expect(matching.count) == 1
           }

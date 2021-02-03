@@ -27,8 +27,8 @@ import SwiftSyntax
 
 public final class ClassVisitor: SyntaxVisitor {
 
-  public init(parentTypeName: String? = nil) {
-    self.parentTypeName = parentTypeName
+  public init(parentType: TypeDescription? = nil) {
+    self.parentType = parentType
   }
 
   /// All of the classes found by this visitor.
@@ -52,11 +52,8 @@ public final class ClassVisitor: SyntaxVisitor {
       // Base case. We've previously found a class declaration, so this must be an inner class.
       // This class visitor shouldn't recurse down into the children.
       // Instead, we'll use a new class visitor to get the information from this class.
-      let qualifiedParentTypeName = QualifiedParentNameCreator.createNameGiven(
-        currentParentTypeName: parentTypeName,
-        currentTypeName: classInfo.name)
-
-      let innerClassVisitor = ClassVisitor(parentTypeName: qualifiedParentTypeName)
+      let newParentType = TypeDescription.createTypeWithName(classInfo.name, parent: self.parentType)
+      let innerClassVisitor = ClassVisitor(parentType: newParentType)
       innerClassVisitor.walk(node)
 
       innerClasses += innerClassVisitor.classes
@@ -73,7 +70,7 @@ public final class ClassVisitor: SyntaxVisitor {
       classInfo = ClassInfo(
         name: name,
         inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
-        parentTypeName: parentTypeName)
+        parentType: parentType)
       return .visitChildren
     }
   }
@@ -86,11 +83,9 @@ public final class ClassVisitor: SyntaxVisitor {
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
     if !hasFinishedParsingClass, let classInfo = classInfo {
       // We've previously found a class declaration, so this must be an inner struct.
-      let qualifiedParentTypeName = QualifiedParentNameCreator.createNameGiven(
-        currentParentTypeName: parentTypeName,
-        currentTypeName: classInfo.name)
+      let newParentType = TypeDescription.createTypeWithName(classInfo.name, parent: self.parentType)
 
-      let structVisitor = StructVisitor(parentTypeName: qualifiedParentTypeName)
+      let structVisitor = StructVisitor(parentType: newParentType)
       structVisitor.walk(node)
       innerStructs += structVisitor.structs
       innerClasses += structVisitor.innerClasses
@@ -106,11 +101,9 @@ public final class ClassVisitor: SyntaxVisitor {
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
     if !hasFinishedParsingClass, let classInfo = classInfo {
       // We've previously found a class declaration, so this must be an inner enum.
-      let qualifiedParentTypeName = QualifiedParentNameCreator.createNameGiven(
-        currentParentTypeName: parentTypeName,
-        currentTypeName: classInfo.name)
+      let newParentType = TypeDescription.createTypeWithName(classInfo.name, parent: self.parentType)
 
-      let enumVisitor = EnumVisitor(parentTypeName: qualifiedParentTypeName)
+      let enumVisitor = EnumVisitor(parentType: newParentType)
       enumVisitor.walk(node)
       innerEnums += enumVisitor.enums
       innerStructs += enumVisitor.innerStructs
@@ -137,7 +130,7 @@ public final class ClassVisitor: SyntaxVisitor {
 
   // MARK: Private
 
-  private let parentTypeName: String?
+  private let parentType: TypeDescription?
   private var hasFinishedParsingClass = false
   private var classInfo: ClassInfo?
   private var innerClasses = [ClassInfo]()
@@ -145,7 +138,7 @@ public final class ClassVisitor: SyntaxVisitor {
 
 public struct ClassInfo: Codable, Equatable {
   public let name: String
-  public let inheritsFromTypes: [String]
-  public let parentTypeName: String?
+  public let inheritsFromTypes: [TypeDescription]
+  public let parentType: TypeDescription?
   // TODO: also find and expose properties on a class
 }

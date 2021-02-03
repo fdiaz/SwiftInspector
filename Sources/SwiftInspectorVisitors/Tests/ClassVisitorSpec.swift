@@ -51,8 +51,8 @@ final class ClassVisitorSpec: QuickSpec {
 
             let classInfo = self.sut.classes.first
             expect(classInfo?.name) == "SomeClass"
-            expect(classInfo?.inheritsFromTypes) == []
-            expect(classInfo?.parentTypeName).to(beNil())
+            expect(classInfo?.inheritsFromTypes.map { $0.description }) == []
+            expect(classInfo?.parentType).to(beNil())
           }
         }
 
@@ -68,8 +68,8 @@ final class ClassVisitorSpec: QuickSpec {
 
             let classInfo = self.sut.classes.first
             expect(classInfo?.name) == "SomeClass"
-            expect(classInfo?.inheritsFromTypes) == ["Equatable"]
-            expect(classInfo?.parentTypeName).to(beNil())
+            expect(classInfo?.inheritsFromTypes.map { $0.description }) == ["Equatable"]
+            expect(classInfo?.parentType).to(beNil())
           }
         }
 
@@ -85,8 +85,8 @@ final class ClassVisitorSpec: QuickSpec {
 
             let classInfo = self.sut.classes.first
             expect(classInfo?.name) == "SomeClass"
-            expect(classInfo?.inheritsFromTypes) == ["Foo", "Bar"]
-            expect(classInfo?.parentTypeName).to(beNil())
+            expect(classInfo?.inheritsFromTypes.map { $0.description }) == ["Foo", "Bar"]
+            expect(classInfo?.parentType).to(beNil())
           }
         }
       }
@@ -118,8 +118,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds FooClass") {
             let matching = self.sut.classes.filter {
               $0.name == "FooClass"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == nil
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == nil
             }
 
             expect(matching.count) == 1
@@ -128,8 +128,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds BarFooClass") {
             let matching = self.sut.classes.filter {
               $0.name == "BarFooClass"
-                && $0.inheritsFromTypes == ["Equatable"]
-                && $0.parentTypeName == "FooClass"
+                && $0.inheritsFromTypes.map { $0.description } == ["Equatable"]
+                && $0.parentType?.description == "FooClass"
             }
 
             expect(matching.count) == 1
@@ -138,8 +138,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds BarBarFooClass") {
             let matching = self.sut.classes.filter {
               $0.name == "BarBarFooClass"
-                && $0.inheritsFromTypes == ["Hashable"]
-                && $0.parentTypeName == "FooClass.BarFooClass"
+                && $0.inheritsFromTypes.map { $0.description } == ["Hashable"]
+                && $0.parentType?.description == "FooClass.BarFooClass"
             }
 
             expect(matching.count) == 1
@@ -148,8 +148,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds FooFooClass") {
             let matching = self.sut.classes.filter {
               $0.name == "FooFooClass"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooClass"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooClass"
             }
 
             expect(matching.count) == 1
@@ -158,8 +158,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds BarFooFoo1Class") {
             let matching = self.sut.classes.filter {
               $0.name == "BarFooFoo1Class"
-                && $0.inheritsFromTypes == ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"]
-                && $0.parentTypeName == "FooClass.FooFooClass"
+                && $0.inheritsFromTypes.map { $0.description } == ["BarFooFoo1Protocol1", "BarFooFoo1Protocol2"]
+                && $0.parentType?.description == "FooClass.FooFooClass"
             }
 
             expect(matching.count) == 1
@@ -168,8 +168,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds BarBarFooFoo1Class") {
             let matching = self.sut.classes.filter {
               $0.name == "BarBarFooFoo1Class"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooClass.FooFooClass.BarFooFoo1Class"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooClass.FooFooClass.BarFooFoo1Class"
             }
 
             expect(matching.count) == 1
@@ -178,8 +178,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds BarFooFoo2Class") {
             let matching = self.sut.classes.filter {
               $0.name == "BarFooFoo2Class"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooClass.FooFooClass"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooClass.FooFooClass"
             }
 
             expect(matching.count) == 1
@@ -210,8 +210,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds FooClass") {
             let matching = self.sut.classes.filter {
               $0.name == "FooClass"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == nil
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == nil
             }
 
             expect(matching.count) == 1
@@ -220,8 +220,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds FooClass.BarFooStruct") {
             let matching = self.sut.innerStructs.filter {
               $0.name == "BarFooStruct"
-                && $0.inheritsFromTypes == ["Equatable"]
-                && $0.parentTypeName == "FooClass"
+                && $0.inheritsFromTypes.map { $0.description } == ["Equatable"]
+                && $0.parentType?.description == "FooClass"
             }
 
             expect(matching.count) == 1
@@ -230,8 +230,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds FooClass.BarFooStruct.BarBarFooClass") {
             let matching = self.sut.classes.filter {
               $0.name == "BarBarFooClass"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooClass.BarFooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooClass.BarFooStruct"
             }
 
             expect(matching.count) == 1
@@ -240,8 +240,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds FooClass.FooFooClass") {
             let matching = self.sut.classes.filter {
               $0.name == "FooFooClass"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooClass"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooClass"
             }
 
             expect(matching.count) == 1
@@ -250,8 +250,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds FooClass.FooFooClass.BarFooFooClass") {
             let matching = self.sut.classes.filter {
               $0.name == "BarFooFooClass"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooClass.FooFooClass"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooClass.FooFooClass"
             }
 
             expect(matching.count) == 1
@@ -260,8 +260,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds FooClass.BarFooEnum") {
             let matching = self.sut.innerEnums.filter {
               $0.name == "BarFooEnum"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooClass"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooClass"
             }
 
             expect(matching.count) == 1
@@ -270,8 +270,8 @@ final class ClassVisitorSpec: QuickSpec {
           it("finds FooClass.BarFooEnum.BarBarFooClass") {
             let matching = self.sut.classes.filter {
               $0.name == "BarBarFooClass"
-                && $0.inheritsFromTypes == []
-                && $0.parentTypeName == "FooClass.BarFooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooClass.BarFooEnum"
             }
 
             expect(matching.count) == 1
