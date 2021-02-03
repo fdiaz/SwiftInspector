@@ -35,6 +35,18 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
   indirect case tuple([TypeDescription])
   case unknown(text: String)
 
+  /*
+   * Note that we do not yet support the following syntax types:
+   * SomeTypeSyntax
+   * MetatypeTypeSyntax
+   * FunctionTypeSyntax
+   * AttributedTypeSyntax
+   * UnknownTypeSyntax
+   *
+   * We will likely need to add these types at some point in the future.
+   * We’ll Get There™
+   */
+
   /// A description of this type that can be used for code-generation to represent this type.
   public var description: String {
     switch self {
