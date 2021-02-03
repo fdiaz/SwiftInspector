@@ -237,7 +237,8 @@ extension TypeSyntax {
       return .tuple(typeIdentifiers.elements.map { $0.type.typeDescription })
 
     } else if self.as(ClassRestrictionTypeSyntax.self) != nil {
-      // A class restriction is the same as requiring inheriting from AnyObject.
+      // A class restriction is the same as requiring inheriting from AnyObject:
+      // https://forums.swift.org/t/class-only-protocols-class-vs-anyobject/11507/4
       return .simple(name: "AnyObject")
 
     } else {
