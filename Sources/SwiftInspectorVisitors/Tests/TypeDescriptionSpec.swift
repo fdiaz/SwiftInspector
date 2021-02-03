@@ -50,7 +50,7 @@ final class TypeDescriptionSpec: QuickSpec {
         }
       }
 
-      context("when decoding a member type") {
+      context("when decoding a nested type") {
         beforeEach {
           sut = .nested(name: "Bar", parentType: .simple(name: "Foo"))
           data = try? encoder.encode(sut)
@@ -176,9 +176,9 @@ final class TypeDescriptionSpec: QuickSpec {
 
       context("when called on a TypeSyntax node representing a MemberTypeIdentifierSyntax") {
         final class MemberTypeIdentifierSyntaxVisitor: SyntaxVisitor {
-          var memberTypeIdentifier: TypeDescription?
+          var nestedTypeIdentifier: TypeDescription?
           override func visit(_ node: MemberTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
-            memberTypeIdentifier = TypeSyntax(node).typeDescription
+            nestedTypeIdentifier = TypeSyntax(node).typeDescription
             return .skipChildren
           }
         }
@@ -194,7 +194,7 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor?.memberTypeIdentifier?.description) == "Swift.Int"
+          expect(visitor?.nestedTypeIdentifier?.description) == "Swift.Int"
         }
       }
 
