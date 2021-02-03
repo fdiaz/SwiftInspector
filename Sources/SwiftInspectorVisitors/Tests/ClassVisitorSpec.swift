@@ -96,6 +96,7 @@ final class ClassVisitorSpec: QuickSpec {
           beforeEach {
             let content = """
               public class FooClass {
+                public class FooClass {}
                 public class BarFooClass: Equatable {
                   public class BarBarFooClass: Hashable {}
                 }
@@ -120,6 +121,16 @@ final class ClassVisitorSpec: QuickSpec {
               $0.name == "FooClass"
                 && $0.inheritsFromTypes.map { $0.description } == []
                 && $0.parentType?.description == nil
+            }
+
+            expect(matching.count) == 1
+          }
+
+          it("finds FooClass.FooClass") {
+            let matching = self.sut.classes.filter {
+              $0.name == "FooClass"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooClass"
             }
 
             expect(matching.count) == 1

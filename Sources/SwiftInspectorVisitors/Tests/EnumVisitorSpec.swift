@@ -183,6 +183,7 @@ final class EnumVisitorSpec: QuickSpec {
           beforeEach {
             let content = """
               public enum FooEnum {
+                public enum FooEnum {}
                 public struct BarFooStruct {
                   public enum BarBarFooEnum {}
                 }
@@ -205,6 +206,15 @@ final class EnumVisitorSpec: QuickSpec {
               $0.name == "FooEnum"
                 && $0.inheritsFromTypes.map { $0.description } == []
                 && $0.parentType?.description == nil
+            }
+            expect(matching.count) == 1
+          }
+
+          it("finds FooEnum.FooEnum") {
+            let matching = self.sut.enums.filter {
+              $0.name == "FooEnum"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentType?.description == "FooEnum"
             }
             expect(matching.count) == 1
           }
