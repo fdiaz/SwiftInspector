@@ -52,7 +52,7 @@ final class TypeDescriptionSpec: QuickSpec {
 
       context("when decoding a member type") {
         beforeEach {
-          sut = .member(name: "Bar", baseType: .simple(name: "Foo"))
+          sut = .nested(name: "Bar", parentType: .simple(name: "Foo"))
           data = try? encoder.encode(sut)
         }
 

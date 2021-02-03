@@ -26,7 +26,7 @@ import SwiftSyntax
 
 public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
   case simple(name: String)
-  indirect case member(name: String, baseType: TypeDescription)
+  indirect case nested(name: String, parentType: TypeDescription)
   indirect case composition([TypeDescription])
   indirect case optional(TypeDescription)
   indirect case implicitlyUnwrappedOptional(TypeDescription)
@@ -62,8 +62,8 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
       return "\(type)!"
     case let .dictionary(key, value):
       return "[\(key): \(value)]"
-    case let .member(name, baseType):
-      return "\(baseType).\(name)"
+    case let .nested(name, parentType):
+      return "\(parentType).\(name)"
     case let .tuple(types):
       return "(\(types.map { $0.description }.joined(separator: ", ")))"
     case let .unknown(text):
@@ -84,8 +84,8 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
 
     } else if caseDescription == Self.memberDescription {
       let text = try values.decode(String.self, forKey: .text)
-      let baseType = try values.decode(Self.self, forKey: .typeDescription)
-      self = .member(name: text, baseType: baseType)
+      let parentType = try values.decode(Self.self, forKey: .typeDescription)
+      self = .nested(name: text, parentType: parentType)
 
     } else if caseDescription == Self.optionalDescription {
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
@@ -135,9 +135,9 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
     case let .dictionary(key, value):
       try container.encode(key, forKey: .typeDescriptionKey)
       try container.encode(value, forKey: .typeDescriptionValue)
-    case let .member(name, baseType):
+    case let .nested(name, parentType):
       try container.encode(name, forKey: .text)
-      try container.encode(baseType, forKey: .typeDescription)
+      try container.encode(parentType, forKey: .typeDescription)
     }
   }
 
@@ -161,7 +161,7 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
   /// - Note: This method only makes sense when the `parent` is of case  `simple`, `member`, `optional`, and `implicitlyUnwrappedOptional`.
   static func createTypeWithName(_ name: String, parent: TypeDescription?) -> TypeDescription {
     if let parent = parent {
-      return .member(name: name, baseType: parent)
+      return .nested(name: name, parentType: parent)
     } else {
       return .simple(name: name)
     }
@@ -177,7 +177,7 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
       return Self.dictionaryDescription
     case .implicitlyUnwrappedOptional:
       return Self.implicitlyUnwrappedOptionalDescription
-    case .member:
+    case .nested:
       return Self.memberDescription
     case .optional:
       return Self.optionalDescription
@@ -212,9 +212,9 @@ extension TypeSyntax {
       return .simple(name: typeIdentifier.name.text)
 
     } else if let typeIdentifier = self.as(MemberTypeIdentifierSyntax.self) {
-      return .member(
+      return .nested(
         name: typeIdentifier.name.text,
-        baseType: typeIdentifier.baseType.typeDescription)
+        parentType: typeIdentifier.baseType.typeDescription)
 
     } else if let typeIdentifiers = self.as(CompositionTypeSyntax.self) {
       return .composition(typeIdentifiers.elements.map { $0.type.typeDescription })
