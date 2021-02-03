@@ -31,6 +31,10 @@ public final class ClassVisitor: SyntaxVisitor {
     self.parentTypeName = parentTypeName
   }
 
+  deinit {
+    assert(!classParsingTracker.isParsing)
+  }
+
   /// All of the classes found by this visitor.
   public var classes: [ClassInfo] {
     [classInfo].compactMap { $0 } + innerClasses
@@ -43,10 +47,12 @@ public final class ClassVisitor: SyntaxVisitor {
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
 
-    guard !hasFinishedParsingClass else {
+    guard !classParsingTracker.hasFinishedParsing else {
       assertionFailure("Encountered more than one top-level class. This is a usage error: a single ClassVisitor instance should start walking only over a node of type `ClassDeclSyntax`")
       return .skipChildren
     }
+
+    classParsingTracker.increment()
 
     if let classInfo = classInfo {
       // Base case. We've previously found a class declaration, so this must be an inner class.
@@ -79,12 +85,12 @@ public final class ClassVisitor: SyntaxVisitor {
   }
 
   public override func visitPost(_ node: ClassDeclSyntax) {
-    guard !hasFinishedParsingClass else { return } 
-    hasFinishedParsingClass = node.identifier.text == classInfo?.name
+    guard !classParsingTracker.hasFinishedParsing else { return }
+    classParsingTracker.decrement()
   }
 
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingClass, let classInfo = classInfo {
+    if !classParsingTracker.hasFinishedParsing, let classInfo = classInfo {
       // We've previously found a class declaration, so this must be an inner struct.
       let qualifiedParentTypeName = QualifiedParentNameCreator.createNameGiven(
         currentParentTypeName: parentTypeName,
@@ -104,7 +110,7 @@ public final class ClassVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingClass, let classInfo = classInfo {
+    if !classParsingTracker.hasFinishedParsing, let classInfo = classInfo {
       // We've previously found a class declaration, so this must be an inner enum.
       let qualifiedParentTypeName = QualifiedParentNameCreator.createNameGiven(
         currentParentTypeName: parentTypeName,
@@ -138,7 +144,7 @@ public final class ClassVisitor: SyntaxVisitor {
   // MARK: Private
 
   private let parentTypeName: String?
-  private var hasFinishedParsingClass = false
+  private var classParsingTracker = ParsingTracker()
   private var classInfo: ClassInfo?
   private var innerClasses = [ClassInfo]()
 }

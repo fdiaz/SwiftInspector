@@ -190,6 +190,7 @@ final class StructVisitorSpec: QuickSpec {
           beforeEach {
             let content = """
               public struct FooStruct {
+                public struct FooStruct {}
                 public class BarFooClass: Equatable {
                   public struct BarBarFooStruct {}
                 }
@@ -212,6 +213,16 @@ final class StructVisitorSpec: QuickSpec {
               $0.name == "FooStruct"
                 && $0.inheritsFromTypes == []
                 && $0.parentTypeName == nil
+            }
+
+            expect(matching.count) == 1
+          }
+
+          it("finds FooStruct.FooStruct") {
+            let matching = self.sut.structs.filter {
+              $0.name == "FooStruct"
+                && $0.inheritsFromTypes.map { $0.description } == []
+                && $0.parentTypeName == "FooStruct"
             }
 
             expect(matching.count) == 1

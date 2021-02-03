@@ -31,6 +31,10 @@ public final class EnumVisitor: SyntaxVisitor {
     self.parentTypeName = parentTypeName
   }
 
+  deinit {
+    assert(!enumParsingTracker.isParsing)
+  }
+
   /// All of the classes found by this visitor.
   public var enums: [EnumInfo] {
     [enumInfo].compactMap { $0 } + innerEnums
@@ -43,10 +47,12 @@ public final class EnumVisitor: SyntaxVisitor {
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
 
-    guard !hasFinishedParsingEnum else {
+    guard !enumParsingTracker.hasFinishedParsing else {
       assertionFailure("Encountered more than one top-level enum. This is a usage error: a single EnumVisitor instance should start walking only over a node of type `EnumDeclSyntax`")
       return .skipChildren
     }
+
+    enumParsingTracker.increment()
 
     if let enumInfo = enumInfo {
       // Base case. We've previously found an enum declaration, so this must be an inner class.
@@ -82,11 +88,11 @@ public final class EnumVisitor: SyntaxVisitor {
   }
 
   public override func visitPost(_ node: EnumDeclSyntax) {
-    hasFinishedParsingEnum = node.identifier.text == enumInfo?.name
+    enumParsingTracker.decrement()
   }
 
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingEnum, let enumInfo = enumInfo {
+    if !enumParsingTracker.hasFinishedParsing, let enumInfo = enumInfo {
       // We've previously found an enum declaration, so this must be an inner struct.
       let qualifiedParentTypeName = QualifiedParentNameCreator.createNameGiven(
         currentParentTypeName: parentTypeName,
@@ -106,7 +112,7 @@ public final class EnumVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingEnum, let enumInfo = enumInfo {
+    if !enumParsingTracker.hasFinishedParsing, let enumInfo = enumInfo {
       // We've previously found an enum declaration, so this must be an inner enum.
       let qualifiedParentTypeName = QualifiedParentNameCreator.createNameGiven(
         currentParentTypeName: parentTypeName,
@@ -140,7 +146,7 @@ public final class EnumVisitor: SyntaxVisitor {
   // MARK: Private
 
   private let parentTypeName: String?
-  private var hasFinishedParsingEnum = false
+  private var enumParsingTracker = ParsingTracker()
   private var enumInfo: EnumInfo?
   private var innerEnums = [EnumInfo]()
 }
