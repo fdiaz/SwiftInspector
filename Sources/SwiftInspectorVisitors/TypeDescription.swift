@@ -181,7 +181,7 @@ public enum TypeDescription: Codable, Equatable {
     case typeDescriptionDictionaryValue
   }
 
-  enum CodingError: Error {
+  public enum CodingError: Error {
     case unknownCase
   }
 
