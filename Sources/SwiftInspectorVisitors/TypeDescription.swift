@@ -100,8 +100,8 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
       self = .array(typeDescription)
 
     } else if caseDescription == Self.dictionaryDescription {
-      let key = try values.decode(Self.self, forKey: .typeDescriptionKey)
-      let value = try values.decode(Self.self, forKey: .typeDescriptionValue)
+      let key = try values.decode(Self.self, forKey: .typeDescriptionDictionaryKey)
+      let value = try values.decode(Self.self, forKey: .typeDescriptionDictionaryValue)
       self = .dictionary(key: key, value: value)
 
     } else if caseDescription == Self.compositionDescription {
@@ -133,8 +133,8 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
          let .composition(types):
       try container.encode(types, forKey: .typeDescriptions)
     case let .dictionary(key, value):
-      try container.encode(key, forKey: .typeDescriptionKey)
-      try container.encode(value, forKey: .typeDescriptionValue)
+      try container.encode(key, forKey: .typeDescriptionDictionaryKey)
+      try container.encode(value, forKey: .typeDescriptionDictionaryValue)
     case let .nested(name, parentType):
       try container.encode(name, forKey: .text)
       try container.encode(parentType, forKey: .typeDescription)
@@ -142,12 +142,18 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
   }
 
   enum CodingKeys: String, CodingKey {
+    /// The value for this key is the case encoded as a string.
     case caseDescription
+    /// The value for this key is an associated value of type String
     case text
+    /// The value for this key is the associated value of type TypeDescription
     case typeDescription
+    /// The value for this key is the associated value of type [TypeDescription]
     case typeDescriptions
-    case typeDescriptionKey
-    case typeDescriptionValue
+    /// The value for this key is the associated value of type TypeDescription that represents the key in a dictionary.
+    case typeDescriptionDictionaryKey
+    /// The value for this key is the associated value of type TypeDescription that represents the value in a dictionary
+    case typeDescriptionDictionaryValue
   }
 
   enum CodingError: Error {
