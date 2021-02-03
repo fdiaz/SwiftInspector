@@ -92,7 +92,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
           }
         }
 
-        context("with a composition conformances on multiple lines") {
+        context("with composition conformances on multiple lines") {
           beforeEach {
             let content = """
             protocol Protocol: FooProviding & BarProviding
