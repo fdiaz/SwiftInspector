@@ -43,10 +43,12 @@ public final class StructVisitor: SyntaxVisitor {
 
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
 
-    guard !hasFinishedParsingStruct else {
+    guard !structParsingTracker.hasFinishedParsing else {
       assertionFailure("Encountered more than one top-level struct. This is a usage error: a single StructVisitor instance should start walking only over a node of type `StructDeclSyntax`")
       return .skipChildren
     }
+
+    structParsingTracker.increment()
 
     if let structInfo = structInfo {
       // Base case. We've previously found a struct declaration, so this must be an inner struct.
@@ -82,11 +84,11 @@ public final class StructVisitor: SyntaxVisitor {
   }
 
   public override func visitPost(_ node: StructDeclSyntax) {
-    hasFinishedParsingStruct = node.identifier.text == structInfo?.name
+    structParsingTracker.decrement()
   }
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingStruct, let structInfo = structInfo {
+    if !structParsingTracker.hasFinishedParsing, let structInfo = structInfo {
       // We've previously found a struct declaration, so this must be an inner class.
       let qualifiedParentTypeName = QualifiedParentNameCreator.createNameGiven(
         currentParentTypeName: parentTypeName,
@@ -106,7 +108,7 @@ public final class StructVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingStruct, let structInfo = structInfo {
+    if !structParsingTracker.hasFinishedParsing, let structInfo = structInfo {
       // We've previously found a struct declaration, so this must be an inner enum.
       let qualifiedParentTypeName = QualifiedParentNameCreator.createNameGiven(
         currentParentTypeName: parentTypeName,
@@ -140,7 +142,7 @@ public final class StructVisitor: SyntaxVisitor {
   // MARK: Private
 
   private let parentTypeName: String?
-  private var hasFinishedParsingStruct = false
+  private let structParsingTracker = ParsingTracker()
   private var structInfo: StructInfo?
   private var innerStructs = [StructInfo]()
 }
