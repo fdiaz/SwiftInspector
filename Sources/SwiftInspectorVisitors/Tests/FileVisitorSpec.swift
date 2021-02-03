@@ -91,7 +91,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestStruct.InnerStruct") {
           let matching = self.sut.fileInfo.structs.filter {
             $0.name == "InnerStruct"
-              && $0.parentType?.description == "TestStruct"
+              && $0.parentType?.asSource == "TestStruct"
           }
           expect(matching.count) == 1
         }
@@ -99,7 +99,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestStruct.InnerClass") {
           let matching = self.sut.fileInfo.classes.filter {
             $0.name == "InnerClass"
-              && $0.parentType?.description == "TestStruct"
+              && $0.parentType?.asSource == "TestStruct"
           }
           expect(matching.count) == 1
         }
@@ -107,7 +107,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestStruct.InnerEnum") {
           let matching = self.sut.fileInfo.enums.filter {
             $0.name == "InnerEnum"
-              && $0.parentType?.description == "TestStruct"
+              && $0.parentType?.asSource == "TestStruct"
           }
           expect(matching.count) == 1
         }
@@ -122,7 +122,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestClass.InnerStruct") {
           let matching = self.sut.fileInfo.structs.filter {
             $0.name == "InnerStruct"
-              && $0.parentType?.description == "TestClass"
+              && $0.parentType?.asSource == "TestClass"
           }
           expect(matching.count) == 1
         }
@@ -130,7 +130,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestClass.InnerClass") {
           let matching = self.sut.fileInfo.classes.filter {
             $0.name == "InnerClass"
-              && $0.parentType?.description == "TestClass"
+              && $0.parentType?.asSource == "TestClass"
           }
           expect(matching.count) == 1
         }
@@ -138,7 +138,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestClass.InnerEnum") {
           let matching = self.sut.fileInfo.enums.filter {
             $0.name == "InnerEnum"
-              && $0.parentType?.description == "TestClass"
+              && $0.parentType?.asSource == "TestClass"
           }
           expect(matching.count) == 1
         }
@@ -146,7 +146,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestEnum") {
           let matching = self.sut.fileInfo.enums.filter {
             $0.name == "TestEnum"
-              && $0.parentType?.description == nil
+              && $0.parentType?.asSource == nil
           }
           expect(matching.count) == 1
         }
@@ -154,7 +154,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestEnum.InnerStruct") {
           let matching = self.sut.fileInfo.structs.filter {
             $0.name == "InnerStruct"
-              && $0.parentType?.description == "TestEnum"
+              && $0.parentType?.asSource == "TestEnum"
           }
           expect(matching.count) == 1
         }
@@ -162,7 +162,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestEnum.InnerClass") {
           let matching = self.sut.fileInfo.classes.filter {
             $0.name == "InnerClass"
-              && $0.parentType?.description == "TestEnum"
+              && $0.parentType?.asSource == "TestEnum"
           }
           expect(matching.count) == 1
         }
@@ -170,7 +170,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestEnum.InnerEnum") {
           let matching = self.sut.fileInfo.enums.filter {
             $0.name == "InnerEnum"
-              && $0.parentType?.description == "TestEnum"
+              && $0.parentType?.asSource == "TestEnum"
           }
           expect(matching.count) == 1
         }
@@ -184,9 +184,9 @@ final class FileVisitorSpec: QuickSpec {
 
         it("finds Array extension") {
           let matching = self.sut.fileInfo.extensions.filter {
-            $0.type.description == "Array"
-              && $0.genericRequirements.first?.leftType.description == "Element"
-              && $0.genericRequirements.first?.rightType.description == "Int"
+            $0.type.asSource == "Array"
+              && $0.genericRequirements.first?.leftType.asSource == "Element"
+              && $0.genericRequirements.first?.rightType.asSource == "Int"
               && $0.genericRequirements.first?.relationship == .equals
           }
           expect(matching.count) == 1
@@ -195,7 +195,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds Array.InnerStruct") {
           let matching = self.sut.fileInfo.structs.filter {
             $0.name == "InnerStruct"
-              && $0.parentType?.description == "Array"
+              && $0.parentType?.asSource == "Array"
           }
           expect(matching.count) == 1
         }
@@ -203,7 +203,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds Array.InnerClass") {
           let matching = self.sut.fileInfo.classes.filter {
             $0.name == "InnerClass"
-              && $0.parentType?.description == "Array"
+              && $0.parentType?.asSource == "Array"
           }
           expect(matching.count) == 1
         }
@@ -211,7 +211,7 @@ final class FileVisitorSpec: QuickSpec {
         it("finds Array.InnerEnum") {
           let matching = self.sut.fileInfo.enums.filter {
             $0.name == "InnerEnum"
-              && $0.parentType?.description == "Array"
+              && $0.parentType?.asSource == "Array"
           }
           expect(matching.count) == 1
         }

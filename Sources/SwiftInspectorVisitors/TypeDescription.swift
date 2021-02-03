@@ -25,7 +25,7 @@
 import SwiftSyntax
 
 /// An enum that describes a parsed type in a cannonical form.
-public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
+public enum TypeDescription: Codable, Equatable {
   /// A root type. e.g. Int
   case simple(name: String)
   /// A nested type. e.g. Array.Element
@@ -57,25 +57,25 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
    * We’ll Get There™
    */
 
-  /// A description of this type that can be used for code-generation to represent this type.
-  public var description: String {
+  /// A source-code representation of this type that can be used in code generation.
+  public var asSource: String {
     switch self {
     case let .simple(name):
       return name
     case let .array(type):
-      return "[\(type)]"
+      return "[\(type.asSource)]"
     case let .composition(types):
-      return types.map { $0.description }.joined(separator: " & ")
+      return types.map { $0.asSource }.joined(separator: " & ")
     case let .optional(type):
-      return "\(type)?"
+      return "\(type.asSource)?"
     case let .implicitlyUnwrappedOptional(type):
-      return "\(type)!"
+      return "\(type.asSource)!"
     case let .dictionary(key, value):
-      return "[\(key): \(value)]"
+      return "[\(key.asSource): \(value.asSource)]"
     case let .nested(name, parentType):
-      return "\(parentType).\(name)"
+      return "\(parentType.asSource).\(name)"
     case let .tuple(types):
-      return "(\(types.map { $0.description }.joined(separator: ", ")))"
+      return "(\(types.map { $0.asSource }.joined(separator: ", ")))"
     case let .unknown(text):
       return text
     }

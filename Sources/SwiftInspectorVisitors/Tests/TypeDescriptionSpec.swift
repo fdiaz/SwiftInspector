@@ -170,7 +170,7 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor?.simpleTypeIdentifier?.description) == "Int"
+          expect(visitor?.simpleTypeIdentifier?.asSource) == "Int"
         }
       }
 
@@ -194,7 +194,7 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor?.nestedTypeIdentifier?.description) == "Swift.Int"
+          expect(visitor?.nestedTypeIdentifier?.asSource) == "Swift.Int"
         }
       }
 
@@ -220,7 +220,7 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds the types") {
-          expect(visitor?.composedTypeIdentifier?.description) == "Foo & Bar"
+          expect(visitor?.composedTypeIdentifier?.asSource) == "Foo & Bar"
         }
       }
 
@@ -248,7 +248,7 @@ final class TypeDescriptionSpec: QuickSpec {
 
         it("Finds the type") {
           expect(visitor?.optionalTypeIdentifiers
-                  .map { $0.description }
+                  .map { $0.asSource }
                   .contains("AnyObject?"))
             .to(beTrue())
         }
@@ -274,7 +274,7 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor?.implictlyUnwrappedOptionalTypeIdentifier?.description)
+          expect(visitor?.implictlyUnwrappedOptionalTypeIdentifier?.asSource)
             == "Int!"
         }
       }
@@ -299,7 +299,7 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor.arrayTypeIdentifier?.description) == "[Int]"
+          expect(visitor.arrayTypeIdentifier?.asSource) == "[Int]"
         }
       }
 
@@ -323,7 +323,7 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor.dictionaryTypeIdentifier?.description) == "[Int: String]"
+          expect(visitor.dictionaryTypeIdentifier?.asSource) == "[Int: String]"
         }
       }
 
@@ -349,7 +349,7 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor?.tupleTypeIdentifier?.description) == "(Int, String)"
+          expect(visitor?.tupleTypeIdentifier?.asSource) == "(Int, String)"
         }
       }
 
@@ -375,7 +375,7 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds returns the type as AnyObject") {
-          expect(visitor?.classRestrictionIdentifier?.description) == "AnyObject"
+          expect(visitor?.classRestrictionIdentifier?.asSource) == "AnyObject"
         }
       }
     }
