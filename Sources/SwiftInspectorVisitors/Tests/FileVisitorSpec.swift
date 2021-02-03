@@ -184,7 +184,7 @@ final class FileVisitorSpec: QuickSpec {
 
         it("finds Array extension") {
           let matching = self.sut.fileInfo.extensions.filter {
-            $0.type.asSource == "Array"
+            $0.typeDescription.asSource == "Array"
               && $0.genericRequirements.first?.leftType.asSource == "Element"
               && $0.genericRequirements.first?.rightType.asSource == "Int"
               && $0.genericRequirements.first?.relationship == .equals

@@ -50,7 +50,7 @@ final class ExtensionVisitorSpec: QuickSpec {
               overContent: content)
 
             let extensionInfo = self.sut.extensionInfo
-            expect(extensionInfo?.type.asSource) == "Array"
+            expect(extensionInfo?.typeDescription.asSource) == "Array"
             expect(extensionInfo?.inheritsFromTypes.map { $0.asSource }) == []
           }
         }
@@ -65,7 +65,7 @@ final class ExtensionVisitorSpec: QuickSpec {
 
           it("returns the conforming type name") {
             let extensionInfo = self.sut.extensionInfo
-            expect(extensionInfo?.type.asSource) == "Foundation.NSURL"
+            expect(extensionInfo?.typeDescription.asSource) == "Foundation.NSURL"
             expect(extensionInfo?.inheritsFromTypes.map { $0.asSource }) == []
           }
         }
@@ -81,7 +81,7 @@ final class ExtensionVisitorSpec: QuickSpec {
               overContent: content)
 
             let extensionInfo = self.sut.extensionInfo
-            expect(extensionInfo?.type.asSource) == "Array"
+            expect(extensionInfo?.typeDescription.asSource) == "Array"
             expect(extensionInfo?.inheritsFromTypes.map { $0.asSource }) == ["Foo"]
           }
         }
@@ -96,7 +96,7 @@ final class ExtensionVisitorSpec: QuickSpec {
 
           it("returns the conforming type name") {
             let extensionInfo = self.sut.extensionInfo
-            expect(extensionInfo?.type.asSource) == "Array"
+            expect(extensionInfo?.typeDescription.asSource) == "Array"
             expect(extensionInfo?.inheritsFromTypes.map { $0.asSource }) == ["Swift.Equatable"]
           }
         }
@@ -112,7 +112,7 @@ final class ExtensionVisitorSpec: QuickSpec {
               overContent: content)
 
             let extensionInfo = self.sut.extensionInfo
-            expect(extensionInfo?.type.asSource) == "Array"
+            expect(extensionInfo?.typeDescription.asSource) == "Array"
             expect(extensionInfo?.inheritsFromTypes.map { $0.asSource }) == ["Foo", "Bar"]
           }
         }
@@ -149,7 +149,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           }
 
           it("finds extension") {
-            expect(self.sut.extensionInfo?.type.asSource) == "Array"
+            expect(self.sut.extensionInfo?.typeDescription.asSource) == "Array"
           }
 
           it("finds Array.TestStruct") {

@@ -49,7 +49,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
     genericRequirementsVisitor.walk(node)
 
     extensionInfo = ExtensionInfo(
-      type: node.extendedType.typeDescription,
+      typeDescription: node.extendedType.typeDescription,
       inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
       genericRequirements: genericRequirementsVisitor.genericRequirements)
     return .visitChildren
@@ -62,7 +62,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
     if !hasFinishedParsingExtension, let extensionInfo = extensionInfo {
       // We've previously found an extension declaration, so this must be an inner class.
-      let classVisitor = ClassVisitor(parentType: extensionInfo.type)
+      let classVisitor = ClassVisitor(parentType: extensionInfo.typeDescription)
       classVisitor.walk(node)
 
       innerClasses += classVisitor.classes
@@ -79,7 +79,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
     if !hasFinishedParsingExtension, let extensionInfo = extensionInfo {
       // We've previously found an extension declaration, so this must be an inner struct.
-      let structVisitor = StructVisitor(parentType: extensionInfo.type)
+      let structVisitor = StructVisitor(parentType: extensionInfo.typeDescription)
       structVisitor.walk(node)
 
       innerStructs += structVisitor.structs
@@ -97,7 +97,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
     if !hasFinishedParsingExtension, let extensionInfo = extensionInfo {
       // We've previously found a extension declaration, so this must be an inner enum.
-      let enumVisitor = EnumVisitor(parentType: extensionInfo.type)
+      let enumVisitor = EnumVisitor(parentType: extensionInfo.typeDescription)
       enumVisitor.walk(node)
 
       innerEnums += enumVisitor.enums
@@ -123,7 +123,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
 }
 
 public struct ExtensionInfo: Codable, Equatable {
-  public let type: TypeDescription
+  public let typeDescription: TypeDescription
   public private(set) var inheritsFromTypes: [TypeDescription]
   public private(set) var genericRequirements: [GenericRequirement]
   // TODO: also find and expose computed properties
