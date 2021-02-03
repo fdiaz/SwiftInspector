@@ -31,6 +31,10 @@ public final class ClassVisitor: SyntaxVisitor {
     self.parentTypeName = parentTypeName
   }
 
+  deinit {
+    assert(!classParsingTracker.isParsing)
+  }
+
   /// All of the classes found by this visitor.
   public var classes: [ClassInfo] {
     [classInfo].compactMap { $0 } + innerClasses
@@ -140,7 +144,7 @@ public final class ClassVisitor: SyntaxVisitor {
   // MARK: Private
 
   private let parentTypeName: String?
-  private let classParsingTracker = ParsingTracker()
+  private var classParsingTracker = ParsingTracker()
   private var classInfo: ClassInfo?
   private var innerClasses = [ClassInfo]()
 }

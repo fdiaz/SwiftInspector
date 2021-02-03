@@ -31,6 +31,10 @@ public final class EnumVisitor: SyntaxVisitor {
     self.parentTypeName = parentTypeName
   }
 
+  deinit {
+    assert(!enumParsingTracker.isParsing)
+  }
+
   /// All of the classes found by this visitor.
   public var enums: [EnumInfo] {
     [enumInfo].compactMap { $0 } + innerEnums
@@ -142,7 +146,7 @@ public final class EnumVisitor: SyntaxVisitor {
   // MARK: Private
 
   private let parentTypeName: String?
-  private let enumParsingTracker = ParsingTracker()
+  private var enumParsingTracker = ParsingTracker()
   private var enumInfo: EnumInfo?
   private var innerEnums = [EnumInfo]()
 }

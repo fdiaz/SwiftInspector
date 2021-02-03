@@ -31,6 +31,10 @@ public final class StructVisitor: SyntaxVisitor {
     self.parentTypeName = parentTypeName
   }
 
+  deinit {
+    assert(!structParsingTracker.isParsing)
+  }
+
   /// All of the structs found by this visitor.
   public var structs: [StructInfo] {
     [structInfo].compactMap { $0 } + innerStructs
@@ -142,7 +146,7 @@ public final class StructVisitor: SyntaxVisitor {
   // MARK: Private
 
   private let parentTypeName: String?
-  private let structParsingTracker = ParsingTracker()
+  private var structParsingTracker = ParsingTracker()
   private var structInfo: StructInfo?
   private var innerStructs = [StructInfo]()
 }

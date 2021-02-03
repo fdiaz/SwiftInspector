@@ -24,16 +24,20 @@
 
 import Foundation
 
-final class ParsingTracker {
+struct ParsingTracker {
   var hasFinishedParsing: Bool {
-    hasStartedParsing && parsingCount == 0
+    hasStartedParsing && !isParsing
   }
 
-  func increment() {
+  var isParsing: Bool {
+    parsingCount != 0
+  }
+
+  mutating func increment() {
     parsingCount += 1
   }
 
-  func decrement() {
+  mutating func decrement() {
     parsingCount -= 1
   }
 
