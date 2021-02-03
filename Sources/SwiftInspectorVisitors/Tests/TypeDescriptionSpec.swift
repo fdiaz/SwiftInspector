@@ -105,13 +105,13 @@ final class TypeDescriptionSpec: QuickSpec {
         }
       }
 
-      context("when decoding a dictionary type") {
+      context("when decoding a composition type") {
         beforeEach {
           sut = .composition([.simple(name: "Foo"), .optional(.simple(name: "Bar"))])
           data = try? encoder.encode(sut)
         }
 
-        it("to decode the encoded compositionDescription description") {
+        it("to decode the encoded composition description") {
           expect(try decoder.decode(TypeDescription.self, from: data)) == sut
         }
       }
