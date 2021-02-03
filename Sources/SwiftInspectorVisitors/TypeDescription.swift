@@ -45,6 +45,21 @@ public enum TypeDescription: Codable, Equatable {
   /// A type that can't be represented by the above cases.
   case unknown(text: String)
 
+  /// Creates a type description of case `.nested` with the given name as the name and the receiver as the parent type.
+  /// If no parent is provided, creates a type description of case `.simple`.
+  ///
+  /// - Parameters:
+  ///   - name: The simple name of the returned type.
+  ///   - parent: The parent type for the returned type.
+  /// - Note: This method only makes sense when the `parent` is of case  `simple`, `nested`, `optional`, and `implicitlyUnwrappedOptional`.
+  init(name: String, parent: TypeDescription?) {
+    if let parent = parent {
+      self = .nested(name: name, parentType: parent)
+    } else {
+      self = .simple(name: name)
+    }
+  }
+
   /*
    * Note that we do not yet support the following syntax types:
    * SomeTypeSyntax
@@ -168,19 +183,6 @@ public enum TypeDescription: Codable, Equatable {
 
   enum CodingError: Error {
     case unknownCase
-  }
-
-  /// - Parameters:
-  ///   - name: The simple name of the returned type.
-  ///   - parent: The parent type for the returned type.
-  /// - Returns: Returns a type description of case `.nested` with the given name as the name and the receiver as the base type.
-  /// - Note: This method only makes sense when the `parent` is of case  `simple`, `nested`, `optional`, and `implicitlyUnwrappedOptional`.
-  static func typeDescriptionWithName(_ name: String, parent: TypeDescription?) -> TypeDescription {
-    if let parent = parent {
-      return .nested(name: name, parentType: parent)
-    } else {
-      return .simple(name: name)
-    }
   }
 
   private var caseDescription: String {

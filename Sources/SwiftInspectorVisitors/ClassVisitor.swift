@@ -58,7 +58,7 @@ public final class ClassVisitor: SyntaxVisitor {
       // Base case. We've previously found a class declaration, so this must be an inner class.
       // This class visitor shouldn't recurse down into the children.
       // Instead, we'll use a new class visitor to get the information from this class.
-      let newParentType = TypeDescription.typeDescriptionWithName(classInfo.name, parent: parentType)
+      let newParentType = TypeDescription(name: classInfo.name, parent: parentType)
       let innerClassVisitor = ClassVisitor(parentType: newParentType)
       innerClassVisitor.walk(node)
 
@@ -89,7 +89,7 @@ public final class ClassVisitor: SyntaxVisitor {
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
     if !classParsingTracker.hasFinishedParsing, let classInfo = classInfo {
       // We've previously found a class declaration, so this must be an inner struct.
-      let newParentType = TypeDescription.typeDescriptionWithName(classInfo.name, parent: parentType)
+      let newParentType = TypeDescription(name: classInfo.name, parent: parentType)
 
       let structVisitor = StructVisitor(parentType: newParentType)
       structVisitor.walk(node)
@@ -107,7 +107,7 @@ public final class ClassVisitor: SyntaxVisitor {
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
     if !classParsingTracker.hasFinishedParsing, let classInfo = classInfo {
       // We've previously found a class declaration, so this must be an inner enum.
-      let newParentType = TypeDescription.typeDescriptionWithName(classInfo.name, parent: parentType)
+      let newParentType = TypeDescription(name: classInfo.name, parent: parentType)
 
       let enumVisitor = EnumVisitor(parentType: newParentType)
       enumVisitor.walk(node)
