@@ -92,7 +92,7 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
       let text = try values.decode(String.self, forKey: .text)
       self = .unknown(text: text)
 
-    } else if caseDescription == Self.memberDescription {
+    } else if caseDescription == Self.nestedDescription {
       let text = try values.decode(String.self, forKey: .text)
       let parentType = try values.decode(Self.self, forKey: .typeDescription)
       self = .nested(name: text, parentType: parentType)
@@ -173,8 +173,8 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
   /// - Parameters:
   ///   - name: The simple name of the returned type.
   ///   - parent: The parent type for the returned type.
-  /// - Returns: Returns a type description of case `.member` with the given name as the name and the receiver as the base type.
-  /// - Note: This method only makes sense when the `parent` is of case  `simple`, `member`, `optional`, and `implicitlyUnwrappedOptional`.
+  /// - Returns: Returns a type description of case `.nested` with the given name as the name and the receiver as the base type.
+  /// - Note: This method only makes sense when the `parent` is of case  `simple`, `nested`, `optional`, and `implicitlyUnwrappedOptional`.
   static func typeDescriptionWithName(_ name: String, parent: TypeDescription?) -> TypeDescription {
     if let parent = parent {
       return .nested(name: name, parentType: parent)
@@ -194,7 +194,7 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
     case .implicitlyUnwrappedOptional:
       return Self.implicitlyUnwrappedOptionalDescription
     case .nested:
-      return Self.memberDescription
+      return Self.nestedDescription
     case .optional:
       return Self.optionalDescription
     case .simple:
@@ -207,7 +207,7 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
   }
 
   private static let simpleDescription = "simple"
-  private static let memberDescription = "member"
+  private static let nestedDescription = "nested"
   private static let compositionDescription = "composition"
   private static let optionalDescription = "optional"
   private static let implicitlyUnwrappedOptionalDescription = "implicitlyUnwrappedOptional"
