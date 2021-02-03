@@ -24,15 +24,25 @@
 
 import SwiftSyntax
 
+/// An enum that describes a parsed type in a cannonical form.
 public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
+  /// A root type. e.g. Int
   case simple(name: String)
+  /// A nested type. e.g. Array.Element
   indirect case nested(name: String, parentType: TypeDescription)
+  /// A composed type. e.g. Identifiable & Equatable
   indirect case composition([TypeDescription])
+  /// An optional type. e.g. Int?
   indirect case optional(TypeDescription)
+  /// An implicitly unwrapped optional type. eg. Int!
   indirect case implicitlyUnwrappedOptional(TypeDescription)
+  /// An array. e.g. [Int]
   indirect case array(TypeDescription)
+  /// A dictionary. e.g. [Int: String]
   indirect case dictionary(key: TypeDescription, value: TypeDescription)
+  /// A tuple. e.g. (Int, String)
   indirect case tuple([TypeDescription])
+  /// A type that can't be represented by the above cases.
   case unknown(text: String)
 
   /*
