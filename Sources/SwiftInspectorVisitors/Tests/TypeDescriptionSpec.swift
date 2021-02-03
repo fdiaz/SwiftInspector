@@ -352,6 +352,32 @@ final class TypeDescriptionSpec: QuickSpec {
           expect(visitor?.tupleTypeIdentifier?.description) == "(Int, String)"
         }
       }
+
+      context("when called on a TypeSyntax node representing a ClassRestrictionTypeSyntax") {
+        final class ClassRestrictionTypeSyntaxVisitor: SyntaxVisitor {
+          var classRestrictionIdentifier: TypeDescription?
+          // Note: ideally we'd visit a node of type ClassRestrictionTypeSyntax
+          // but there's no way to get a TypeSyntax from an object of that type.
+          override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {
+            classRestrictionIdentifier = node.typeName.typeDescription
+            return .skipChildren
+          }
+        }
+
+        var visitor: ClassRestrictionTypeSyntaxVisitor!
+        beforeEach {
+          let content = """
+              protocol SomeObject: class {}
+              """
+
+          visitor = ClassRestrictionTypeSyntaxVisitor()
+          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+        }
+
+        it("Finds returns the type as AnyObject") {
+          expect(visitor?.classRestrictionIdentifier?.description) == "AnyObject"
+        }
+      }
     }
   }
 }

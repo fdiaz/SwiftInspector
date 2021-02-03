@@ -224,6 +224,10 @@ extension TypeSyntax {
     } else if let typeIdentifiers = self.as(TupleTypeSyntax.self) {
       return .tuple(typeIdentifiers.elements.map { $0.type.typeDescription })
 
+    } else if self.as(ClassRestrictionTypeSyntax.self) != nil {
+      // A class restriction is the same as requiring inheriting from AnyObject.
+      return .simple(name: "AnyObject")
+
     } else {
       assertionFailure("TypeSyntax of unexpected type. Defaulting to `description`.")
       // The description is a source-accurate description of this node,
