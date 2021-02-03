@@ -29,7 +29,7 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
   indirect case member(name: String, baseType: TypeDescription)
   indirect case composition([TypeDescription])
   indirect case optional(TypeDescription)
-  indirect case implicitlyUnwrapped(TypeDescription)
+  indirect case implicitlyUnwrappedOptional(TypeDescription)
   indirect case array(TypeDescription)
   indirect case dictionary(key: TypeDescription, value: TypeDescription)
   indirect case tuple([TypeDescription])
@@ -58,7 +58,7 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
       return types.map { $0.description }.joined(separator: " & ")
     case let .optional(type):
       return "\(type)?"
-    case let .implicitlyUnwrapped(type):
+    case let .implicitlyUnwrappedOptional(type):
       return "\(type)!"
     case let .dictionary(key, value):
       return "[\(key): \(value)]"
@@ -91,9 +91,9 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
       self = .optional(typeDescription)
 
-    } else if caseDescription == Self.implicitlyUnwrappedDescription {
+    } else if caseDescription == Self.implicitlyUnwrappedOptionalDescription {
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
-      self = .implicitlyUnwrapped(typeDescription)
+      self = .implicitlyUnwrappedOptional(typeDescription)
 
     } else if caseDescription == Self.arrayDescription {
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
@@ -127,7 +127,7 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
       try container.encode(text, forKey: .text)
     case let .optional(type),
          let .array(type),
-         let .implicitlyUnwrapped(type):
+         let .implicitlyUnwrappedOptional(type):
       try container.encode(type, forKey: .typeDescription)
     case let .tuple(types),
          let .composition(types):
@@ -158,7 +158,7 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
   ///   - name: The simple name of the returned type.
   ///   - parent: The parent type for the returned type.
   /// - Returns: Returns a type description of case `.member` with the given name as the name and the receiver as the base type.
-  /// - Note: This method only makes sense when the `parent` is of case  `simple`, `member`, `optional`, and `implicitlyUnwrapped`.
+  /// - Note: This method only makes sense when the `parent` is of case  `simple`, `member`, `optional`, and `implicitlyUnwrappedOptional`.
   static func createTypeWithName(_ name: String, parent: TypeDescription?) -> TypeDescription {
     if let parent = parent {
       return .member(name: name, baseType: parent)
@@ -175,8 +175,8 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
       return Self.compositionDescription
     case .dictionary:
       return Self.dictionaryDescription
-    case .implicitlyUnwrapped:
-      return Self.implicitlyUnwrappedDescription
+    case .implicitlyUnwrappedOptional:
+      return Self.implicitlyUnwrappedOptionalDescription
     case .member:
       return Self.memberDescription
     case .optional:
@@ -194,7 +194,7 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
   private static let memberDescription = "member"
   private static let compositionDescription = "composition"
   private static let optionalDescription = "optional"
-  private static let implicitlyUnwrappedDescription = "implicitlyUnwrapped"
+  private static let implicitlyUnwrappedOptionalDescription = "implicitlyUnwrappedOptional"
   private static let arrayDescription = "array"
   private static let dictionaryDescription = "dictionary"
   private static let tupleDescription = "tuple"
@@ -223,7 +223,7 @@ extension TypeSyntax {
       return .optional(typeIdentifier.wrappedType.typeDescription)
 
     } else if let typeIdentifier = self.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
-      return .implicitlyUnwrapped(typeIdentifier.wrappedType.typeDescription)
+      return .implicitlyUnwrappedOptional(typeIdentifier.wrappedType.typeDescription)
 
     } else if let typeIdentifier = self.as(ArrayTypeSyntax.self) {
       return .array(typeIdentifier.elementType.typeDescription)

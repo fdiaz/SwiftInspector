@@ -72,9 +72,9 @@ final class TypeDescriptionSpec: QuickSpec {
         }
       }
 
-      context("when decoding an implicitlyUnwrapped type") {
+      context("when decoding an implicitlyUnwrappedOptional type") {
         beforeEach {
-          sut = .implicitlyUnwrapped(.simple(name: "Foo"))
+          sut = .implicitlyUnwrappedOptional(.simple(name: "Foo"))
           data = try? encoder.encode(sut)
         }
 
