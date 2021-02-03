@@ -159,7 +159,7 @@ public enum TypeDescription: Codable, Equatable, CustomStringConvertible {
   ///   - parent: The parent type for the returned type.
   /// - Returns: Returns a type description of case `.member` with the given name as the name and the receiver as the base type.
   /// - Note: This method only makes sense when the `parent` is of case  `simple`, `member`, `optional`, and `implicitlyUnwrappedOptional`.
-  static func createTypeWithName(_ name: String, parent: TypeDescription?) -> TypeDescription {
+  static func typeDescriptionWithName(_ name: String, parent: TypeDescription?) -> TypeDescription {
     if let parent = parent {
       return .nested(name: name, parentType: parent)
     } else {
