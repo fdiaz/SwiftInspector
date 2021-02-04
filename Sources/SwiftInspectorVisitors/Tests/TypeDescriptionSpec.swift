@@ -483,5 +483,15 @@ final class TypeDescriptionSpec: QuickSpec {
         }
       }
     }
+
+    describe("asSource") {
+      context("when describing an unknown case") {
+        let sut = TypeDescription.unknown(text: " SomeTypeThatIsFormattedOddly  ")
+
+        it("returns the provided string with whitespace stripped") {
+          expect(sut.asSource) == "SomeTypeThatIsFormattedOddly"
+        }
+      }
+    }
   }
 }

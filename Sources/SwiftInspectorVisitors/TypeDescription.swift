@@ -92,7 +92,7 @@ public enum TypeDescription: Codable, Equatable {
     case let .tuple(types):
       return "(\(types.map { $0.asSource }.joined(separator: ", ")))"
     case let .unknown(text):
-      return text
+      return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
   }
 
@@ -263,7 +263,7 @@ extension TypeSyntax {
       assertionFailure("TypeSyntax of unexpected type. Defaulting to `description`.")
       // The description is a source-accurate description of this node,
       // so it is a reasonable fallback.
-      return .unknown(text: description.trimmingCharacters(in: .whitespacesAndNewlines))
+      return .unknown(text: description)
     }
   }
 }
