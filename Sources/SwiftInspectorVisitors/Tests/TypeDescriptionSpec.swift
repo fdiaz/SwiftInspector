@@ -39,7 +39,7 @@ final class TypeDescriptionSpec: QuickSpec {
 
       context("when decoding a simple type") {
         beforeEach {
-          data = "{\"caseDescription\":\"simple\",\"text\":\"Foo\"}".data(using: .utf8)
+          data = "{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]}".data(using: .utf8)
         }
 
         it("decodes the encoded type description") {
@@ -49,7 +49,7 @@ final class TypeDescriptionSpec: QuickSpec {
 
       context("when decoding a nested type") {
         beforeEach {
-          data = "{\"caseDescription\":\"nested\",\"text\":\"Bar\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
+          data = "{\"typeDescriptions\":[],\"caseDescription\":\"nested\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]},\"text\":\"Bar\"}".data(using: .utf8)
         }
 
         it("decodes the encoded type description") {
@@ -59,7 +59,7 @@ final class TypeDescriptionSpec: QuickSpec {
 
       context("when decoding an optional type") {
         beforeEach {
-          data = "{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
+          data = "{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]}}".data(using: .utf8)
         }
 
         it("decodes the encoded type description") {
@@ -69,7 +69,7 @@ final class TypeDescriptionSpec: QuickSpec {
 
       context("when decoding an implicitlyUnwrappedOptional type") {
         beforeEach {
-          data = "{\"caseDescription\":\"implicitlyUnwrappedOptional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
+          data = "{\"caseDescription\":\"implicitlyUnwrappedOptional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]}}".data(using: .utf8)
         }
 
         it("decodes the encoded type description") {
@@ -77,29 +77,9 @@ final class TypeDescriptionSpec: QuickSpec {
         }
       }
 
-      context("when decoding an array type") {
-        beforeEach {
-          data = "{\"caseDescription\":\"array\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
-        }
-
-        it("decodes the encoded type description") {
-          expect(try decoder.decode(TypeDescription.self, from: data)) == .array(.simple(name: "Foo"))
-        }
-      }
-
-      context("when decoding a dictionary type") {
-        beforeEach {
-          data = "{\"caseDescription\":\"dictionary\",\"typeDescriptionDictionaryKey\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"},\"typeDescriptionDictionaryValue\":{\"caseDescription\":\"simple\",\"text\":\"Bar\"}}".data(using: .utf8)
-        }
-
-        it("decodes the encoded type description") {
-          expect(try decoder.decode(TypeDescription.self, from: data)) == .dictionary(key: .simple(name: "Foo"), value: .simple(name: "Bar"))
-        }
-      }
-
       context("when decoding a composition type") {
         beforeEach {
-          data = "{\"caseDescription\":\"composition\",\"typeDescriptions\":[{\"caseDescription\":\"simple\",\"text\":\"Foo\"},{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Bar\"}}]}".data(using: .utf8)
+          data = "{\"caseDescription\":\"composition\",\"typeDescriptions\":[{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]},{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Bar\",\"typeDescriptions\":[]}}]}".data(using: .utf8)
         }
 
         it("to decode the encoded composition description") {
@@ -109,7 +89,7 @@ final class TypeDescriptionSpec: QuickSpec {
 
       context("when decoding a tuple type") {
         beforeEach {
-          data = "{\"caseDescription\":\"tuple\",\"typeDescriptions\":[{\"caseDescription\":\"simple\",\"text\":\"Foo\"},{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Bar\"}}]}".data(using: .utf8)
+          data = "{\"caseDescription\":\"tuple\",\"typeDescriptions\":[{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]},{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Bar\",\"typeDescriptions\":[]}}]}".data(using: .utf8)
         }
 
         it("decodes the encoded type description") {
@@ -146,7 +126,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when encoding a simple type") {
         beforeEach {
           sut = .simple(name: "Foo")
-          data = "{\"caseDescription\":\"simple\",\"text\":\"Foo\"}".data(using: .utf8)
+          data = "{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]}".data(using: .utf8)
         }
 
         it("successfully encodes the data") {
@@ -157,7 +137,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when encoding a nested type") {
         beforeEach {
           sut = .nested(name: "Bar", parentType: .simple(name: "Foo"))
-          data = "{\"caseDescription\":\"nested\",\"text\":\"Bar\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
+          data = "{\"typeDescriptions\":[],\"caseDescription\":\"nested\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]},\"text\":\"Bar\"}".data(using: .utf8)
         }
 
         it("successfully encodes the data") {
@@ -168,7 +148,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when encoding an optional type") {
         beforeEach {
           sut = .optional(.simple(name: "Foo"))
-          data = "{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
+          data = "{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]}}".data(using: .utf8)
         }
 
         it("successfully encodes the data") {
@@ -179,29 +159,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when encoding an implicitlyUnwrappedOptional type") {
         beforeEach {
           sut = .implicitlyUnwrappedOptional(.simple(name: "Foo"))
-          data = "{\"caseDescription\":\"implicitlyUnwrappedOptional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
-        }
-
-        it("successfully encodes the data") {
-          expect(try encoder.encode(sut)) == data
-        }
-      }
-
-      context("when encoding an array type") {
-        beforeEach {
-          sut = .array(.simple(name: "Foo"))
-          data = "{\"caseDescription\":\"array\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
-        }
-
-        it("successfully encodes the data") {
-          expect(try encoder.encode(sut)) == data
-        }
-      }
-
-      context("when encoding a dictionary type") {
-        beforeEach {
-          sut = .dictionary(key: .simple(name: "Foo"), value: .simple(name: "Bar"))
-          data = "{\"caseDescription\":\"dictionary\",\"typeDescriptionDictionaryKey\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"},\"typeDescriptionDictionaryValue\":{\"caseDescription\":\"simple\",\"text\":\"Bar\"}}".data(using: .utf8)
+          data = "{\"caseDescription\":\"implicitlyUnwrappedOptional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]}}".data(using: .utf8)
         }
 
         it("successfully encodes the data") {
@@ -212,7 +170,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when encoding a composition type") {
         beforeEach {
           sut = .composition([.simple(name: "Foo"), .optional(.simple(name: "Bar"))])
-          data = "{\"caseDescription\":\"composition\",\"typeDescriptions\":[{\"caseDescription\":\"simple\",\"text\":\"Foo\"},{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Bar\"}}]}".data(using: .utf8)
+          data = "{\"caseDescription\":\"composition\",\"typeDescriptions\":[{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]},{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Bar\",\"typeDescriptions\":[]}}]}".data(using: .utf8)
         }
 
         it("to decode the encoded composition description") {
@@ -223,7 +181,7 @@ final class TypeDescriptionSpec: QuickSpec {
       context("when encoding a tuple type") {
         beforeEach {
           sut = .tuple([.simple(name: "Foo"), .optional(.simple(name: "Bar"))])
-          data = "{\"caseDescription\":\"tuple\",\"typeDescriptions\":[{\"caseDescription\":\"simple\",\"text\":\"Foo\"},{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Bar\"}}]}".data(using: .utf8)
+          data = "{\"caseDescription\":\"tuple\",\"typeDescriptions\":[{\"caseDescription\":\"simple\",\"text\":\"Foo\",\"typeDescriptions\":[]},{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Bar\",\"typeDescriptions\":[]}}]}".data(using: .utf8)
         }
 
         it("successfully encodes the data") {
@@ -278,17 +236,64 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         var visitor: MemberTypeIdentifierSyntaxVisitor!
-        beforeEach {
-          let content = """
+        context("without a generic argument") {
+          beforeEach {
+            let content = """
               var int: Swift.Int = 1
               """
 
-          visitor = MemberTypeIdentifierSyntaxVisitor()
-          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+            visitor = MemberTypeIdentifierSyntaxVisitor()
+            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          }
+
+          it("Finds the type") {
+            expect(visitor?.nestedTypeIdentifier?.asSource) == "Swift.Int"
+          }
         }
 
-        it("Finds the type") {
-          expect(visitor?.nestedTypeIdentifier?.asSource) == "Swift.Int"
+        context("with a right-hand generic argument") {
+          beforeEach {
+            let content = """
+              var intArray: Swift.Array<Int> = [1]
+              """
+
+            visitor = MemberTypeIdentifierSyntaxVisitor()
+            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          }
+
+          it("Finds the type") {
+            expect(visitor?.nestedTypeIdentifier?.asSource) == "Swift.Array<Int>"
+          }
+        }
+
+        context("with a left-hand generic argument") {
+          beforeEach {
+            let content = """
+              var genericType: OuterGenericType<Int>.InnerType
+              """
+
+            visitor = MemberTypeIdentifierSyntaxVisitor()
+            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          }
+
+          it("Finds the type") {
+            expect(visitor?.nestedTypeIdentifier?.asSource) == "OuterGenericType<Int>.InnerType"
+          }
+        }
+
+        context("with a generic arguments on both sides") {
+          beforeEach {
+            let content = """
+              var genericType: OuterGenericType<Int>.InnerGenericType<String>
+              """
+
+            visitor = MemberTypeIdentifierSyntaxVisitor()
+            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          }
+
+          it("Finds the type") {
+            expect(visitor?.nestedTypeIdentifier?.asSource) == "OuterGenericType<Int>.InnerGenericType<String>"
+          }
         }
       }
 
@@ -392,11 +397,53 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor.arrayTypeIdentifier?.asSource) == "[Int]"
+          expect(visitor.arrayTypeIdentifier?.asSource) == "Array<Int>"
         }
       }
 
-      context("when called on a TypeSyntax node representing an DictionaryTypeSyntax") {
+      context("when called on a TypeSyntax node representing an array not of form ArrayTypeSyntax") {
+        final class SimpleTypeIdentifierSyntaxVisitor: SyntaxVisitor {
+          var typeIdentifier: TypeDescription?
+          override func visit(_ node: SimpleTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
+            typeIdentifier = TypeSyntax(node).typeDescription
+            return .skipChildren
+          }
+        }
+
+        var visitor: SimpleTypeIdentifierSyntaxVisitor!
+        context("when the array is one-dimensional") {
+          beforeEach {
+            let content = """
+            var intArray: Array<Int>
+            """
+
+            visitor = SimpleTypeIdentifierSyntaxVisitor()
+            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          }
+
+          it("Finds the type") {
+            expect(visitor.typeIdentifier?.asSource) == "Array<Int>"
+          }
+        }
+
+        context("when the array is two-dimensional") {
+          beforeEach {
+            let content = """
+            var twoDimensionalIntArray: Array<Array<Int>>
+            """
+
+            visitor = SimpleTypeIdentifierSyntaxVisitor()
+            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          }
+
+          it("Finds the type") {
+            expect(visitor.typeIdentifier?.asSource) == "Array<Array<Int>>"
+          }
+        }
+
+      }
+
+      context("when called on a TypeSyntax node representing a DictionaryTypeSyntax") {
         final class DictionaryTypeSyntaxVisitor: SyntaxVisitor {
           var dictionaryTypeIdentifier: TypeDescription?
           override func visit(_ node: DictionaryTypeSyntax) -> SyntaxVisitorContinueKind {
@@ -416,7 +463,48 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor.dictionaryTypeIdentifier?.asSource) == "[Int: String]"
+          expect(visitor.dictionaryTypeIdentifier?.asSource) == "Dictionary<Int, String>"
+        }
+      }
+
+      context("when called on a TypeSyntax node representing a dictionary not of form DictionaryTypeSyntax") {
+        final class SimpleTypeIdentifierSyntaxVisitor: SyntaxVisitor {
+          var typeIdentifier: TypeDescription?
+          override func visit(_ node: SimpleTypeIdentifierSyntax) -> SyntaxVisitorContinueKind {
+            typeIdentifier = TypeSyntax(node).typeDescription
+            return .skipChildren
+          }
+        }
+
+        var visitor: SimpleTypeIdentifierSyntaxVisitor!
+        context("when the dictionary is one-dimensional") {
+          beforeEach {
+            let content = """
+            var dictionary: Dictionary<Int, String>
+            """
+
+            visitor = SimpleTypeIdentifierSyntaxVisitor()
+            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          }
+
+          it("Finds the type") {
+            expect(visitor.typeIdentifier?.asSource) == "Dictionary<Int, String>"
+          }
+        }
+
+        context("when the dictionary is two-dimensional") {
+          beforeEach {
+            let content = """
+            var twoDimensionalDictionary: Dictionary<Int, Dictionary<Int, String>>
+            """
+
+            visitor = SimpleTypeIdentifierSyntaxVisitor()
+            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          }
+
+          it("Finds the type") {
+            expect(visitor.typeIdentifier?.asSource) == "Dictionary<Int, Dictionary<Int, String>>"
+          }
         }
       }
 
