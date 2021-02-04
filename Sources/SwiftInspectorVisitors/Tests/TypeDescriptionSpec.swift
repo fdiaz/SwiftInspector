@@ -36,104 +36,94 @@ final class TypeDescriptionSpec: QuickSpec {
     describe("init(from decoder: Decoder)") {
       let decoder = JSONDecoder()
       var data: Data!
-      var sut: TypeDescription!
 
       context("when decoding a simple type") {
         beforeEach {
-          sut = .simple(name: "Foo")
           data = "{\"caseDescription\":\"simple\",\"text\":\"Foo\"}".data(using: .utf8)
         }
 
         it("to decode the encoded type description") {
-          expect(try decoder.decode(TypeDescription.self, from: data)) == sut
+          expect(try decoder.decode(TypeDescription.self, from: data)) == .simple(name: "Foo")
         }
       }
 
       context("when decoding a nested type") {
         beforeEach {
-          sut = .nested(name: "Bar", parentType: .simple(name: "Foo"))
           data = "{\"caseDescription\":\"nested\",\"text\":\"Bar\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
         }
 
         it("to decode the encoded type description") {
-          expect(try decoder.decode(TypeDescription.self, from: data)) == sut
+          expect(try decoder.decode(TypeDescription.self, from: data)) == .nested(name: "Bar", parentType: .simple(name: "Foo"))
         }
       }
 
       context("when decoding an optional type") {
         beforeEach {
-          sut = .optional(.simple(name: "Foo"))
           data = "{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
         }
 
         it("to decode the encoded type description") {
-          expect(try decoder.decode(TypeDescription.self, from: data)) == sut
+          expect(try decoder.decode(TypeDescription.self, from: data)) == .optional(.simple(name: "Foo"))
         }
       }
 
       context("when decoding an implicitlyUnwrappedOptional type") {
         beforeEach {
-          sut = .implicitlyUnwrappedOptional(.simple(name: "Foo"))
           data = "{\"caseDescription\":\"implicitlyUnwrappedOptional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
         }
 
         it("to decode the encoded type description") {
-          expect(try decoder.decode(TypeDescription.self, from: data)) == sut
+          expect(try decoder.decode(TypeDescription.self, from: data)) == .implicitlyUnwrappedOptional(.simple(name: "Foo"))
         }
       }
 
       context("when decoding an array type") {
         beforeEach {
-          sut = .array(.simple(name: "Foo"))
           data = "{\"caseDescription\":\"array\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
         }
 
         it("to decode the encoded type description") {
-          expect(try decoder.decode(TypeDescription.self, from: data)) == sut
+          expect(try decoder.decode(TypeDescription.self, from: data)) == .array(.simple(name: "Foo"))
         }
       }
 
       context("when decoding a dictionary type") {
         beforeEach {
-          sut = .dictionary(key: .simple(name: "Foo"), value: .simple(name: "Bar"))
           data = "{\"caseDescription\":\"dictionary\",\"typeDescriptionDictionaryKey\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"},\"typeDescriptionDictionaryValue\":{\"caseDescription\":\"simple\",\"text\":\"Bar\"}}".data(using: .utf8)
         }
 
         it("to decode the encoded type description") {
-          expect(try decoder.decode(TypeDescription.self, from: data)) == sut
+          expect(try decoder.decode(TypeDescription.self, from: data)) == .dictionary(key: .simple(name: "Foo"), value: .simple(name: "Bar"))
         }
       }
 
       context("when decoding a composition type") {
         beforeEach {
-          sut = .composition([.simple(name: "Foo"), .optional(.simple(name: "Bar"))])
           data = "{\"caseDescription\":\"composition\",\"typeDescriptions\":[{\"caseDescription\":\"simple\",\"text\":\"Foo\"},{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Bar\"}}]}".data(using: .utf8)
         }
 
         it("to decode the encoded composition description") {
-          expect(try decoder.decode(TypeDescription.self, from: data)) == sut
+          expect(try decoder.decode(TypeDescription.self, from: data)) == .composition([.simple(name: "Foo"), .optional(.simple(name: "Bar"))])
         }
       }
 
       context("when decoding a tuple type") {
         beforeEach {
-          sut = .tuple([.simple(name: "Foo"), .optional(.simple(name: "Bar"))])
           data = "{\"caseDescription\":\"tuple\",\"typeDescriptions\":[{\"caseDescription\":\"simple\",\"text\":\"Foo\"},{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Bar\"}}]}".data(using: .utf8)
         }
 
         it("to decode the encoded type description") {
-          expect(try decoder.decode(TypeDescription.self, from: data)) == sut
+          expect(try decoder.decode(TypeDescription.self, from: data)) == .tuple([.simple(name: "Foo"), .optional(.simple(name: "Bar"))])
         }
       }
 
       context("when decoding an unknown type") {
         beforeEach {
-          sut = .unknown(text: "Foo")
           data = "{\"caseDescription\":\"unknown\",\"text\":\"Foo\"}".data(using: .utf8)
         }
 
         it("to decode the encoded type description") {
-          expect(try decoder.decode(TypeDescription.self, from: data)) == sut
+          expect(try decoder.decode(TypeDescription.self, from: data)) == .unknown(text: "Foo")
         }
       }
 
