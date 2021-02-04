@@ -32,24 +32,45 @@ import SwiftSyntax
 
 final class TypeDescriptionSpec: QuickSpec {
 
-  let simpleTestCase = TypeDescription.simple(name: "Foo")
+  let simpleTestCase = TypeDescription.simple(
+    name: "Foo",
+    generics: [
+      .simple(name: "Bar")
+    ])
   let simpleTestCaseData = """
     {
       "caseDescription": "simple",
       "text": "Foo",
-      "typeDescriptions": []
+      "typeDescriptions": [{
+        "caseDescription": "simple",
+        "text": "Bar",
+        "typeDescriptions": []
+      }]
     }
     """.data(using: .utf8)!
 
-  let nestedTestCase = TypeDescription.nested(name: "Bar", parentType: .simple(name: "Foo"))
+  let nestedTestCase = TypeDescription.nested(
+    name: "Bar",
+    parentType: .simple(
+      name: "Foo",
+      generics: [.simple(name: "Int")]),
+    generics: [.simple(name: "String")])
   let nestedTestCaseData = """
     {
-      "typeDescriptions": [],
+      "typeDescriptions": [{
+        "caseDescription": "simple",
+        "text": "String",
+        "typeDescriptions": []
+      }],
       "caseDescription": "nested",
       "typeDescription": {
         "caseDescription": "simple",
         "text": "Foo",
-        "typeDescriptions": []
+        "typeDescriptions": [{
+          "caseDescription": "simple",
+          "text": "Int",
+          "typeDescriptions": []
+      }]
       },
       "text": "Bar"
     }
