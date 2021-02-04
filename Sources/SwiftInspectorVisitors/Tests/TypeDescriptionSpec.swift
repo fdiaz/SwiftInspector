@@ -100,7 +100,11 @@ final class TypeDescriptionSpec: QuickSpec {
     }
     """.data(using: .utf8)!
 
-  let compositionTestCase = TypeDescription.composition([.simple(name: "Foo"), .optional(.simple(name: "Bar"))])
+  let compositionTestCase = TypeDescription.composition(
+    [
+      .simple(name: "Foo"),
+      .optional(.simple(name: "Bar")),
+    ])
   let compositionTestCaseData = """
     {
       "caseDescription": "composition",
@@ -122,7 +126,11 @@ final class TypeDescriptionSpec: QuickSpec {
     }
     """.data(using: .utf8)!
 
-  let tupleTestCase = TypeDescription.tuple([.simple(name: "Foo"), .optional(.simple(name: "Bar"))])
+  let tupleTestCase = TypeDescription.tuple(
+    [
+      .simple(name: "Foo"),
+      .optional(.simple(name: "Bar"))
+    ])
   let tupleTestCaseData = """
     {
       "caseDescription": "tuple",
