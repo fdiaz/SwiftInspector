@@ -129,11 +129,11 @@ final class TypeDescriptionSpec: QuickSpec {
 
       context("when decoding an unknown case") {
         beforeEach {
-          data = "{\"garbage\": \"fire\"}".data(using: .utf8)
+          data = "{\"caseDescription\": \"garbage\"}".data(using: .utf8)
         }
 
         it("throws") {
-          expect(try decoder.decode(TypeDescription.self, from: data)).to(throwError())
+          expect(try decoder.decode(TypeDescription.self, from: data)).to(throwError(TypeDescription.CodingError.unknownCase))
         }
       }
     }
