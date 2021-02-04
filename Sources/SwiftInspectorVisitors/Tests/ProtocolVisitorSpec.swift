@@ -51,7 +51,7 @@ final class ProtocolVisitorSpec: QuickSpec {
 
             let protocolInfo = self.sut.protocolInfo
             expect(protocolInfo?.name) == "SomeProtocol"
-            expect(protocolInfo?.inheritsFromTypes) == []
+            expect(protocolInfo?.inheritsFromTypes.map { $0.asSource }) == []
             expect(protocolInfo?.genericRequirements) == []
           }
         }
@@ -68,7 +68,7 @@ final class ProtocolVisitorSpec: QuickSpec {
 
             let protocolInfo = self.sut.protocolInfo
             expect(protocolInfo?.name) == "SomeProtocol"
-            expect(protocolInfo?.inheritsFromTypes) == ["Equatable"]
+            expect(protocolInfo?.inheritsFromTypes.map { $0.asSource }) == ["Equatable"]
             expect(protocolInfo?.genericRequirements) == []
           }
         }
@@ -85,7 +85,7 @@ final class ProtocolVisitorSpec: QuickSpec {
 
             let protocolInfo = self.sut.protocolInfo
             expect(protocolInfo?.name) == "SomeProtocol"
-            expect(protocolInfo?.inheritsFromTypes) == ["Foo", "Bar"]
+            expect(protocolInfo?.inheritsFromTypes.map { $0.asSource }) == ["Foo", "Bar"]
             expect(protocolInfo?.genericRequirements) == []
           }
         }
@@ -102,9 +102,9 @@ final class ProtocolVisitorSpec: QuickSpec {
 
             let protocolInfo = self.sut.protocolInfo
             expect(protocolInfo?.name) == "SomeProtocol"
-            expect(protocolInfo?.inheritsFromTypes) == ["Collection"]
-            expect(protocolInfo?.genericRequirements.first?.leftType) == "Element"
-            expect(protocolInfo?.genericRequirements.first?.rightType) == "Int"
+            expect(protocolInfo?.inheritsFromTypes.map { $0.asSource }) == ["Collection"]
+            expect(protocolInfo?.genericRequirements.first?.leftType.asSource) == "Element"
+            expect(protocolInfo?.genericRequirements.first?.rightType.asSource) == "Int"
             expect(protocolInfo?.genericRequirements.first?.relationship) == .equals
           }
 
@@ -123,11 +123,11 @@ final class ProtocolVisitorSpec: QuickSpec {
 
               let protocolInfo = self.sut.protocolInfo
               expect(protocolInfo?.name) == "SomeProtocol"
-              expect(protocolInfo?.genericRequirements.first?.leftType) == "Input"
-              expect(protocolInfo?.genericRequirements.first?.rightType) == "Int"
+              expect(protocolInfo?.genericRequirements.first?.leftType.asSource) == "Input"
+              expect(protocolInfo?.genericRequirements.first?.rightType.asSource) == "Int"
               expect(protocolInfo?.genericRequirements.first?.relationship) == .equals
-              expect(protocolInfo?.genericRequirements.last?.leftType) == "Output"
-              expect(protocolInfo?.genericRequirements.last?.rightType) == "AnyObject"
+              expect(protocolInfo?.genericRequirements.last?.leftType.asSource) == "Output"
+              expect(protocolInfo?.genericRequirements.last?.rightType.asSource) == "AnyObject"
               expect(protocolInfo?.genericRequirements.last?.relationship) == .conformsTo
             }
           }
@@ -144,9 +144,9 @@ final class ProtocolVisitorSpec: QuickSpec {
 
               let protocolInfo = self.sut.protocolInfo
               expect(protocolInfo?.name) == "SomeProtocol"
-              expect(protocolInfo?.inheritsFromTypes) == ["Collection"]
-              expect(protocolInfo?.genericRequirements.first?.leftType) == "Element"
-              expect(protocolInfo?.genericRequirements.first?.rightType) == "Int"
+              expect(protocolInfo?.inheritsFromTypes.map { $0.asSource }) == ["Collection"]
+              expect(protocolInfo?.genericRequirements.first?.leftType.asSource) == "Element"
+              expect(protocolInfo?.genericRequirements.first?.rightType.asSource) == "Int"
               expect(protocolInfo?.genericRequirements.first?.relationship) == .conformsTo
             }
           }

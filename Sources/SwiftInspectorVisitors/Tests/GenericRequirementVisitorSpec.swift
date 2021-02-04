@@ -64,10 +64,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             self.sut,
             overContent: content)
 
-          expect(self.sut.genericRequirements.first) == GenericRequirement(
-            leftType: "LeftType",
-            rightType: "RightType",
-            relationship: .equals)
+          expect(self.sut.genericRequirements.first?.leftType.asSource) == "LeftType"
+          expect(self.sut.genericRequirements.first?.rightType.asSource) == "RightType"
+          expect(self.sut.genericRequirements.first?.relationship) == .equals
         }
       }
 
@@ -83,10 +82,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             self.sut,
             overContent: content)
 
-          expect(self.sut.genericRequirements.first) == GenericRequirement(
-            leftType: "FooModule.LeftType",
-            rightType: "RightType",
-            relationship: .equals)
+          expect(self.sut.genericRequirements.first?.leftType.asSource) == "FooModule.LeftType"
+          expect(self.sut.genericRequirements.first?.rightType.asSource) == "RightType"
+          expect(self.sut.genericRequirements.first?.relationship) == .equals
         }
       }
 
@@ -102,10 +100,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             self.sut,
             overContent: content)
 
-          expect(self.sut.genericRequirements.first) == GenericRequirement(
-            leftType: "LeftType",
-            rightType: "FooModule.RightType",
-            relationship: .equals)
+          expect(self.sut.genericRequirements.first?.leftType.asSource) == "LeftType"
+          expect(self.sut.genericRequirements.first?.rightType.asSource) == "FooModule.RightType"
+          expect(self.sut.genericRequirements.first?.relationship) == .equals
         }
       }
 
@@ -124,17 +121,15 @@ final class GenericRequirementVisitorSpec: QuickSpec {
         }
 
         it("finds the first requirement") {
-          expect(self.sut.genericRequirements.first) == GenericRequirement(
-            leftType: "LeftType1",
-            rightType: "RightType1",
-            relationship: .equals)
+          expect(self.sut.genericRequirements.first?.leftType.asSource) == "LeftType1"
+          expect(self.sut.genericRequirements.first?.rightType.asSource) == "RightType1"
+          expect(self.sut.genericRequirements.first?.relationship) == .equals
         }
 
         it("finds the second requirement") {
-          expect(self.sut.genericRequirements.last) == GenericRequirement(
-            leftType: "LeftType2",
-            rightType: "RightType2",
-            relationship: .conformsTo)
+          expect(self.sut.genericRequirements.last?.leftType.asSource) == "LeftType2"
+          expect(self.sut.genericRequirements.last?.rightType.asSource) == "RightType2"
+          expect(self.sut.genericRequirements.last?.relationship) == .conformsTo
         }
       }
 
@@ -164,10 +159,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             self.sut,
             overContent: content)
 
-          expect(self.sut.genericRequirements.first) == GenericRequirement(
-            leftType: "Element",
-            rightType: "AnyObject",
-            relationship: .conformsTo)
+          expect(self.sut.genericRequirements.first?.leftType.asSource) == "Element"
+          expect(self.sut.genericRequirements.first?.rightType.asSource) == "AnyObject"
+          expect(self.sut.genericRequirements.first?.relationship) == .conformsTo
         }
       }
 
@@ -185,17 +179,15 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             overContent: content)
         }
         it("finds the first requirement") {
-          expect(self.sut.genericRequirements.first) == GenericRequirement(
-            leftType: "Key",
-            rightType: "AnyObject",
-            relationship: .conformsTo)
+          expect(self.sut.genericRequirements.first?.leftType.asSource) == "Key"
+          expect(self.sut.genericRequirements.first?.rightType.asSource) == "AnyObject"
+          expect(self.sut.genericRequirements.first?.relationship) == .conformsTo
         }
 
         it("finds the second requirement") {
-          expect(self.sut.genericRequirements.last) == GenericRequirement(
-            leftType: "Value",
-            rightType: "CustomStringConvertible",
-            relationship: .equals)
+          expect(self.sut.genericRequirements.last?.leftType.asSource) == "Value"
+          expect(self.sut.genericRequirements.last?.rightType.asSource) == "CustomStringConvertible"
+          expect(self.sut.genericRequirements.last?.relationship) == .equals
         }
       }
 
@@ -226,10 +218,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             self.sut,
             overContent: content)
 
-          expect(self.sut.genericRequirements.first) == GenericRequirement(
-            leftType: "Element",
-            rightType: "AnyObject",
-            relationship: .conformsTo)
+          expect(self.sut.genericRequirements.first?.leftType.asSource) == "Element"
+          expect(self.sut.genericRequirements.first?.rightType.asSource) == "AnyObject"
+          expect(self.sut.genericRequirements.first?.relationship) == .conformsTo
         }
       }
 
@@ -247,17 +238,15 @@ final class GenericRequirementVisitorSpec: QuickSpec {
         }
 
         it("finds the first requirement") {
-          expect(self.sut.genericRequirements.first) == GenericRequirement(
-            leftType: "Key",
-            rightType: "AnyObject",
-            relationship: .conformsTo)
+          expect(self.sut.genericRequirements.first?.leftType.asSource) == "Key"
+          expect(self.sut.genericRequirements.first?.rightType.asSource) == "AnyObject"
+          expect(self.sut.genericRequirements.first?.relationship) == .conformsTo
         }
 
         it("finds the second requirement") {
-          expect(self.sut.genericRequirements.last) == GenericRequirement(
-            leftType: "Value",
-            rightType: "CustomStringConvertible",
-            relationship: .equals)
+          expect(self.sut.genericRequirements.last?.leftType.asSource) == "Value"
+          expect(self.sut.genericRequirements.last?.rightType.asSource) == "CustomStringConvertible"
+          expect(self.sut.genericRequirements.last?.relationship) == .equals
         }
       }
 
@@ -273,10 +262,9 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             self.sut,
             overContent: content)
 
-          expect(self.sut.genericRequirements.first) == GenericRequirement(
-            leftType: "Element",
-            rightType: "CustomStringConvertible",
-            relationship: .conformsTo)
+          expect(self.sut.genericRequirements.first?.leftType.asSource) == "Element"
+          expect(self.sut.genericRequirements.first?.rightType.asSource) == "CustomStringConvertible"
+          expect(self.sut.genericRequirements.first?.relationship) == .conformsTo
         }
       }
     }

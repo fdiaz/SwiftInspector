@@ -52,32 +52,22 @@ public struct GenericRequirement: Codable, Equatable {
 
   // MARK: Lifecycle
 
-  public init(
-    leftType: String,
-    rightType: String,
-    relationship: Relationship)
-  {
-    self.leftType = leftType
-    self.rightType = rightType
-    self.relationship = relationship
-  }
-
   init(node: SameTypeRequirementSyntax) {
-    leftType = node.leftTypeIdentifier.qualifiedName
-    rightType = node.rightTypeIdentifier.qualifiedName
+    leftType = node.leftTypeIdentifier.typeDescription
+    rightType = node.rightTypeIdentifier.typeDescription
     relationship = .equals
   }
 
   init(node: ConformanceRequirementSyntax) {
-    leftType = node.leftTypeIdentifier.qualifiedName
-    rightType = node.rightTypeIdentifier.qualifiedName
+    leftType = node.leftTypeIdentifier.typeDescription
+    rightType = node.rightTypeIdentifier.typeDescription
     relationship = .conformsTo
   }
 
   // MARK: Public
 
-  public let leftType: String
-  public let rightType: String
+  public let leftType: TypeDescription
+  public let rightType: TypeDescription
   public let relationship: Relationship
 
   // MARK: - Relationship

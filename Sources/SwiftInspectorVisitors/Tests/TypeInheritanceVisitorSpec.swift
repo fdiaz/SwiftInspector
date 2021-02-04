@@ -48,7 +48,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
           }
 
           it("returns the conforming type name") {
-            expect(self.sut.inheritsFromTypes) == ["Foo"]
+            expect(self.sut.inheritsFromTypes.map { $0.asSource }) == ["Foo"]
           }
         }
 
@@ -61,7 +61,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
           }
 
           it("returns the conforming type name") {
-            expect(self.sut.inheritsFromTypes) == ["Swift.Equatable"]
+            expect(self.sut.inheritsFromTypes.map { $0.asSource }) == ["Swift.Equatable"]
           }
         }
 
@@ -74,7 +74,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
           }
 
           it("returns the conforming type names") {
-            expect(self.sut.inheritsFromTypes) == ["Foo", "Bar", "FooBar"]
+            expect(self.sut.inheritsFromTypes.map { $0.asSource }) == ["Foo", "Bar", "FooBar"]
           }
         }
 
@@ -88,7 +88,21 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
           }
 
           it("returns the conforming type names") {
-            expect(self.sut.inheritsFromTypes) == ["Foo", "Bar", "FooBar"]
+            expect(self.sut.inheritsFromTypes.map { $0.asSource }) == ["Foo", "Bar", "FooBar"]
+          }
+        }
+
+        context("with composition conformances on multiple lines") {
+          beforeEach {
+            let content = """
+            protocol Protocol: FooProviding & BarProviding
+              & FooBarProviding {}
+            """
+            try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+          }
+
+          it("returns the conforming type names") {
+            expect(self.sut.inheritsFromTypes.map { $0.asSource }) == ["FooProviding & BarProviding & FooBarProviding"]
           }
         }
       }
@@ -104,7 +118,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
         }
 
         it("does not find the inner type's conformance the conforming type names") {
-          expect(self.sut.inheritsFromTypes).to(beEmpty())
+          expect(self.sut.inheritsFromTypes.map { $0.asSource }).to(beEmpty())
         }
       }
 
@@ -119,7 +133,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
         }
 
         it("only finds the outer type's conformance") {
-          expect(self.sut.inheritsFromTypes) == ["Bar"]
+          expect(self.sut.inheritsFromTypes.map { $0.asSource }) == ["Bar"]
         }
       }
     }

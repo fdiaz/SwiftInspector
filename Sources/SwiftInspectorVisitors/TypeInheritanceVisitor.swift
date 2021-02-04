@@ -27,10 +27,10 @@ import SwiftSyntax
 
 public final class TypeInheritanceVisitor: SyntaxVisitor {
 
-  public private(set) var inheritsFromTypes = [String]()
+  public private(set) var inheritsFromTypes = [TypeDescription]()
 
   public override func visit(_ node: InheritedTypeSyntax) -> SyntaxVisitorContinueKind {
-    inheritsFromTypes.append(node.typeName.qualifiedName)
+    inheritsFromTypes.append(node.typeName.typeDescription)
     // Children don't have any more information about inheritance, so don't visit them.
     return .skipChildren
   }
