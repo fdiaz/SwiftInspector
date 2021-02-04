@@ -149,7 +149,7 @@ final class TypeDescriptionSpec: QuickSpec {
           data = "{\"caseDescription\":\"simple\",\"text\":\"Foo\"}".data(using: .utf8)
         }
 
-        it("decodes the encoded type description") {
+        it("successfully encodes the data") {
           expect(try encoder.encode(sut)) == data
         }
       }
@@ -160,7 +160,7 @@ final class TypeDescriptionSpec: QuickSpec {
           data = "{\"caseDescription\":\"nested\",\"text\":\"Bar\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
         }
 
-        it("decodes the encoded type description") {
+        it("successfully encodes the data") {
           expect(try encoder.encode(sut)) == data
         }
       }
@@ -171,7 +171,7 @@ final class TypeDescriptionSpec: QuickSpec {
           data = "{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
         }
 
-        it("decodes the encoded type description") {
+        it("successfully encodes the data") {
           expect(try encoder.encode(sut)) == data
         }
       }
@@ -182,7 +182,7 @@ final class TypeDescriptionSpec: QuickSpec {
           data = "{\"caseDescription\":\"implicitlyUnwrappedOptional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
         }
 
-        it("decodes the encoded type description") {
+        it("successfully encodes the data") {
           expect(try encoder.encode(sut)) == data
         }
       }
@@ -193,7 +193,7 @@ final class TypeDescriptionSpec: QuickSpec {
           data = "{\"caseDescription\":\"array\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"}}".data(using: .utf8)
         }
 
-        it("decodes the encoded type description") {
+        it("successfully encodes the data") {
           expect(try encoder.encode(sut)) == data
         }
       }
@@ -204,7 +204,7 @@ final class TypeDescriptionSpec: QuickSpec {
           data = "{\"caseDescription\":\"dictionary\",\"typeDescriptionDictionaryKey\":{\"caseDescription\":\"simple\",\"text\":\"Foo\"},\"typeDescriptionDictionaryValue\":{\"caseDescription\":\"simple\",\"text\":\"Bar\"}}".data(using: .utf8)
         }
 
-        it("decodes the encoded type description") {
+        it("successfully encodes the data") {
           expect(try encoder.encode(sut)) == data
         }
       }
@@ -226,7 +226,7 @@ final class TypeDescriptionSpec: QuickSpec {
           data = "{\"caseDescription\":\"tuple\",\"typeDescriptions\":[{\"caseDescription\":\"simple\",\"text\":\"Foo\"},{\"caseDescription\":\"optional\",\"typeDescription\":{\"caseDescription\":\"simple\",\"text\":\"Bar\"}}]}".data(using: .utf8)
         }
 
-        it("decodes the encoded type description") {
+        it("successfully encodes the data") {
           expect(try encoder.encode(sut)) == data
         }
       }
@@ -237,7 +237,7 @@ final class TypeDescriptionSpec: QuickSpec {
           data = "{\"caseDescription\":\"unknown\",\"text\":\"Foo\"}".data(using: .utf8)
         }
 
-        it("decodes the encoded type description") {
+        it("successfully encodes the data") {
           expect(try encoder.encode(sut)) == data
         }
       }
