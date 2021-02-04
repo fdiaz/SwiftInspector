@@ -368,8 +368,7 @@ final class TypeDescriptionSpec: QuickSpec {
         }
 
         it("Finds the type") {
-          expect(visitor?.implictlyUnwrappedOptionalTypeIdentifier?.asSource)
-            == "Int!"
+          expect(visitor?.implictlyUnwrappedOptionalTypeIdentifier?.asSource) == "Int!"
         }
       }
 
