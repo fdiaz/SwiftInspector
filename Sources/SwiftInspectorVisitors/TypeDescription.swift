@@ -109,38 +109,39 @@ public enum TypeDescription: Codable, Equatable {
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     let caseDescription = try values.decode(String.self, forKey: .caseDescription)
-    if caseDescription == Self.simpleDescription {
+    switch caseDescription {
+    case Self.simpleDescription:
       let text = try values.decode(String.self, forKey: .text)
       let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
       self = .simple(name: text, generics: typeDescriptions)
 
-    } else if caseDescription == Self.unknownDescription {
+    case Self.unknownDescription:
       let text = try values.decode(String.self, forKey: .text)
       self = .unknown(text: text)
 
-    } else if caseDescription == Self.nestedDescription {
+    case Self.nestedDescription:
       let text = try values.decode(String.self, forKey: .text)
       let parentType = try values.decode(Self.self, forKey: .typeDescription)
       let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
       self = .nested(name: text, parentType: parentType, generics: typeDescriptions)
 
-    } else if caseDescription == Self.optionalDescription {
+    case Self.optionalDescription:
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
       self = .optional(typeDescription)
 
-    } else if caseDescription == Self.implicitlyUnwrappedOptionalDescription {
+    case Self.implicitlyUnwrappedOptionalDescription:
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
       self = .implicitlyUnwrappedOptional(typeDescription)
 
-    } else if caseDescription == Self.compositionDescription {
+    case Self.compositionDescription:
       let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
       self = .composition(typeDescriptions)
 
-    } else if caseDescription == Self.tupleDescription {
+    case Self.tupleDescription:
       let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
       self = .tuple(typeDescriptions)
 
-    } else {
+    default:
       throw CodingError.unknownCase
     }
   }
