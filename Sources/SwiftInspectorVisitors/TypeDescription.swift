@@ -28,7 +28,7 @@ import SwiftSyntax
 public enum TypeDescription: Codable, Equatable {
   /// A root type with possible generics. e.g. Int, or Array<Int>
   indirect case simple(name: String, generics: [TypeDescription])
-  /// A nested type with possible generics. e.g. Array.Element or Array<Element>
+  /// A nested type with possible generics. e.g. Array.Element or Swift.Array<Element>
   indirect case nested(name: String, parentType: TypeDescription, generics: [TypeDescription])
   /// A composed type. e.g. Identifiable & Equatable
   indirect case composition([TypeDescription])
