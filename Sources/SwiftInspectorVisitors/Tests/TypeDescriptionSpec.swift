@@ -229,25 +229,25 @@ final class TypeDescriptionSpec: QuickSpec {
       let encoder = JSONEncoder()
 
       context("utilizing a simple type") {
-        it("successfully encodes the data") {
+        it("successfully decodes the data") {
           expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.simpleTestCase))) == self.simpleTestCase
         }
       }
 
       context("utilizing a nested type") {
-        it("successfully encodes the data") {
+        it("successfully decodes the data") {
           expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.nestedTestCase))) == self.nestedTestCase
         }
       }
 
       context("utilizing an optional type") {
-        it("successfully encodes the data") {
+        it("successfully decodes the data") {
           expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.optionalTestCase))) == self.optionalTestCase
         }
       }
 
       context("utilizing an implicitlyUnwrappedOptional type") {
-        it("successfully encodes the data") {
+        it("successfully decodes the data") {
           expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.implicitlyUnwrappedOptionalTestCase))) == self.implicitlyUnwrappedOptionalTestCase
         }
       }
@@ -259,13 +259,13 @@ final class TypeDescriptionSpec: QuickSpec {
       }
 
       context("utilizing a tuple type") {
-        it("successfully encodes the data") {
+        it("successfully decodes the data") {
           expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.tupleTestCase))) == self.tupleTestCase
         }
       }
 
       context("utilizing an unknown type") {
-        it("successfully encodes the data") {
+        it("successfully decodes the data") {
           expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.unknownTestCase))) == self.unknownTestCase
         }
       }
