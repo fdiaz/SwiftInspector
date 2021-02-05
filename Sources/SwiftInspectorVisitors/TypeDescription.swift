@@ -78,7 +78,7 @@ public enum TypeDescription: Codable, Equatable {
    * We’ll Get There™
    */
 
-  /// A cononical representation of this type that can be used as source code.
+  /// A canonical representation of this type that can be used as source code.
   public var asSource: String {
     switch self {
     case let .simple(name, generics):
