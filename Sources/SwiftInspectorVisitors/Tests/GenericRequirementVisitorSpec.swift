@@ -224,6 +224,23 @@ final class GenericRequirementVisitorSpec: QuickSpec {
         }
       }
 
+      context("visiting a syntax tree involving an associatedtype that has one generic constraint with its own generic") {
+        it("finds the generic requirements") {
+          let content = """
+            associatedtype SomeType: SomeProtocol where
+              Element == Array<Int>
+            """
+
+          try VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
+
+          expect(self.sut.genericRequirements.first?.leftType.asSource) == "Element"
+          expect(self.sut.genericRequirements.first?.rightType.asSource) == "Array<Int>"
+          expect(self.sut.genericRequirements.first?.relationship) == .equals
+        }
+      }
+
       context("visiting a syntax tree involving an associatedtype that has two generic constraints") {
         beforeEach {
           let content = """

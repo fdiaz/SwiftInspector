@@ -26,20 +26,16 @@ import SwiftSyntax
 
 /// An enum that describes a parsed type in a cannonical form.
 public enum TypeDescription: Codable, Equatable {
-  /// A root type. e.g. Int
-  case simple(name: String)
-  /// A nested type. e.g. Array.Element
-  indirect case nested(name: String, parentType: TypeDescription)
+  /// A root type with possible generics. e.g. Int, or Array<Int>
+  indirect case simple(name: String, generics: [TypeDescription])
+  /// A nested type with possible generics. e.g. Array.Element or Array<Element>
+  indirect case nested(name: String, parentType: TypeDescription, generics: [TypeDescription])
   /// A composed type. e.g. Identifiable & Equatable
   indirect case composition([TypeDescription])
   /// An optional type. e.g. Int?
   indirect case optional(TypeDescription)
   /// An implicitly unwrapped optional type. eg. Int!
   indirect case implicitlyUnwrappedOptional(TypeDescription)
-  /// An array. e.g. [Int]
-  indirect case array(TypeDescription)
-  /// A dictionary. e.g. [Int: String]
-  indirect case dictionary(key: TypeDescription, value: TypeDescription)
   /// A tuple. e.g. (Int, String)
   indirect case tuple([TypeDescription])
   /// A type that can't be represented by the above cases.
@@ -60,6 +56,16 @@ public enum TypeDescription: Codable, Equatable {
     }
   }
 
+  /// A shortcut for creating a `simple` case without any generic types.
+  public static func simple(name: String) -> TypeDescription {
+    .simple(name: name, generics: [])
+  }
+
+  /// A shortcut for creating a `nested` case without any generic types.
+  public static func nested(name: String, parentType: TypeDescription) -> TypeDescription {
+    .nested(name: name, parentType: parentType, generics: [])
+  }
+
   /*
    * Note that we do not yet support the following syntax types:
    * SomeTypeSyntax
@@ -72,23 +78,27 @@ public enum TypeDescription: Codable, Equatable {
    * We’ll Get There™
    */
 
-  /// A source-code representation of this type that can be used in code generation.
+  /// A canonical representation of this type that can be used as source code.
   public var asSource: String {
     switch self {
-    case let .simple(name):
-      return name
-    case let .array(type):
-      return "[\(type.asSource)]"
+    case let .simple(name, generics):
+      if generics.isEmpty {
+        return name
+      } else {
+        return "\(name)<\(generics.map { $0.asSource }.joined(separator: ", "))>"
+      }
     case let .composition(types):
       return types.map { $0.asSource }.joined(separator: " & ")
     case let .optional(type):
       return "\(type.asSource)?"
     case let .implicitlyUnwrappedOptional(type):
       return "\(type.asSource)!"
-    case let .dictionary(key, value):
-      return "[\(key.asSource): \(value.asSource)]"
-    case let .nested(name, parentType):
-      return "\(parentType.asSource).\(name)"
+    case let .nested(name, parentType, generics):
+      if generics.isEmpty {
+        return "\(parentType.asSource).\(name)"
+      } else {
+        return "\(parentType.asSource).\(name)<\(generics.map { $0.asSource }.joined(separator: ", "))>"
+      }
     case let .tuple(types):
       return "(\(types.map { $0.asSource }.joined(separator: ", ")))"
     case let .unknown(text):
@@ -99,45 +109,39 @@ public enum TypeDescription: Codable, Equatable {
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     let caseDescription = try values.decode(String.self, forKey: .caseDescription)
-    if caseDescription == Self.simpleDescription {
+    switch caseDescription {
+    case Self.simpleDescription:
       let text = try values.decode(String.self, forKey: .text)
-      self = .simple(name: text)
+      let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
+      self = .simple(name: text, generics: typeDescriptions)
 
-    } else if caseDescription == Self.unknownDescription {
+    case Self.unknownDescription:
       let text = try values.decode(String.self, forKey: .text)
       self = .unknown(text: text)
 
-    } else if caseDescription == Self.nestedDescription {
+    case Self.nestedDescription:
       let text = try values.decode(String.self, forKey: .text)
       let parentType = try values.decode(Self.self, forKey: .typeDescription)
-      self = .nested(name: text, parentType: parentType)
+      let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
+      self = .nested(name: text, parentType: parentType, generics: typeDescriptions)
 
-    } else if caseDescription == Self.optionalDescription {
+    case Self.optionalDescription:
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
       self = .optional(typeDescription)
 
-    } else if caseDescription == Self.implicitlyUnwrappedOptionalDescription {
+    case Self.implicitlyUnwrappedOptionalDescription:
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
       self = .implicitlyUnwrappedOptional(typeDescription)
 
-    } else if caseDescription == Self.arrayDescription {
-      let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
-      self = .array(typeDescription)
-
-    } else if caseDescription == Self.dictionaryDescription {
-      let key = try values.decode(Self.self, forKey: .typeDescriptionDictionaryKey)
-      let value = try values.decode(Self.self, forKey: .typeDescriptionDictionaryValue)
-      self = .dictionary(key: key, value: value)
-
-    } else if caseDescription == Self.compositionDescription {
+    case Self.compositionDescription:
       let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
       self = .composition(typeDescriptions)
 
-    } else if caseDescription == Self.tupleDescription {
+    case Self.tupleDescription:
       let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
       self = .tuple(typeDescriptions)
 
-    } else {
+    default:
       throw CodingError.unknownCase
     }
   }
@@ -146,23 +150,21 @@ public enum TypeDescription: Codable, Equatable {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(caseDescription, forKey: .caseDescription)
     switch self {
-    case let .simple(name):
+    case let .simple(name, generics):
       try container.encode(name, forKey: .text)
+      try container.encode(generics, forKey: .typeDescriptions)
     case let .unknown(text):
       try container.encode(text, forKey: .text)
     case let .optional(type),
-         let .array(type),
          let .implicitlyUnwrappedOptional(type):
       try container.encode(type, forKey: .typeDescription)
     case let .tuple(types),
          let .composition(types):
       try container.encode(types, forKey: .typeDescriptions)
-    case let .dictionary(key, value):
-      try container.encode(key, forKey: .typeDescriptionDictionaryKey)
-      try container.encode(value, forKey: .typeDescriptionDictionaryValue)
-    case let .nested(name, parentType):
+    case let .nested(name, parentType, generics):
       try container.encode(name, forKey: .text)
       try container.encode(parentType, forKey: .typeDescription)
+      try container.encode(generics, forKey: .typeDescriptions)
     }
   }
 
@@ -175,10 +177,6 @@ public enum TypeDescription: Codable, Equatable {
     case typeDescription
     /// The value for this key is the associated value of type [TypeDescription]
     case typeDescriptions
-    /// The value for this key is the associated value of type TypeDescription that represents the key in a dictionary.
-    case typeDescriptionDictionaryKey
-    /// The value for this key is the associated value of type TypeDescription that represents the value in a dictionary
-    case typeDescriptionDictionaryValue
   }
 
   public enum CodingError: Error {
@@ -187,12 +185,8 @@ public enum TypeDescription: Codable, Equatable {
 
   private var caseDescription: String {
     switch self {
-    case .array:
-      return Self.arrayDescription
     case .composition:
       return Self.compositionDescription
-    case .dictionary:
-      return Self.dictionaryDescription
     case .implicitlyUnwrappedOptional:
       return Self.implicitlyUnwrappedOptionalDescription
     case .nested:
@@ -213,8 +207,6 @@ public enum TypeDescription: Codable, Equatable {
   private static let compositionDescription = "composition"
   private static let optionalDescription = "optional"
   private static let implicitlyUnwrappedOptionalDescription = "implicitlyUnwrappedOptional"
-  private static let arrayDescription = "array"
-  private static let dictionaryDescription = "dictionary"
   private static let tupleDescription = "tuple"
   private static let unknownDescription = "unknown"
 }
@@ -227,12 +219,23 @@ extension TypeSyntax {
   ///            `AttributedTypeSyntax`, or `UnknownTypeSyntax`
   var typeDescription: TypeDescription {
     if let typeIdentifier = self.as(SimpleTypeIdentifierSyntax.self) {
-      return .simple(name: typeIdentifier.name.text)
+      let genericTypeVisitor = GenericArgumentVisitor()
+      if let genericArgumentClause = typeIdentifier.genericArgumentClause {
+        genericTypeVisitor.walk(genericArgumentClause)
+      }
+      return .simple(
+        name: typeIdentifier.name.text,
+        generics: genericTypeVisitor.genericArguments)
 
     } else if let typeIdentifier = self.as(MemberTypeIdentifierSyntax.self) {
+      let genericTypeVisitor = GenericArgumentVisitor()
+      if let genericArgumentClause = typeIdentifier.genericArgumentClause {
+        genericTypeVisitor.walk(genericArgumentClause)
+      }
       return .nested(
         name: typeIdentifier.name.text,
-        parentType: typeIdentifier.baseType.typeDescription)
+        parentType: typeIdentifier.baseType.typeDescription,
+        generics: genericTypeVisitor.genericArguments)
 
     } else if let typeIdentifiers = self.as(CompositionTypeSyntax.self) {
       return .composition(typeIdentifiers.elements.map { $0.type.typeDescription })
@@ -244,12 +247,18 @@ extension TypeSyntax {
       return .implicitlyUnwrappedOptional(typeIdentifier.wrappedType.typeDescription)
 
     } else if let typeIdentifier = self.as(ArrayTypeSyntax.self) {
-      return .array(typeIdentifier.elementType.typeDescription)
+      // An array of the form [Type] is synonymous with Array<Type>.
+      // Utilize a simple type rather than creating another enum case.
+      let elementDescription = typeIdentifier.elementType.typeDescription.asSource
+      return .simple(name: "Array<\(elementDescription)>")
 
     } else if let typeIdentifier = self.as(DictionaryTypeSyntax.self) {
-      return .dictionary(
-        key: typeIdentifier.keyType.typeDescription,
-        value: typeIdentifier.valueType.typeDescription)
+      // An array of the form [KeyType: ValueType] is synonymous with Dictionary<KeyType, ValueType>.
+      // Utilize a simple type rather than creating another enum case.
+      let keyDescription = typeIdentifier.keyType.typeDescription
+      let valueDescription = typeIdentifier.valueType.typeDescription
+      return .simple(
+        name: "Dictionary<\(keyDescription.asSource), \(valueDescription.asSource)>")
 
     } else if let typeIdentifiers = self.as(TupleTypeSyntax.self) {
       return .tuple(typeIdentifiers.elements.map { $0.type.typeDescription })
@@ -265,5 +274,15 @@ extension TypeSyntax {
       // so it is a reasonable fallback.
       return .unknown(text: description)
     }
+  }
+}
+
+private final class GenericArgumentVisitor: SyntaxVisitor {
+
+  private(set) var genericArguments = [TypeDescription]()
+
+  override func visit(_ node: GenericArgumentSyntax) -> SyntaxVisitorContinueKind {
+    genericArguments.append(node.argumentType.typeDescription)
+    return .skipChildren
   }
 }
