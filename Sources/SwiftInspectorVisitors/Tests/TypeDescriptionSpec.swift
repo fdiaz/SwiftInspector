@@ -192,7 +192,7 @@ final class TypeDescriptionSpec: QuickSpec {
       }
 
       context("that represents a composition type") {
-        it("to decode the encoded composition description") {
+        it("decodes the encoded type description") {
           expect(try decoder.decode(TypeDescription.self, from: self.compositionTestCaseData)) == self.compositionTestCase
         }
       }
@@ -253,7 +253,7 @@ final class TypeDescriptionSpec: QuickSpec {
       }
 
       context("utilizing a composition type") {
-        it("to decode the encoded composition description") {
+        it("successfully decodes the data") {
           expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.compositionTestCase))) == self.compositionTestCase
         }
       }
