@@ -48,10 +48,14 @@ public final class ExtensionVisitor: SyntaxVisitor {
     let genericRequirementsVisitor = GenericRequirementVisitor()
     genericRequirementsVisitor.walk(node)
 
+    let declarationModifierVisitor = DeclarationModifierVisitor()
+    declarationModifierVisitor.walk(node.members)
+
     extensionInfo = ExtensionInfo(
       typeDescription: node.extendedType.typeDescription,
       inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
-      genericRequirements: genericRequirementsVisitor.genericRequirements)
+      genericRequirements: genericRequirementsVisitor.genericRequirements,
+      modifiers: .init(declarationModifierVisitor.modifiers))
     return .visitChildren
   }
 
@@ -126,5 +130,6 @@ public struct ExtensionInfo: Codable, Equatable {
   public let typeDescription: TypeDescription
   public private(set) var inheritsFromTypes: [TypeDescription]
   public private(set) var genericRequirements: [GenericRequirement]
+  public let modifiers: Set<String>
   // TODO: also find and expose computed properties
 }

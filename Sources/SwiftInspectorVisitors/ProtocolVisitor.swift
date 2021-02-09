@@ -41,10 +41,14 @@ public final class ProtocolVisitor: SyntaxVisitor {
     let genericRequirementsVisitor = GenericRequirementVisitor()
     genericRequirementsVisitor.walk(node)
 
+    let declarationModifierVisitor = DeclarationModifierVisitor()
+    declarationModifierVisitor.walk(node.members)
+
     protocolInfo = ProtocolInfo(
       name: node.identifier.text,
       inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
-      genericRequirements: genericRequirementsVisitor.genericRequirements)
+      genericRequirements: genericRequirementsVisitor.genericRequirements,
+      modifiers: .init(declarationModifierVisitor.modifiers))
 
     // We don't (yet) care about what is in this protocol. When we start looking for
     // properties on this protocol we'll need to start visiting children.
@@ -79,5 +83,6 @@ public struct ProtocolInfo: Codable, Equatable {
   public let name: String
   public let inheritsFromTypes: [TypeDescription]
   public let genericRequirements: [GenericRequirement]
+  public let modifiers: Set<String>
   // TODO: also find and expose properties on a protocol
 }

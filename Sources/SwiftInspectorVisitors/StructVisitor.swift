@@ -77,10 +77,14 @@ public final class StructVisitor: SyntaxVisitor {
       let typeInheritanceVisitor = TypeInheritanceVisitor()
       typeInheritanceVisitor.walk(node)
 
+      let declarationModifierVisitor = DeclarationModifierVisitor()
+      declarationModifierVisitor.walk(node.members)
+
       structInfo = StructInfo(
         name: name,
         inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
-        parentType: parentType)
+        parentType: parentType,
+        modifiers: .init(declarationModifierVisitor.modifiers))
       return .visitChildren
     }
   }
@@ -149,5 +153,6 @@ public struct StructInfo: Codable, Equatable {
   public let name: String
   public let inheritsFromTypes: [TypeDescription]
   public let parentType: TypeDescription?
+  public let modifiers: Set<String>
   // TODO: also find and expose properties on a struct
 }
