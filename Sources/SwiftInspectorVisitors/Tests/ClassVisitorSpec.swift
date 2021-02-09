@@ -96,7 +96,7 @@ final class ClassVisitorSpec: QuickSpec {
           beforeEach {
             let content = """
               public class FooClass {
-                public class FooClass {}
+                internal class FooClass {}
                 public class BarFooClass: Equatable {
                   public class BarBarFooClass: Hashable {}
                 }
@@ -121,6 +121,7 @@ final class ClassVisitorSpec: QuickSpec {
               $0.name == "FooClass"
                 && $0.inheritsFromTypes.map { $0.asSource } == []
                 && $0.parentType?.asSource == nil
+                && $0.modifiers.contains("public")
             }
 
             expect(matching.count) == 1
@@ -131,6 +132,7 @@ final class ClassVisitorSpec: QuickSpec {
               $0.name == "FooClass"
                 && $0.inheritsFromTypes.map { $0.asSource } == []
                 && $0.parentType?.asSource == "FooClass"
+                && $0.modifiers.contains("internal")
             }
 
             expect(matching.count) == 1

@@ -38,21 +38,31 @@ final class ProtocolVisitorSpec: QuickSpec {
     }
 
     describe("visit(_:)") {
-      context("visiting a single protocol declaration") {
+      context("visiting a single, simple protocol declaration") {
         context("with no conformance") {
-          it("finds the type name") {
+          beforeEach {
             let content = """
               public protocol SomeProtocol {}
               """
 
-            try VisitorExecutor.walkVisitor(
+            try? VisitorExecutor.walkVisitor(
               self.sut,
               overContent: content)
+          }
+          it("finds the type name") {
+            expect(self.sut.protocolInfo?.name) == "SomeProtocol"
+          }
 
-            let protocolInfo = self.sut.protocolInfo
-            expect(protocolInfo?.name) == "SomeProtocol"
-            expect(protocolInfo?.inheritsFromTypes.map { $0.asSource }) == []
-            expect(protocolInfo?.genericRequirements) == []
+          it("finds no inheritance") {
+            expect(self.sut.protocolInfo?.inheritsFromTypes.map { $0.asSource }) == []
+          }
+
+          it("finds no generic requirements") {
+            expect(self.sut.protocolInfo?.genericRequirements) == []
+          }
+
+          it("finds the modifiers") {
+            expect(self.sut.protocolInfo?.modifiers) == .init(["public"])
           }
         }
 

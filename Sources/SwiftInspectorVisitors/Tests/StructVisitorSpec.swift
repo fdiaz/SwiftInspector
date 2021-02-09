@@ -96,7 +96,7 @@ final class StructVisitorSpec: QuickSpec {
           beforeEach {
             let content = """
               public struct FooStruct {
-                public struct BarFooStruct: Equatable {
+                internal struct BarFooStruct: Equatable {
                   public struct BarBarFooStruct: Hashable {}
                 }
                 public struct FooFooStruct {
@@ -120,6 +120,7 @@ final class StructVisitorSpec: QuickSpec {
               $0.name == "FooStruct"
                 && $0.inheritsFromTypes.map { $0.asSource } == []
                 && $0.parentType?.asSource == nil
+                && $0.modifiers == .init(["public"])
             }
 
             expect(matching.count) == 1
@@ -130,6 +131,7 @@ final class StructVisitorSpec: QuickSpec {
               $0.name == "BarFooStruct"
                 && $0.inheritsFromTypes.map { $0.asSource } == ["Equatable"]
                 && $0.parentType?.asSource == "FooStruct"
+                && $0.modifiers == .init(["internal"])
             }
 
             expect(matching.count) == 1
