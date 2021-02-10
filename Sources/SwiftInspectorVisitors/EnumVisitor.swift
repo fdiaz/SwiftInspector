@@ -76,10 +76,16 @@ public final class EnumVisitor: SyntaxVisitor {
       let typeInheritanceVisitor = TypeInheritanceVisitor()
       typeInheritanceVisitor.walk(node)
 
+      let declarationModifierVisitor = DeclarationModifierVisitor()
+      if let modifiers = node.modifiers {
+        declarationModifierVisitor.walk(modifiers)
+      }
+
       enumInfo = EnumInfo(
         name: name,
         inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
-        parentType: parentType)
+        parentType: parentType,
+        modifiers: .init(declarationModifierVisitor.modifiers))
       return .visitChildren
     }
   }
@@ -148,5 +154,6 @@ public struct EnumInfo: Codable, Equatable {
   public let name: String
   public let inheritsFromTypes: [TypeDescription]
   public let parentType: TypeDescription?
+  public let modifiers: Set<String>
   // TODO: also find and expose properties on a class
 }

@@ -152,6 +152,10 @@ final class ExtensionVisitorSpec: QuickSpec {
             expect(self.sut.extensionInfo?.typeDescription.asSource) == "Array"
           }
 
+          it("finds extension's modifiers") {
+            expect(self.sut.extensionInfo?.modifiers) == .init(["public"])
+          }
+
           it("finds Array.TestStruct") {
             let matching = self.sut.innerStructs.filter {
               $0.name == "TestStruct"

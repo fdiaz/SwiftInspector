@@ -96,7 +96,7 @@ final class EnumVisitorSpec: QuickSpec {
           beforeEach {
             let content = """
               public enum FooEnum {
-                public enum BarFooEnum: Equatable {
+                internal enum BarFooEnum: Equatable {
                   public enum BarBarFooEnum: Hashable {}
                 }
                 public enum FooFooEnum {
@@ -120,6 +120,7 @@ final class EnumVisitorSpec: QuickSpec {
               $0.name == "FooEnum"
                 && $0.inheritsFromTypes.map { $0.asSource } == []
                 && $0.parentType?.asSource == nil
+                && $0.modifiers.contains("public")
             }
             expect(matching.count) == 1
           }
@@ -129,6 +130,7 @@ final class EnumVisitorSpec: QuickSpec {
               $0.name == "BarFooEnum"
                 && $0.inheritsFromTypes.map { $0.asSource } == ["Equatable"]
                 && $0.parentType?.asSource == "FooEnum"
+                && $0.modifiers.contains("internal")
             }
             expect(matching.count) == 1
           }
