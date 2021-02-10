@@ -83,7 +83,7 @@ final class ImportVisitorSpec: QuickSpec {
       context("with an import statement with an attribute") {
         beforeEach {
           let content = """
-                        @_export import SomeModule
+                        @_exported import SomeModule
 
                         public final protocol Some {}
                         """
@@ -93,7 +93,7 @@ final class ImportVisitorSpec: QuickSpec {
         }
 
         it("returns the appropriate attribute name") {
-          expect(self.sut.imports.first?.attribute) == "_export"
+          expect(self.sut.imports.first?.attribute) == "_exported"
         }
       }
 
