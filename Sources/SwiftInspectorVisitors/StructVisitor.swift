@@ -150,11 +150,3 @@ public final class StructVisitor: SyntaxVisitor {
   private var structInfo: StructInfo?
   private var innerStructs = [StructInfo]()
 }
-
-public struct StructInfo: Codable, Equatable {
-  public let name: String
-  public let inheritsFromTypes: [TypeDescription]
-  public let parentType: TypeDescription?
-  public let modifiers: Set<String>
-  // TODO: also find and expose properties on a struct
-}

@@ -147,11 +147,3 @@ public final class ClassVisitor: SyntaxVisitor {
   private var classInfo: ClassInfo?
   private var innerClasses = [ClassInfo]()
 }
-
-public struct ClassInfo: Codable, Equatable {
-  public let name: String
-  public let inheritsFromTypes: [TypeDescription]
-  public let parentType: TypeDescription?
-  public let modifiers: Set<String>
-  // TODO: also find and expose properties on a class
-}
