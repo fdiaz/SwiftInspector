@@ -90,6 +90,26 @@ final class NestableTypeVisitorSpec: QuickSpec {
               expect(classInfo?.parentType).to(beNil())
             }
           }
+
+          context("with a typealias") {
+            beforeEach {
+              let content = """
+                public class SomeClass {
+                  typealias MyString = String
+                }
+                """
+
+              try? VisitorExecutor.walkVisitor(
+                self.sut,
+                overContent: content)
+            }
+
+            it("finds the typealias") {
+              let typealiasInfo = self.sut.typealiases.first
+              expect(typealiasInfo?.name) == "MyString"
+              expect(typealiasInfo?.initializer?.asSource) == "String"
+            }
+          }
         }
 
         context("that is a struct") {
@@ -143,6 +163,26 @@ final class NestableTypeVisitorSpec: QuickSpec {
               expect(structInfo?.parentType).to(beNil())
             }
           }
+
+          context("with a typealias") {
+            beforeEach {
+              let content = """
+                public enum SomeEnum {
+                  typealias MyString = String
+                }
+                """
+
+              try? VisitorExecutor.walkVisitor(
+                self.sut,
+                overContent: content)
+            }
+
+            it("finds the typealias") {
+              let typealiasInfo = self.sut.typealiases.first
+              expect(typealiasInfo?.name) == "MyString"
+              expect(typealiasInfo?.initializer?.asSource) == "String"
+            }
+          }
         }
 
         context("that is an enum") {
@@ -194,6 +234,26 @@ final class NestableTypeVisitorSpec: QuickSpec {
               expect(classInfo?.name) == "SomeEnum"
               expect(classInfo?.inheritsFromTypes.map { $0.asSource }) == ["Foo", "Bar"]
               expect(classInfo?.parentType).to(beNil())
+            }
+          }
+
+          context("with a typealias") {
+            beforeEach {
+              let content = """
+                public enum SomeEnum {
+                  typealias MyString = String
+                }
+                """
+
+              try? VisitorExecutor.walkVisitor(
+                self.sut,
+                overContent: content)
+            }
+
+            it("finds the typealias") {
+              let typealiasInfo = self.sut.typealiases.first
+              expect(typealiasInfo?.name) == "MyString"
+              expect(typealiasInfo?.initializer?.asSource) == "String"
             }
           }
         }
