@@ -35,6 +35,8 @@ public final class ExtensionVisitor: SyntaxVisitor {
   public private(set) var innerClasses = [ClassInfo]()
   /// Inner enums found by this visitor.
   public private(set) var innerEnums = [EnumInfo]()
+  /// Inner typealiases declarations found by this visitor.
+  public private(set) var innerTypealiases = [TypealiasInfo]()
 
   public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
 
@@ -80,6 +82,16 @@ public final class ExtensionVisitor: SyntaxVisitor {
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
     // We've encountered a protocol declaration, which can only be defined at the top-level. Something is wrong.
     assertionFailure("Encountered a protocol. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
+    return .skipChildren
+  }
+
+  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+    let typealiasVisitor = TypealiasVisitor(parentType: extensionInfo?.typeDescription)
+    typealiasVisitor.walk(node)
+
+    innerTypealiases.append(contentsOf: typealiasVisitor.typealiases)
+
+    // We don't need to visit children because our visitor just did that for us.
     return .skipChildren
   }
 
