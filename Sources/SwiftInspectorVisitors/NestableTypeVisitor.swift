@@ -115,7 +115,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
       // Base case. We've previously found an top-level declaration, so this must be an inner declaration.
       // This visitor shouldn't recurse down into the children.
       // Instead, we'll use a new visitor to get the information from this declaration.
-      let newParentType = TypeDescription(name: topLevelDeclarationName, parent: self.parentType)
+      let newParentType = TypeDescription(name: topLevelDeclarationName, parent: parentType)
       let declarationVisitor = NestableTypeVisitor(parentType: newParentType)
       declarationVisitor.walk(node)
 
@@ -144,8 +144,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
           name: node.identifier.text,
           inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
           parentType: parentType,
-          modifiers: Set(declarationModifierVisitor.modifiers)
-        ))
+          modifiers: Set(declarationModifierVisitor.modifiers)))
 
       return .visitChildren
     }
