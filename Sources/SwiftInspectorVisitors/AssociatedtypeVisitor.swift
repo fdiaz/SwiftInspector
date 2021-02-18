@@ -41,18 +41,12 @@ public final class AssociatedtypeVisitor: SyntaxVisitor {
       genericRequirementsVisitor.walk(genericWhereClause)
     }
 
-    let declarationModifierVisitor = DeclarationModifierVisitor()
-    if let modifiers = node.modifiers {
-      declarationModifierVisitor.walk(modifiers)
-    }
-
     associatedTypes.append(
       .init(
         name: name,
         inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
         initializer: node.initializer?.value.typeDescription,
-        genericRequirements: genericRequirementsVisitor.genericRequirements,
-        modifiers: .init(declarationModifierVisitor.modifiers)))
+        genericRequirements: genericRequirementsVisitor.genericRequirements))
 
     return .skipChildren
   }
@@ -63,5 +57,4 @@ public struct AssociatedtypeInfo: Codable, Equatable {
   public let inheritsFromTypes: [TypeDescription]
   public let initializer: TypeDescription?
   public let genericRequirements: [GenericRequirement]
-  public let modifiers: Set<String>
 }
