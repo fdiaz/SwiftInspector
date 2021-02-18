@@ -55,39 +55,15 @@ public final class FileVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    let structVisitor = StructVisitor()
-    structVisitor.walk(node)
-
-    fileInfo.appendStructs(structVisitor.structs)
-    fileInfo.appendClasses(structVisitor.innerClasses)
-    fileInfo.appendEnums(structVisitor.innerEnums)
-
-    // We don't need to visit children because our visitor just did that for us.
-    return .skipChildren
+    visitNestableDeclaration(node: node)
   }
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    let classVisitor = ClassVisitor()
-    classVisitor.walk(node)
-
-    fileInfo.appendClasses(classVisitor.classes)
-    fileInfo.appendStructs(classVisitor.innerStructs)
-    fileInfo.appendEnums(classVisitor.innerEnums)
-
-    // We don't need to visit children because our visitor just did that for us.
-    return .skipChildren
+    visitNestableDeclaration(node: node)
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    let enumsVisitor = EnumVisitor()
-    enumsVisitor.walk(node)
-
-    fileInfo.appendEnums(enumsVisitor.enums)
-    fileInfo.appendClasses(enumsVisitor.innerClasses)
-    fileInfo.appendStructs(enumsVisitor.innerStructs)
-
-    // We don't need to visit children because our visitor just did that for us.
-    return .skipChildren
+    visitNestableDeclaration(node: node)
   }
 
   public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
@@ -100,6 +76,20 @@ public final class FileVisitor: SyntaxVisitor {
       fileInfo.appendClasses(extensionVisitor.innerClasses)
       fileInfo.appendStructs(extensionVisitor.innerStructs)
     }
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+  }
+
+  // MARK: Private
+
+  private func visitNestableDeclaration<DeclSyntax: NestableDeclSyntax>(node: DeclSyntax) -> SyntaxVisitorContinueKind {
+    let declarationVisitor = NestableTypeVisitor()
+    declarationVisitor.walk(node)
+
+    fileInfo.appendStructs(declarationVisitor.structs)
+    fileInfo.appendClasses(declarationVisitor.classes)
+    fileInfo.appendEnums(declarationVisitor.enums)
 
     // We don't need to visit children because our visitor just did that for us.
     return .skipChildren

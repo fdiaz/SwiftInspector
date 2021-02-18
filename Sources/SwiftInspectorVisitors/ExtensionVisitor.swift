@@ -66,55 +66,15 @@ public final class ExtensionVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingExtension, let extensionInfo = extensionInfo {
-      // We've previously found an extension declaration, so this must be an inner class.
-      let classVisitor = ClassVisitor(parentType: extensionInfo.typeDescription)
-      classVisitor.walk(node)
-
-      innerClasses += classVisitor.classes
-      innerStructs += classVisitor.innerStructs
-      innerEnums += classVisitor.innerEnums
-
-    } else {
-      // We've encountered a class declaration before encountering an extension declaration. Something is wrong.
-      assertionFailure("Encountered a top-level class. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
-    }
-    return .skipChildren
+    visitNestableDeclaration(node: node)
   }
 
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingExtension, let extensionInfo = extensionInfo {
-      // We've previously found an extension declaration, so this must be an inner struct.
-      let structVisitor = StructVisitor(parentType: extensionInfo.typeDescription)
-      structVisitor.walk(node)
-
-      innerStructs += structVisitor.structs
-      innerClasses += structVisitor.innerClasses
-      innerEnums += structVisitor.innerEnums
-
-    } else {
-      // We've encountered a class declaration before encountering an extension declaration. Something is wrong.
-      assertionFailure("Encountered a top-level struct. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
-    }
-
-    return .skipChildren
+    visitNestableDeclaration(node: node)
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    if !hasFinishedParsingExtension, let extensionInfo = extensionInfo {
-      // We've previously found a extension declaration, so this must be an inner enum.
-      let enumVisitor = EnumVisitor(parentType: extensionInfo.typeDescription)
-      enumVisitor.walk(node)
-
-      innerEnums += enumVisitor.enums
-      innerStructs += enumVisitor.innerStructs
-      innerClasses += enumVisitor.innerClasses
-
-    } else {
-      // We've encountered a enum declaration before encountering an extension declaration. Something is wrong.
-      assertionFailure("Encountered a top-level enum. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
-    }
-    return .skipChildren
+    visitNestableDeclaration(node: node)
   }
 
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
@@ -124,6 +84,23 @@ public final class ExtensionVisitor: SyntaxVisitor {
   }
 
   // MARK: Private
+
+  private func visitNestableDeclaration<DeclSyntax: NestableDeclSyntax>(node: DeclSyntax) -> SyntaxVisitorContinueKind {
+    if !hasFinishedParsingExtension, let extensionInfo = extensionInfo {
+      // We've previously found an extension declaration, so this must be an inner declaration.
+      let declarationVisitor = NestableTypeVisitor(parentType: extensionInfo.typeDescription)
+      declarationVisitor.walk(node)
+
+      innerClasses += declarationVisitor.classes
+      innerStructs += declarationVisitor.structs
+      innerEnums += declarationVisitor.enums
+
+    } else {
+      // We've encountered a class declaration before encountering an extension declaration. Something is wrong.
+      assertionFailure("Encountered a top-level declaration. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
+    }
+    return .skipChildren
+  }
 
   private var hasFinishedParsingExtension = false
 }
