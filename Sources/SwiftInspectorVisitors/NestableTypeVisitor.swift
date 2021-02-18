@@ -116,24 +116,22 @@ public final class NestableTypeVisitor: SyntaxVisitor {
     } else {
       // Recursive case. This is the first top-level declaration we've come across.
       // We need to get its information and then visit children to see if there is more information we need.
-      let name = node.identifier.text
       let typeInheritanceVisitor = TypeInheritanceVisitor()
-      typeInheritanceVisitor.walk(node)
+      if let inheritanceClause = node.inheritanceClause {
+        typeInheritanceVisitor.walk(inheritanceClause)
+      }
 
       let declarationModifierVisitor = DeclarationModifierVisitor()
       if let modifiers = node.modifiers {
         declarationModifierVisitor.walk(modifiers)
       }
 
-      let inheritsFromTypes = typeInheritanceVisitor.inheritsFromTypes
-      let modifiers = Set(declarationModifierVisitor.modifiers)
-
       topLevelDeclaration = topLevelDeclarationCreator(
         .init(
-          name: name,
-          inheritsFromTypes: inheritsFromTypes,
+          name: node.identifier.text,
+          inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
           parentType: parentType,
-          modifiers: modifiers
+          modifiers: Set(declarationModifierVisitor.modifiers)
         ))
 
       return .visitChildren

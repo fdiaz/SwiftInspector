@@ -25,8 +25,9 @@
 import SwiftSyntax
 
 protocol NestableDeclSyntax: SyntaxProtocol {
-  var identifier: TokenSyntax { get }
   var modifiers: ModifierListSyntax? { get }
+  var identifier: TokenSyntax { get }
+  var inheritanceClause: TypeInheritanceClauseSyntax? { get }
 }
 
 extension ClassDeclSyntax: NestableDeclSyntax {}
