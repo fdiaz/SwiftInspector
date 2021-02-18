@@ -22,38 +22,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-protocol NestableTypeInfo {
-
-  init(
-    name: String,
-    inheritsFromTypes: [TypeDescription],
-    parentType: TypeDescription?,
-    modifiers: Set<String>)
-
-  var name: String { get }
-  var inheritsFromTypes: [TypeDescription] { get }
-  var parentType: TypeDescription? { get }
-  var modifiers: Set<String> { get }
+public struct NestableTypeInfo: Codable, Equatable {
+  public let name: String
+  public let inheritsFromTypes: [TypeDescription]
+  public let parentType: TypeDescription?
+  public let modifiers: Set<String>
   // TODO: also find and expose properties on this type
 }
 
-public struct ClassInfo: NestableTypeInfo, Codable, Equatable {
-  public let name: String
-  public let inheritsFromTypes: [TypeDescription]
-  public let parentType: TypeDescription?
-  public let modifiers: Set<String>
-}
-
-public struct EnumInfo: NestableTypeInfo, Codable, Equatable {
-  public let name: String
-  public let inheritsFromTypes: [TypeDescription]
-  public let parentType: TypeDescription?
-  public let modifiers: Set<String>
-}
-
-public struct StructInfo: NestableTypeInfo, Codable, Equatable {
-  public let name: String
-  public let inheritsFromTypes: [TypeDescription]
-  public let parentType: TypeDescription?
-  public let modifiers: Set<String>
-}
+public typealias ClassInfo = NestableTypeInfo
+public typealias EnumInfo = NestableTypeInfo
+public typealias StructInfo = NestableTypeInfo

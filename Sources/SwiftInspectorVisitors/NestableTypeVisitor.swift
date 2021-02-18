@@ -37,15 +37,15 @@ public final class NestableTypeVisitor: SyntaxVisitor {
 
   /// All the classes found by this visitor
   public var classes: [ClassInfo] {
-    [topLevelDeclaration?.nestableInfo as? ClassInfo].compactMap { $0 } + innerClasses
+    [topLevelDeclaration?.nestableInfo].compactMap { $0 } + innerClasses
   }
   /// All the structs found by this visitor
   public var structs: [StructInfo] {
-    [topLevelDeclaration?.nestableInfo as? StructInfo].compactMap { $0 } + innerStructs
+    [topLevelDeclaration?.nestableInfo].compactMap { $0 } + innerStructs
   }
   /// All of the enums found by this visitor.
   public var enums: [EnumInfo] {
-    [topLevelDeclaration?.nestableInfo as? EnumInfo].compactMap { $0 } + innerEnums
+    [topLevelDeclaration?.nestableInfo].compactMap { $0 } + innerEnums
   }
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
@@ -86,9 +86,9 @@ public final class NestableTypeVisitor: SyntaxVisitor {
 
   // MARK: Private
 
-  private func visitNestableDeclaration<DeclSyntax: NestableDeclSyntax, TypeInfo: NestableTypeInfo>(
+  private func visitNestableDeclaration<DeclSyntax: NestableDeclSyntax>(
     node: DeclSyntax,
-    topLevelDeclarationCreator: (TypeInfo) -> TopLevelDeclaration)
+    topLevelDeclarationCreator: (NestableTypeInfo) -> TopLevelDeclaration)
   -> SyntaxVisitorContinueKind
   {
     guard !topLevelParsingTracker.hasFinishedParsing else {
@@ -158,9 +158,9 @@ private enum TopLevelDeclaration {
 
   var nestableInfo: NestableTypeInfo {
     switch self {
-    case let .topLevelClass(topLevelObject as NestableTypeInfo),
-         let .topLevelEnum(topLevelObject as NestableTypeInfo),
-         let .topLevelStruct(topLevelObject as NestableTypeInfo):
+    case let .topLevelClass(topLevelObject),
+         let .topLevelEnum(topLevelObject),
+         let .topLevelStruct(topLevelObject):
       return topLevelObject
     }
   }
