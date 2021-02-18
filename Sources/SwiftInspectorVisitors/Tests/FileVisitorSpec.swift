@@ -63,7 +63,7 @@ final class FileVisitorSpec: QuickSpec {
 
               protocol TestProtocol {}
 
-              // TODO: find and propogate this generic constraint to inner types.
+              // TODO: propogate this generic constraint to inner types.
               extension Array where Element == Int {
                 struct InnerStruct {}
                 class InnerClass {}
