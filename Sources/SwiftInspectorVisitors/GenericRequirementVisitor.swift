@@ -48,7 +48,7 @@ public final class GenericRequirementVisitor: SyntaxVisitor {
   }
 }
 
-public struct GenericRequirement: Codable, Equatable {
+public struct GenericRequirement: Codable, Hashable {
 
   // MARK: Lifecycle
 

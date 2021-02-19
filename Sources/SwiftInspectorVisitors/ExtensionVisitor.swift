@@ -122,7 +122,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
   private var hasFinishedParsingExtension = false
 }
 
-public struct ExtensionInfo: Codable, Equatable {
+public struct ExtensionInfo: Codable, Hashable {
   public let typeDescription: TypeDescription
   public private(set) var inheritsFromTypes: [TypeDescription]
   public private(set) var genericRequirements: [GenericRequirement]

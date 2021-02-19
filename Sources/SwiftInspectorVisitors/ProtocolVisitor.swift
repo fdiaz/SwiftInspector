@@ -86,7 +86,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
   private var hasFinishedParsingProtocol = false
 }
 
-public struct ProtocolInfo: Codable, Equatable {
+public struct ProtocolInfo: Codable, Hashable {
   public let name: String
   public let inheritsFromTypes: [TypeDescription]
   public let genericRequirements: [GenericRequirement]

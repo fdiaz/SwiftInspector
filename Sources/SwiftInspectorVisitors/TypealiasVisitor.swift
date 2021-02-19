@@ -67,7 +67,7 @@ public final class TypealiasVisitor: SyntaxVisitor {
   private let parentType: TypeDescription?
 }
 
-public struct TypealiasInfo: Codable, Equatable {
+public struct TypealiasInfo: Codable, Hashable {
   public let name: String
   public let genericParameters: [GenericParameter]
   public let initializer: TypeDescription?
