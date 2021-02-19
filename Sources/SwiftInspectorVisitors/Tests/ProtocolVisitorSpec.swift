@@ -189,6 +189,24 @@ final class ProtocolVisitorSpec: QuickSpec {
               expect(associatedTypeNameToInfoMap?["Output"]).toNot(beNil())
             }
           }
+
+          context("with a typealias") {
+            it("finds the typealias") {
+              let content = """
+                public protocol SomeProtocol {
+                 typealias Test = Any
+                }
+                """
+
+              try VisitorExecutor.walkVisitor(
+                self.sut,
+                overContent: content)
+
+              let protocolInfo = self.sut.protocolInfo
+              expect(protocolInfo?.innerTypealiases.first?.name) == "Test"
+              expect(protocolInfo?.innerTypealiases.first?.initializer?.asSource) == "Any"
+            }
+          }
         }
 
         context("visiting a code block with multiple top-level declarations") {

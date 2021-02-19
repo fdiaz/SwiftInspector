@@ -69,6 +69,8 @@ final class FileVisitorSpec: QuickSpec {
                 class InnerClass {}
                 enum InnerEnum {}
               }
+
+              typealias SortableSet<Element: Hashable & Comparable> = Set<Element>
               """
 
           try? VisitorExecutor.walkVisitor(
@@ -216,6 +218,14 @@ final class FileVisitorSpec: QuickSpec {
           expect(matching.count) == 1
         }
 
+        it("finds typealias SortableSet") {
+          let matching = self.sut.fileInfo.typealiases.filter {
+            $0.name == "SortableSet"
+              && $0.genericParameters.first?.name == "Element"
+              && $0.genericParameters.first?.inheritsFrom?.asSource == "Hashable & Comparable"
+          }
+          expect(matching.count) == 1
+        }
       }
     }
   }
