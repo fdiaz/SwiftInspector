@@ -52,7 +52,7 @@ public final class AssociatedtypeVisitor: SyntaxVisitor {
   }
 }
 
-public struct AssociatedtypeInfo: Codable, Equatable {
+public struct AssociatedtypeInfo: Codable, Hashable {
   public let name: String
   public let inheritsFromTypes: [TypeDescription]
   public let initializer: TypeDescription?
