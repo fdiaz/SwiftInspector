@@ -41,19 +41,29 @@ final class NestableTypeVisitorSpec: QuickSpec {
       context("visiting a single top-level declaration") {
         context("that is a class") {
           context("with no conformance") {
-            it("finds the type name") {
+            beforeEach {
               let content = """
                 public class SomeClass {}
                 """
 
-              try VisitorExecutor.walkVisitor(
+              try? VisitorExecutor.walkVisitor(
                 self.sut,
                 overContent: content)
+            }
 
+            it("finds the type name") {
               let classInfo = self.sut.classes.first
               expect(classInfo?.name) == "SomeClass"
               expect(classInfo?.inheritsFromTypes.map { $0.asSource }) == []
               expect(classInfo?.parentType).to(beNil())
+            }
+
+            it("does not find a struct") {
+              expect(self.sut.structs.count) == 0
+            }
+
+            it("does not find an enum") {
+              expect(self.sut.enums.count) == 0
             }
           }
 
@@ -114,19 +124,29 @@ final class NestableTypeVisitorSpec: QuickSpec {
 
         context("that is a struct") {
           context("with no conformance") {
-            it("finds the type name") {
+            beforeEach {
               let content = """
                 public struct SomeStruct {}
                 """
 
-              try VisitorExecutor.walkVisitor(
+              try? VisitorExecutor.walkVisitor(
                 self.sut,
                 overContent: content)
+            }
 
+            it("finds the type name") {
               let structInfo = self.sut.structs.first
               expect(structInfo?.name) == "SomeStruct"
               expect(structInfo?.inheritsFromTypes.map { $0.asSource }) == []
               expect(structInfo?.parentType).to(beNil())
+            }
+
+            it("does not find a class") {
+              expect(self.sut.classes.count) == 0
+            }
+
+            it("does not find an enum") {
+              expect(self.sut.enums.count) == 0
             }
           }
 
@@ -187,19 +207,29 @@ final class NestableTypeVisitorSpec: QuickSpec {
 
         context("that is an enum") {
           context("with no conformance") {
-            it("finds the type name") {
+            beforeEach {
               let content = """
               public enum SomeEnum {}
               """
 
-              try VisitorExecutor.walkVisitor(
+              try? VisitorExecutor.walkVisitor(
                 self.sut,
                 overContent: content)
+            }
 
+            it("finds the type name") {
               let classInfo = self.sut.enums.first
               expect(classInfo?.name) == "SomeEnum"
               expect(classInfo?.inheritsFromTypes.map { $0.asSource }) == []
               expect(classInfo?.parentType).to(beNil())
+            }
+
+            it("does not find a class") {
+              expect(self.sut.classes.count) == 0
+            }
+
+            it("does not find a struct") {
+              expect(self.sut.structs.count) == 0
             }
           }
 
