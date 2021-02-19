@@ -37,15 +37,15 @@ public final class NestableTypeVisitor: SyntaxVisitor {
 
   /// All the classes found by this visitor
   public var classes: [ClassInfo] {
-    [topLevelDeclaration?.nestableInfo].compactMap { $0 } + innerClasses
+    [topLevelDeclaration?.nestableClassInfo].compactMap { $0 } + innerClasses
   }
   /// All the structs found by this visitor
   public var structs: [StructInfo] {
-    [topLevelDeclaration?.nestableInfo].compactMap { $0 } + innerStructs
+    [topLevelDeclaration?.nestableStructInfo].compactMap { $0 } + innerStructs
   }
   /// All of the enums found by this visitor.
   public var enums: [EnumInfo] {
-    [topLevelDeclaration?.nestableInfo].compactMap { $0 } + innerEnums
+    [topLevelDeclaration?.nestableEnumInfo].compactMap { $0 } + innerEnums
   }
 
   /// Typealiases declarations found by this visitor.
@@ -174,6 +174,36 @@ private enum TopLevelDeclaration {
          let .topLevelEnum(topLevelObject),
          let .topLevelStruct(topLevelObject):
       return topLevelObject
+    }
+  }
+
+  var nestableClassInfo: ClassInfo? {
+    switch self {
+    case let .topLevelClass(topLevelObject):
+      return topLevelObject
+    case .topLevelStruct,
+         .topLevelEnum:
+      return nil
+    }
+  }
+
+  var nestableStructInfo: StructInfo? {
+    switch self {
+    case let .topLevelStruct(topLevelObject):
+      return topLevelObject
+    case .topLevelClass,
+         .topLevelEnum:
+      return nil
+    }
+  }
+
+  var nestableEnumInfo: EnumInfo? {
+    switch self {
+    case let .topLevelEnum(topLevelObject):
+      return topLevelObject
+    case .topLevelClass,
+         .topLevelStruct:
+      return nil
     }
   }
 }
