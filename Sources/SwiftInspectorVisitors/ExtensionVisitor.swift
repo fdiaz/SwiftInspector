@@ -44,9 +44,14 @@ public final class ExtensionVisitor: SyntaxVisitor {
     }
 
     let typeInheritanceVisitor = TypeInheritanceVisitor()
-    typeInheritanceVisitor.walk(node)
+    if let inheritanceClause = node.inheritanceClause {
+      typeInheritanceVisitor.walk(inheritanceClause)
+    }
+
     let genericRequirementsVisitor = GenericRequirementVisitor()
-    genericRequirementsVisitor.walk(node)
+    if let genericWhereClause = node.genericWhereClause {
+      genericRequirementsVisitor.walk(genericWhereClause)
+    }
 
     let declarationModifierVisitor = DeclarationModifierVisitor()
     if let modifiers = node.modifiers {
