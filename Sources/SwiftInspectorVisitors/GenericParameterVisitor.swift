@@ -38,6 +38,6 @@ public final class GenericParameterVisitor: SyntaxVisitor {
 }
 
 public struct GenericParameter: Codable, Equatable {
-  let name: String
-  let inheritsFrom: TypeDescription?
+  public let name: String
+  public let inheritsFrom: TypeDescription?
 }
