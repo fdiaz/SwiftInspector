@@ -48,6 +48,9 @@ public final class NestableTypeVisitor: SyntaxVisitor {
     [topLevelDeclaration?.nestableInfo].compactMap { $0 } + innerEnums
   }
 
+  /// Typealiases declarations found by this visitor.
+  public private(set) var typealiases = [TypealiasInfo]()
+
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
     visitNestableDeclaration(node: node, topLevelDeclarationCreator: { .topLevelClass($0) })
   }
@@ -84,6 +87,16 @@ public final class NestableTypeVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
+  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+    let typealiasVisitor = TypealiasVisitor(parentType: parentType)
+    typealiasVisitor.walk(node)
+
+    typealiases.append(contentsOf: typealiasVisitor.typealiases)
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+  }
+
   // MARK: Private
 
   private func visitNestableDeclaration<DeclSyntax: NestableDeclSyntax>(
@@ -102,7 +115,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
       // Base case. We've previously found an top-level declaration, so this must be an inner declaration.
       // This visitor shouldn't recurse down into the children.
       // Instead, we'll use a new visitor to get the information from this declaration.
-      let newParentType = TypeDescription(name: topLevelDeclarationName, parent: self.parentType)
+      let newParentType = TypeDescription(name: topLevelDeclarationName, parent: parentType)
       let declarationVisitor = NestableTypeVisitor(parentType: newParentType)
       declarationVisitor.walk(node)
 
@@ -131,8 +144,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
           name: node.identifier.text,
           inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
           parentType: parentType,
-          modifiers: Set(declarationModifierVisitor.modifiers)
-        ))
+          modifiers: Set(declarationModifierVisitor.modifiers)))
 
       return .visitChildren
     }

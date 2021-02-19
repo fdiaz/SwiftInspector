@@ -140,6 +140,8 @@ final class ExtensionVisitorSpec: QuickSpec {
                   class InnerClass {}
                   enum InnerEnum {}
                 }
+
+                typealias TestClassTypeAlias = TestClass
               }
               """
 
@@ -248,6 +250,15 @@ final class ExtensionVisitorSpec: QuickSpec {
             let matching = self.sut.innerEnums.filter {
               $0.name == "InnerEnum"
                 && $0.parentType?.asSource == "Array.TestEnum"
+            }
+            expect(matching.count) == 1
+          }
+
+          it("finds Array.TestClassTypeAlias") {
+            let matching = self.sut.innerTypealiases.filter {
+              $0.name == "TestClassTypeAlias"
+                && $0.parentType?.asSource == "Array"
+                && $0.initializer?.asSource == "TestClass"
             }
             expect(matching.count) == 1
           }

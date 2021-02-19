@@ -81,6 +81,16 @@ public final class FileVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
+  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+    let typealiasVisitor = TypealiasVisitor()
+    typealiasVisitor.walk(node)
+
+    fileInfo.appendTypealiases(typealiasVisitor.typealiases)
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+  }
+
   // MARK: Private
 
   private func visitNestableDeclaration<DeclSyntax: NestableDeclSyntax>(node: DeclSyntax) -> SyntaxVisitorContinueKind {
@@ -94,6 +104,7 @@ public final class FileVisitor: SyntaxVisitor {
     // We don't need to visit children because our visitor just did that for us.
     return .skipChildren
   }
+
 }
 
 public struct FileInfo: Codable, Equatable {
@@ -104,6 +115,7 @@ public struct FileInfo: Codable, Equatable {
   public private(set) var classes = [ClassInfo]()
   public private(set) var enums = [EnumInfo]()
   public private(set) var extensions = [ExtensionInfo]()
+  public private(set) var typealiases = [TypealiasInfo]()
 
   mutating func appendImports(_ imports: [ImportStatement]) {
     self.imports += imports
@@ -122,5 +134,8 @@ public struct FileInfo: Codable, Equatable {
   }
   mutating func appendExtension(_ extensionInfo: ExtensionInfo) {
     extensions.append(extensionInfo)
+  }
+  mutating func appendTypealiases(_ typealiases: [TypealiasInfo]) {
+    self.typealiases += typealiases
   }
 }
