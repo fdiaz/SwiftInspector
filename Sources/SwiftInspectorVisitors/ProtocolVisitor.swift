@@ -22,7 +22,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
 import SwiftSyntax
 
 public final class ProtocolVisitor: SyntaxVisitor {
@@ -37,10 +36,17 @@ public final class ProtocolVisitor: SyntaxVisitor {
     }
     let name = node.identifier.text
 
+    let associatedtypeVisitor = AssociatedtypeVisitor()
+    associatedtypeVisitor.walk(node.members)
+
     let typeInheritanceVisitor = TypeInheritanceVisitor()
-    typeInheritanceVisitor.walk(node)
+    if let inheritanceClause = node.inheritanceClause {
+      typeInheritanceVisitor.walk(inheritanceClause)
+    }
     let genericRequirementsVisitor = GenericRequirementVisitor()
-    genericRequirementsVisitor.walk(node)
+    if let genericWhereClause = node.genericWhereClause {
+      genericRequirementsVisitor.walk(genericWhereClause)
+    }
 
     let declarationModifierVisitor = DeclarationModifierVisitor()
     if let modifiers = node.modifiers {
@@ -52,6 +58,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
 
     protocolInfo = ProtocolInfo(
       name: name,
+      associatedTypes: associatedtypeVisitor.associatedTypes,
       inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
       genericRequirements: genericRequirementsVisitor.genericRequirements,
       modifiers: .init(declarationModifierVisitor.modifiers),
@@ -88,6 +95,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
 
 public struct ProtocolInfo: Codable, Equatable {
   public let name: String
+  public let associatedTypes: [AssociatedtypeInfo]
   public let inheritsFromTypes: [TypeDescription]
   public let genericRequirements: [GenericRequirement]
   public let modifiers: Set<String>

@@ -161,6 +161,35 @@ final class ProtocolVisitorSpec: QuickSpec {
             }
           }
 
+          context("with associatedtypes") {
+            var associatedTypeNameToInfoMap: [String: AssociatedtypeInfo]?
+            beforeEach {
+              let content = """
+                public protocol Transformer {
+                  associatedtype Input
+                  associatedtype Output
+                }
+                """
+
+              try? VisitorExecutor.walkVisitor(
+                self.sut,
+                overContent: content)
+
+              associatedTypeNameToInfoMap = self.sut.protocolInfo?.associatedTypes
+                .reduce(into: [String: AssociatedtypeInfo]()) { (result, associatedTypeInfo) in
+                  result[associatedTypeInfo.name] = associatedTypeInfo
+                }
+            }
+
+            it("finds the associatedtype Input") {
+              expect(associatedTypeNameToInfoMap?["Input"]).toNot(beNil())
+            }
+
+            it("finds the associatedtype Output") {
+              expect(associatedTypeNameToInfoMap?["Output"]).toNot(beNil())
+            }
+          }
+
           context("with a typealias") {
             it("finds the typealias") {
               let content = """
