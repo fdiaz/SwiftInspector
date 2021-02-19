@@ -107,7 +107,7 @@ public final class FileVisitor: SyntaxVisitor {
 
 }
 
-public struct FileInfo: Codable, Equatable {
+public struct FileInfo: Codable, Hashable {
   public let url: URL
   public private(set) var imports = [ImportStatement]()
   public private(set) var protocols = [ProtocolInfo]()

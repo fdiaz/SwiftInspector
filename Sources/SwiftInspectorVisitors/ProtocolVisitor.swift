@@ -93,7 +93,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
   private var hasFinishedParsingProtocol = false
 }
 
-public struct ProtocolInfo: Codable, Equatable {
+public struct ProtocolInfo: Codable, Hashable {
   public let name: String
   public let associatedTypes: [AssociatedtypeInfo]
   public let inheritsFromTypes: [TypeDescription]

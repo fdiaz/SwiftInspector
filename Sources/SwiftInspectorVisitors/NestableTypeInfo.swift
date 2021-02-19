@@ -22,7 +22,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-public struct NestableTypeInfo: Codable, Equatable {
+public struct NestableTypeInfo: Codable, Hashable {
   public let name: String
   public let inheritsFromTypes: [TypeDescription]
   public let parentType: TypeDescription?

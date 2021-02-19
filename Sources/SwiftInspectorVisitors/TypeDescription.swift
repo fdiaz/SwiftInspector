@@ -25,7 +25,7 @@
 import SwiftSyntax
 
 /// An enum that describes a parsed type in a canonical form.
-public enum TypeDescription: Codable, Equatable {
+public enum TypeDescription: Codable, Hashable {
   /// A root type with possible generics. e.g. Int, or Array<Int>
   indirect case simple(name: String, generics: [TypeDescription])
   /// A nested type with possible generics. e.g. Array.Element or Swift.Array<Element>
