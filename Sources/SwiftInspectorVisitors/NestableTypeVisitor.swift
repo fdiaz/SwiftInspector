@@ -96,7 +96,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
       return .skipChildren
     }
 
-    // We've previously found an top-level declaration, so this must be an inner declaration.
+    // We've previously found a top-level declaration, so this must be an inner declaration.
     let newParentType = TypeDescription(name: topLevelDeclarationName, parent: parentType)
     let typealiasVisitor = TypealiasVisitor(parentType: newParentType)
     typealiasVisitor.walk(node)
@@ -121,7 +121,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
     topLevelParsingTracker.increment()
 
     if !topLevelParsingTracker.hasFinishedParsing, let topLevelDeclarationName = topLevelDeclaration?.nestableInfo.name {
-      // Base case. We've previously found an top-level declaration, so this must be an inner declaration.
+      // Base case. We've previously found a top-level declaration, so this must be an inner declaration.
       // This visitor shouldn't recurse down into the children.
       // Instead, we'll use a new visitor to get the information from this declaration.
       let newParentType = TypeDescription(name: topLevelDeclarationName, parent: parentType)

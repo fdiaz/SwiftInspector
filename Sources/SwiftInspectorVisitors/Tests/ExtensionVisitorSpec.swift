@@ -119,176 +119,174 @@ final class ExtensionVisitorSpec: QuickSpec {
       }
 
       context("visiting a code block with nested declarations") {
-        context("visiting a class with nested types") {
-          beforeEach {
-            let content = """
-              public extension Array {
-                struct TestStruct {
-                  struct InnerStruct {}
-                  class InnerClass {}
-                  enum InnerEnum {}
-                  typealias InnerTypealias = Void
-                }
-
-                class TestClass {
-                  struct InnerStruct {}
-                  class InnerClass {}
-                  enum InnerEnum {}
-                  typealias InnerTypealias = Void
-                }
-
-                enum TestEnum {
-                  struct InnerStruct {}
-                  class InnerClass {}
-                  enum InnerEnum {}
-                  typealias InnerTypealias = Void
-                }
-
-                typealias TestClassTypeAlias = TestClass
+        beforeEach {
+          let content = """
+            public extension Array {
+              struct TestStruct {
+                struct InnerStruct {}
+                class InnerClass {}
+                enum InnerEnum {}
+                typealias InnerTypealias = Void
               }
-              """
 
-            try? VisitorExecutor.walkVisitor(
-              self.sut,
-              overContent: content)
-          }
+              class TestClass {
+                struct InnerStruct {}
+                class InnerClass {}
+                enum InnerEnum {}
+                typealias InnerTypealias = Void
+              }
 
-          it("finds extension") {
-            expect(self.sut.extensionInfo?.typeDescription.asSource) == "Array"
-          }
+              enum TestEnum {
+                struct InnerStruct {}
+                class InnerClass {}
+                enum InnerEnum {}
+                typealias InnerTypealias = Void
+              }
 
-          it("finds extension's modifiers") {
-            expect(self.sut.extensionInfo?.modifiers) == .init(["public"])
-          }
-
-          it("finds Array.TestStruct") {
-            let matching = self.sut.innerStructs.filter {
-              $0.name == "TestStruct"
-                && $0.parentType?.asSource == "Array"
+              typealias TestClassTypeAlias = TestClass
             }
-            expect(matching.count) == 1
-          }
+            """
 
-          it("finds Array.TestStruct.InnerStruct") {
-            let matching = self.sut.innerStructs.filter {
-              $0.name == "InnerStruct"
-                && $0.parentType?.asSource == "Array.TestStruct"
-            }
-            expect(matching.count) == 1
-          }
+          try? VisitorExecutor.walkVisitor(
+            self.sut,
+            overContent: content)
+        }
 
-          it("finds Array.TestStruct.InnerClass") {
-            let matching = self.sut.innerClasses.filter {
-              $0.name == "InnerClass"
-                && $0.parentType?.asSource == "Array.TestStruct"
-            }
-            expect(matching.count) == 1
-          }
+        it("finds extension") {
+          expect(self.sut.extensionInfo?.typeDescription.asSource) == "Array"
+        }
 
-          it("finds Array.TestStruct.InnerEnum") {
-            let matching = self.sut.innerEnums.filter {
-              $0.name == "InnerEnum"
-                && $0.parentType?.asSource == "Array.TestStruct"
-            }
-            expect(matching.count) == 1
-          }
+        it("finds extension's modifiers") {
+          expect(self.sut.extensionInfo?.modifiers) == .init(["public"])
+        }
 
-          it("finds Array.TestStruct.InnerTypealias") {
-            let matching = self.sut.innerTypealiases.filter {
-              $0.name == "InnerTypealias"
-                && $0.parentType?.asSource == "Array.TestStruct"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestStruct") {
+          let matching = self.sut.innerStructs.filter {
+            $0.name == "TestStruct"
+              && $0.parentType?.asSource == "Array"
           }
+          expect(matching.count) == 1
+        }
 
-          it("finds Array.TestClass") {
-            let matching = self.sut.innerClasses.filter {
-              $0.name == "TestClass"
-                && $0.parentType?.asSource == "Array"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestStruct.InnerStruct") {
+          let matching = self.sut.innerStructs.filter {
+            $0.name == "InnerStruct"
+              && $0.parentType?.asSource == "Array.TestStruct"
           }
+          expect(matching.count) == 1
+        }
 
-          it("finds Array.TestClass.InnerStruct") {
-            let matching = self.sut.innerStructs.filter {
-              $0.name == "InnerStruct"
-                && $0.parentType?.asSource == "Array.TestClass"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestStruct.InnerClass") {
+          let matching = self.sut.innerClasses.filter {
+            $0.name == "InnerClass"
+              && $0.parentType?.asSource == "Array.TestStruct"
           }
+          expect(matching.count) == 1
+        }
 
-          it("finds Array.TestClass.InnerClass") {
-            let matching = self.sut.innerClasses.filter {
-              $0.name == "InnerClass"
-                && $0.parentType?.asSource == "Array.TestClass"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestStruct.InnerEnum") {
+          let matching = self.sut.innerEnums.filter {
+            $0.name == "InnerEnum"
+              && $0.parentType?.asSource == "Array.TestStruct"
           }
+          expect(matching.count) == 1
+        }
 
-          it("finds Array.TestClass.InnerEnum") {
-            let matching = self.sut.innerEnums.filter {
-              $0.name == "InnerEnum"
-                && $0.parentType?.asSource == "Array.TestClass"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestStruct.InnerTypealias") {
+          let matching = self.sut.innerTypealiases.filter {
+            $0.name == "InnerTypealias"
+              && $0.parentType?.asSource == "Array.TestStruct"
           }
+          expect(matching.count) == 1
+        }
 
-          it("finds Array.TestClass.InnerTypealias") {
-            let matching = self.sut.innerTypealiases.filter {
-              $0.name == "InnerTypealias"
-                && $0.parentType?.asSource == "Array.TestClass"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestClass") {
+          let matching = self.sut.innerClasses.filter {
+            $0.name == "TestClass"
+              && $0.parentType?.asSource == "Array"
           }
+          expect(matching.count) == 1
+        }
 
-          it("finds Array.TestEnum") {
-            let matching = self.sut.innerEnums.filter {
-              $0.name == "TestEnum"
-                && $0.parentType?.asSource == "Array"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestClass.InnerStruct") {
+          let matching = self.sut.innerStructs.filter {
+            $0.name == "InnerStruct"
+              && $0.parentType?.asSource == "Array.TestClass"
           }
+          expect(matching.count) == 1
+        }
 
-          it("finds Array.TestEnum.InnerStruct") {
-            let matching = self.sut.innerStructs.filter {
-              $0.name == "InnerStruct"
-                && $0.parentType?.asSource == "Array.TestEnum"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestClass.InnerClass") {
+          let matching = self.sut.innerClasses.filter {
+            $0.name == "InnerClass"
+              && $0.parentType?.asSource == "Array.TestClass"
           }
+          expect(matching.count) == 1
+        }
 
-          it("finds Array.TestEnum.InnerClass") {
-            let matching = self.sut.innerClasses.filter {
-              $0.name == "InnerClass"
-                && $0.parentType?.asSource == "Array.TestEnum"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestClass.InnerEnum") {
+          let matching = self.sut.innerEnums.filter {
+            $0.name == "InnerEnum"
+              && $0.parentType?.asSource == "Array.TestClass"
           }
+          expect(matching.count) == 1
+        }
 
-          it("finds Array.TestEnum.InnerEnum") {
-            let matching = self.sut.innerEnums.filter {
-              $0.name == "InnerEnum"
-                && $0.parentType?.asSource == "Array.TestEnum"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestClass.InnerTypealias") {
+          let matching = self.sut.innerTypealiases.filter {
+            $0.name == "InnerTypealias"
+              && $0.parentType?.asSource == "Array.TestClass"
           }
+          expect(matching.count) == 1
+        }
 
-          it("finds Array.TestEnum.InnerTypealias") {
-            let matching = self.sut.innerTypealiases.filter {
-              $0.name == "InnerTypealias"
-                && $0.parentType?.asSource == "Array.TestEnum"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestEnum") {
+          let matching = self.sut.innerEnums.filter {
+            $0.name == "TestEnum"
+              && $0.parentType?.asSource == "Array"
           }
+          expect(matching.count) == 1
+        }
 
-          it("finds Array.TestClassTypeAlias") {
-            let matching = self.sut.innerTypealiases.filter {
-              $0.name == "TestClassTypeAlias"
-                && $0.parentType?.asSource == "Array"
-                && $0.initializer?.asSource == "TestClass"
-            }
-            expect(matching.count) == 1
+        it("finds Array.TestEnum.InnerStruct") {
+          let matching = self.sut.innerStructs.filter {
+            $0.name == "InnerStruct"
+              && $0.parentType?.asSource == "Array.TestEnum"
           }
+          expect(matching.count) == 1
+        }
+
+        it("finds Array.TestEnum.InnerClass") {
+          let matching = self.sut.innerClasses.filter {
+            $0.name == "InnerClass"
+              && $0.parentType?.asSource == "Array.TestEnum"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds Array.TestEnum.InnerEnum") {
+          let matching = self.sut.innerEnums.filter {
+            $0.name == "InnerEnum"
+              && $0.parentType?.asSource == "Array.TestEnum"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds Array.TestEnum.InnerTypealias") {
+          let matching = self.sut.innerTypealiases.filter {
+            $0.name == "InnerTypealias"
+              && $0.parentType?.asSource == "Array.TestEnum"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds Array.TestClassTypeAlias") {
+          let matching = self.sut.innerTypealiases.filter {
+            $0.name == "TestClassTypeAlias"
+              && $0.parentType?.asSource == "Array"
+              && $0.initializer?.asSource == "TestClass"
+          }
+          expect(matching.count) == 1
         }
       }
 
