@@ -127,18 +127,21 @@ final class ExtensionVisitorSpec: QuickSpec {
                   struct InnerStruct {}
                   class InnerClass {}
                   enum InnerEnum {}
+                  typealias InnerTypealias = Void
                 }
 
                 class TestClass {
                   struct InnerStruct {}
                   class InnerClass {}
                   enum InnerEnum {}
+                  typealias InnerTypealias = Void
                 }
 
                 enum TestEnum {
                   struct InnerStruct {}
                   class InnerClass {}
                   enum InnerEnum {}
+                  typealias InnerTypealias = Void
                 }
 
                 typealias TestClassTypeAlias = TestClass
@@ -190,6 +193,14 @@ final class ExtensionVisitorSpec: QuickSpec {
             expect(matching.count) == 1
           }
 
+          it("finds Array.TestStruct.InnerTypealias") {
+            let matching = self.sut.innerTypealiases.filter {
+              $0.name == "InnerTypealias"
+                && $0.parentType?.asSource == "Array.TestStruct"
+            }
+            expect(matching.count) == 1
+          }
+
           it("finds Array.TestClass") {
             let matching = self.sut.innerClasses.filter {
               $0.name == "TestClass"
@@ -222,6 +233,14 @@ final class ExtensionVisitorSpec: QuickSpec {
             expect(matching.count) == 1
           }
 
+          it("finds Array.TestClass.InnerTypealias") {
+            let matching = self.sut.innerTypealiases.filter {
+              $0.name == "InnerTypealias"
+                && $0.parentType?.asSource == "Array.TestClass"
+            }
+            expect(matching.count) == 1
+          }
+
           it("finds Array.TestEnum") {
             let matching = self.sut.innerEnums.filter {
               $0.name == "TestEnum"
@@ -249,6 +268,14 @@ final class ExtensionVisitorSpec: QuickSpec {
           it("finds Array.TestEnum.InnerEnum") {
             let matching = self.sut.innerEnums.filter {
               $0.name == "InnerEnum"
+                && $0.parentType?.asSource == "Array.TestEnum"
+            }
+            expect(matching.count) == 1
+          }
+
+          it("finds Array.TestEnum.InnerTypealias") {
+            let matching = self.sut.innerTypealiases.filter {
+              $0.name == "InnerTypealias"
                 && $0.parentType?.asSource == "Array.TestEnum"
             }
             expect(matching.count) == 1

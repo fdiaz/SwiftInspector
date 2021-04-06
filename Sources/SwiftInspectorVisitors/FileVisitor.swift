@@ -75,6 +75,7 @@ public final class FileVisitor: SyntaxVisitor {
       fileInfo.appendEnums(extensionVisitor.innerEnums)
       fileInfo.appendClasses(extensionVisitor.innerClasses)
       fileInfo.appendStructs(extensionVisitor.innerStructs)
+      fileInfo.appendTypealiases(extensionVisitor.innerTypealiases)
     }
 
     // We don't need to visit children because our visitor just did that for us.
@@ -100,6 +101,7 @@ public final class FileVisitor: SyntaxVisitor {
     fileInfo.appendStructs(declarationVisitor.structs)
     fileInfo.appendClasses(declarationVisitor.classes)
     fileInfo.appendEnums(declarationVisitor.enums)
+    fileInfo.appendTypealiases(declarationVisitor.typealiases)
 
     // We don't need to visit children because our visitor just did that for us.
     return .skipChildren
