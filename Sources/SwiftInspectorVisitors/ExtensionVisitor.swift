@@ -111,6 +111,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
       innerClasses += declarationVisitor.classes
       innerStructs += declarationVisitor.structs
       innerEnums += declarationVisitor.enums
+      innerTypealiases += declarationVisitor.typealiases
 
     } else {
       // We've encountered a class declaration before encountering an extension declaration. Something is wrong.

@@ -582,12 +582,13 @@ final class NestableTypeVisitorSpec: QuickSpec {
           }
         }
 
-        context("visiting a class with nested structs, classes, and enums") {
+        context("visiting a class with nested structs, classes, enums, and typealiases") {
           beforeEach {
             let content = """
               public class FooClass {
                 public struct BarFooStruct: Equatable {
                   public class BarBarFooClass {}
+                  public typealias BarBarFooTypealias = Void
                 }
                 public enum BarFooEnum {
                   public class BarBarFooClass {}
@@ -633,6 +634,15 @@ final class NestableTypeVisitorSpec: QuickSpec {
             expect(matching.count) == 1
           }
 
+          it("finds FooClass.BarFooStruct.BarBarFooTypealias") {
+            let matching = self.sut.typealiases.filter {
+              $0.name == "BarBarFooTypealias"
+                && $0.initializer?.asSource == "Void"
+                && $0.parentType?.asSource == "FooClass.BarFooStruct"
+            }
+            expect(matching.count) == 1
+          }
+
           it("finds FooClass.FooFooClass") {
             let matching = self.sut.classes.filter {
               $0.name == "FooFooClass"
@@ -674,13 +684,14 @@ final class NestableTypeVisitorSpec: QuickSpec {
           }
         }
 
-        context("visiting a struct with nested structs, classes, and enums") {
+        context("visiting a struct with nested structs, classes, enums, and typealiases") {
           beforeEach {
             let content = """
               public struct FooStruct {
                 public struct FooStruct {}
                 public class BarFooClass: Equatable {
                   public struct BarBarFooStruct {}
+                  public typealias BarBarFooTypealias = Void
                 }
                 public enum BarFooEnum {
                   public struct BarBarFooStruct {}
@@ -756,6 +767,15 @@ final class NestableTypeVisitorSpec: QuickSpec {
             expect(matching.count) == 1
           }
 
+          it("finds FooStruct.BarFooClass.BarBarFooTypealias") {
+            let matching = self.sut.typealiases.filter {
+              $0.name == "BarBarFooTypealias"
+                && $0.initializer?.asSource == "Void"
+                && $0.parentType?.asSource == "FooStruct.BarFooClass"
+            }
+            expect(matching.count) == 1
+          }
+
           it("finds FooStruct.BarFooEnum") {
             let matching = self.sut.enums.filter {
               $0.name == "BarFooEnum"
@@ -778,13 +798,14 @@ final class NestableTypeVisitorSpec: QuickSpec {
         }
       }
 
-      context("visiting an enum with nested structs, classes, and enums") {
+      context("visiting an enum with nested structs, classes, enums, and typealiases") {
         beforeEach {
           let content = """
               public enum FooEnum {
                 public enum FooEnum {}
                 public struct BarFooStruct {
                   public enum BarBarFooEnum {}
+                  public typealias BarBarFooTypealias = Void
                 }
                 public enum BarFooEnum: Equatable {
                   public enum BarBarFooEnum {}
@@ -849,6 +870,15 @@ final class NestableTypeVisitorSpec: QuickSpec {
           let matching = self.sut.enums.filter {
             $0.name == "BarBarFooEnum"
               && $0.inheritsFromTypes.map { $0.asSource } == []
+              && $0.parentType?.asSource == "FooEnum.BarFooStruct"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds FooEnum.BarFooStruct.BarBarFooTypealias") {
+          let matching = self.sut.typealiases.filter {
+            $0.name == "BarBarFooTypealias"
+              && $0.initializer?.asSource == "Void"
               && $0.parentType?.asSource == "FooEnum.BarFooStruct"
           }
           expect(matching.count) == 1
@@ -936,8 +966,8 @@ final class NestableTypeVisitorSpec: QuickSpec {
           public struct BarStruct {}
           """
 
-            // The StructVisitor is only meant to be used over a single struct.
-            // Using a StructVisitor over a block that has multiple top-level
+            // The NestableTypeVisitor is only meant to be used over a single nestable type.
+            // Using a NestableTypeVisitor over a block that has multiple top-level
             // structs is API misuse.
             expect(try VisitorExecutor.walkVisitor(
                     self.sut,
@@ -953,8 +983,8 @@ final class NestableTypeVisitorSpec: QuickSpec {
           public class FooClass {}
           """
 
-            // The StructVisitor is only meant to be used over a single struct.
-            // Using a StructVisitor over a block that has a top-level class
+            // The NestableTypeVisitor is only meant to be used over a single nestable type.
+            // Using a NestableTypeVisitor over a block that has a top-level class
             // is API misuse.
             expect(try VisitorExecutor.walkVisitor(
                     self.sut,
@@ -970,8 +1000,8 @@ final class NestableTypeVisitorSpec: QuickSpec {
           public struct FooEnum {}
           """
 
-            // The StructVisitor is only meant to be used over a single struct.
-            // Using a StructVisitor over a block that has a top-level enum
+            // The NestableTypeVisitor is only meant to be used over a single nestable type.
+            // Using a NestableTypeVisitor over a block that has a top-level enum
             // is API misuse.
             expect(try VisitorExecutor.walkVisitor(
                     self.sut,
@@ -989,7 +1019,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             public enum BarEnum {}
             """
 
-            // The NestableTypeVisitor is only meant to be used over a single enum.
+            // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has multiple top-level
             // classes is API misuse.
             expect(try VisitorExecutor.walkVisitor(
@@ -1006,7 +1036,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             public struct FooStruct {}
             """
 
-            // The NestableTypeVisitor is only meant to be used over a single enum.
+            // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has a top-level struct
             // is API misuse.
             expect(try VisitorExecutor.walkVisitor(
@@ -1023,7 +1053,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             public class FooClass {}
             """
 
-            // The NestableTypeVisitor is only meant to be used over a single enum.
+            // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has a top-level class
             // is API misuse.
             expect(try VisitorExecutor.walkVisitor(
@@ -1041,7 +1071,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             public protocol FooProtocol {}
             """
 
-        // The NestableTypeVisitor is only meant to be used over a single enum.
+        // The NestableTypeVisitor is only meant to be used over a single nestable type.
         // Using a NestableTypeVisitor over a block that has a top-level protocol
         // is API misuse.
         expect(try VisitorExecutor.walkVisitor(
@@ -1057,8 +1087,24 @@ final class NestableTypeVisitorSpec: QuickSpec {
             public extension Array {}
             """
 
-        // The NestableTypeVisitor is only meant to be used over a single enum.
+        // The NestableTypeVisitor is only meant to be used over a single nestable type.
         // Using a NestableTypeVisitor over a block that has an extension
+        // is API misuse.
+        expect(try VisitorExecutor.walkVisitor(
+                self.sut,
+                overContent: content))
+          .to(throwAssertion())
+      }
+    }
+
+    context("visiting a code block with a top-level typealias") {
+      it("asserts") {
+        let content = """
+            public typealias Sad = Void
+            """
+
+        // The NestableTypeVisitor is only meant to be used over a single nestable type.
+        // Using a NestableTypeVisitor over a block that has a top-level typealias
         // is API misuse.
         expect(try VisitorExecutor.walkVisitor(
                 self.sut,

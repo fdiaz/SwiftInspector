@@ -47,18 +47,21 @@ final class FileVisitorSpec: QuickSpec {
                 struct InnerStruct {}
                 class InnerClass {}
                 enum InnerEnum {}
+                typealias InnerTypealias = Void
               }
 
               class TestClass {
                 struct InnerStruct {}
                 class InnerClass {}
                 enum InnerEnum {}
+                typealias InnerTypealias = Void
               }
 
               enum TestEnum {
                 struct InnerStruct {}
                 class InnerClass {}
                 enum InnerEnum {}
+                typealias InnerTypealias = Void
               }
 
               protocol TestProtocol {}
@@ -68,6 +71,7 @@ final class FileVisitorSpec: QuickSpec {
                 struct InnerStruct {}
                 class InnerClass {}
                 enum InnerEnum {}
+                typealias InnerTypealias = Void
               }
 
               typealias SortableSet<Element: Hashable & Comparable> = Set<Element>
@@ -114,6 +118,14 @@ final class FileVisitorSpec: QuickSpec {
           expect(matching.count) == 1
         }
 
+        it("finds TestStruct.InnerTypealias") {
+          let matching = self.sut.fileInfo.typealiases.filter {
+            $0.name == "InnerTypealias"
+              && $0.parentType?.asSource == "TestStruct"
+          }
+          expect(matching.count) == 1
+        }
+
         it("finds TestClass") {
           let matching = self.sut.fileInfo.classes.filter {
             $0.name == "TestClass"
@@ -140,6 +152,14 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestClass.InnerEnum") {
           let matching = self.sut.fileInfo.enums.filter {
             $0.name == "InnerEnum"
+              && $0.parentType?.asSource == "TestClass"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds TestClass.InnerTypealias") {
+          let matching = self.sut.fileInfo.typealiases.filter {
+            $0.name == "InnerTypealias"
               && $0.parentType?.asSource == "TestClass"
           }
           expect(matching.count) == 1
@@ -172,6 +192,14 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestEnum.InnerEnum") {
           let matching = self.sut.fileInfo.enums.filter {
             $0.name == "InnerEnum"
+              && $0.parentType?.asSource == "TestEnum"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds TestEnum.InnerTypealias") {
+          let matching = self.sut.fileInfo.typealiases.filter {
+            $0.name == "InnerTypealias"
               && $0.parentType?.asSource == "TestEnum"
           }
           expect(matching.count) == 1
@@ -213,6 +241,14 @@ final class FileVisitorSpec: QuickSpec {
         it("finds Array.InnerEnum") {
           let matching = self.sut.fileInfo.enums.filter {
             $0.name == "InnerEnum"
+              && $0.parentType?.asSource == "Array"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds Array.InnerTypealias") {
+          let matching = self.sut.fileInfo.typealiases.filter {
+            $0.name == "InnerTypealias"
               && $0.parentType?.asSource == "Array"
           }
           expect(matching.count) == 1

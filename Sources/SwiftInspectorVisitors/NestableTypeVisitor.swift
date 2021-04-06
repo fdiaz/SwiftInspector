@@ -88,9 +88,18 @@ public final class NestableTypeVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
-    let typealiasVisitor = TypealiasVisitor(parentType: parentType)
-    typealiasVisitor.walk(node)
+    guard
+      !topLevelParsingTracker.hasFinishedParsing,
+      let topLevelDeclarationName = topLevelDeclaration?.nestableInfo.name
+    else {
+      assertionFailure("Encountered more than one top-level declaration. This is a usage error: a single NestableTypeVisitor instance should start walking only over a declaration syntax node")
+      return .skipChildren
+    }
 
+    // We've previously found a top-level declaration, so this must be an inner declaration.
+    let newParentType = TypeDescription(name: topLevelDeclarationName, parent: parentType)
+    let typealiasVisitor = TypealiasVisitor(parentType: newParentType)
+    typealiasVisitor.walk(node)
     typealiases.append(contentsOf: typealiasVisitor.typealiases)
 
     // We don't need to visit children because our visitor just did that for us.
@@ -112,7 +121,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
     topLevelParsingTracker.increment()
 
     if !topLevelParsingTracker.hasFinishedParsing, let topLevelDeclarationName = topLevelDeclaration?.nestableInfo.name {
-      // Base case. We've previously found an top-level declaration, so this must be an inner declaration.
+      // Base case. We've previously found a top-level declaration, so this must be an inner declaration.
       // This visitor shouldn't recurse down into the children.
       // Instead, we'll use a new visitor to get the information from this declaration.
       let newParentType = TypeDescription(name: topLevelDeclarationName, parent: parentType)
@@ -122,6 +131,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
       innerEnums += declarationVisitor.enums
       innerClasses += declarationVisitor.classes
       innerStructs += declarationVisitor.structs
+      typealiases += declarationVisitor.typealiases
 
       // We've already gotten information from the children from our inner visitor.
       return .skipChildren
