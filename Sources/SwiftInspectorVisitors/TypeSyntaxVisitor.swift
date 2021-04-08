@@ -94,7 +94,7 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
   }
 
   /// Information about each of the properties found on the type.
-  private(set) var propertiesData = [TypeProperties.PropertyData]()
+  private(set) var propertiesData: Set<TypeProperties.PropertyData> = []
 
   override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     var leadingTrivia: Trivia? = node.leadingTrivia
@@ -111,7 +111,7 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
           let typeAnnotation = binding.typeAnnotation,
           let simpleTypeIdentifier = typeAnnotation.type.as(SimpleTypeIdentifierSyntax.self)
         {
-          propertiesData.append(.init(
+          propertiesData.insert(.init(
             name: identifier.identifier.text,
             typeAnnotation: simpleTypeIdentifier.name.text,
             comment: comment(from: leadingTrivia),
@@ -124,7 +124,7 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
         // public let thing: String = "Hello" has a type annotation, String which makes this easy
         // public let thing = "Hello" does not have a type annotation, and I don't know how to handle this case.
         // TODO: Include logic to get types of any variable declaration
-        propertiesData.append(.init(
+        propertiesData.insert(.init(
           name: identifier.identifier.text,
           typeAnnotation: nil,
           comment: comment(from: leadingTrivia),
@@ -247,7 +247,7 @@ public struct TypeProperties: Hashable {
   /// The name of the type.
   public let name: String
   /// The properties on this type
-  public let properties: [PropertyData]
+  public let properties: Set<PropertyData>
 }
 
 extension TypeProperties {
@@ -278,6 +278,6 @@ extension TypeProperties {
     }
     return TypeProperties(
       name: name,
-      properties: Array(Set(properties).union(Set(other.properties))))
+      properties: properties.union(other.properties))
   }
 }
