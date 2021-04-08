@@ -25,6 +25,7 @@
 import ArgumentParser
 import Foundation
 import SwiftInspectorAnalyzers
+import SwiftInspectorVisitors
 
 final class PropertiesCommand: ParsableCommand {
   static var configuration = CommandConfiguration(
