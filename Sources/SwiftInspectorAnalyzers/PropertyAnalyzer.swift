@@ -37,15 +37,11 @@ public final class PropertyAnalyzer: Analyzer {
 
   /// Finds property information for the provided type in the Swift file
   /// - Parameter fileURL: The fileURL where the Swift file is located
-  public func analyze(fileURL: URL) throws -> TypeProperties? {
+  public func analyze(fileURL: URL) throws -> Set<PropertyData>? {
     let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
-    var result: TypeProperties?
-    let visitor = TypeSyntaxVisitor(typeName: typeName) { [unowned self] typeProperties in
-      guard self.typeName == typeProperties.name else { return }
-      result = try? typeProperties.merge(with: result)
-    }
+    let visitor = TypeSyntaxVisitor(typeName: typeName)
     visitor.walk(syntax)
-    return result
+    return visitor.propertiesData
   }
 
   // MARK: Private

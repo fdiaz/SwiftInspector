@@ -28,37 +28,39 @@ public final class TypeSyntaxVisitor: SyntaxVisitor {
 
   // MARK: Lifecycle
 
-  public init(typeName: String, onNodeVisit: @escaping (_ info: TypeProperties) -> Void) {
-    self.onNodeVisit = onNodeVisit
+  public init(typeName: String) {
     self.typeName = typeName
   }
 
   // MARK: Public
 
+  /// Information about each of the properties found on the type. `nil` if the type is not found.
+  public private(set) var propertiesData: Set<PropertyData>?
+
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
     if node.identifier.text == typeName {
-      processNode(node, withName: node.identifier.text, members: node.members.members)
+      processNode(node, members: node.members.members)
     }
     return .visitChildren
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
     if node.identifier.text == typeName {
-      processNode(node, withName: node.identifier.text, members: node.members.members)
+      processNode(node, members: node.members.members)
     }
     return .visitChildren
   }
 
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
     if node.identifier.text == typeName {
-      processNode(node, withName: node.identifier.text, members: node.members.members)
+      processNode(node, members: node.members.members)
     }
     return .visitChildren
   }
 
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
     if node.identifier.text == typeName {
-      processNode(node, withName: node.identifier.text, members: node.members.members)
+      processNode(node, members: node.members.members)
     }
     return .visitChildren
   }
@@ -68,20 +70,35 @@ public final class TypeSyntaxVisitor: SyntaxVisitor {
       let typeIdentifier = node.extendedType.as(SimpleTypeIdentifierSyntax.self),
       typeIdentifier.name.text == typeName
     {
-      processNode(node, withName: typeIdentifier.name.text, members: node.members.members)
+      processNode(node, members: node.members.members)
     }
     return .visitChildren
   }
 
+  // MARK: Internal
+
+  /// Merges the new property data with property data we've already found.
+  static func merge(
+    _ newPropertiesData: Set<PropertyData>,
+    into existingPropertiesData: Set<PropertyData>?)
+  -> Set<PropertyData>
+  {
+    if let existingPropertiesData = existingPropertiesData {
+      return newPropertiesData.union(existingPropertiesData)
+    }
+    else {
+      return newPropertiesData
+    }
+  }
+
   // MARK: Private
 
-  private let onNodeVisit: (_ info: TypeProperties) -> Void
   private let typeName: String
 
-  private func processNode<Node>(_ node: Node, withName name: String, members: MemberDeclListSyntax) where Node: SyntaxProtocol {
-    let propertyVisitor = PropertySyntaxVisitor(typeName: name)
+  private func processNode<Node>(_ node: Node, members: MemberDeclListSyntax) where Node: SyntaxProtocol {
+    let propertyVisitor = PropertySyntaxVisitor(typeName: typeName)
     propertyVisitor.walk(node)
-    onNodeVisit(.init(name: name, properties: propertyVisitor.propertiesData))
+    propertiesData = Self.merge(propertyVisitor.propertiesData, into: propertiesData)
   }
 }
 
@@ -94,7 +111,7 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
   }
 
   /// Information about each of the properties found on the type.
-  private(set) var propertiesData: Set<TypeProperties.PropertyData> = []
+  private(set) var propertiesData: Set<PropertyData> = []
 
   override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     var leadingTrivia: Trivia? = node.leadingTrivia
@@ -152,7 +169,7 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
     }.joined(separator: "\n")
   }
 
-  private func findModifiers(from node: VariableDeclSyntax) -> TypeProperties.Modifier {
+  private func findModifiers(from node: VariableDeclSyntax) -> PropertyData.Modifier {
     let modifiersString: [String] = node.children
       .compactMap { $0.as(ModifierListSyntax.self) }
       .reduce(into: []) { result, syntax in
@@ -171,8 +188,8 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
         result.append(contentsOf: modifiers)
       }
 
-    var modifier = modifiersString.reduce(TypeProperties.Modifier()) { result, stringValue in
-      let modifier = TypeProperties.Modifier(stringValue: stringValue)
+    var modifier = modifiersString.reduce(PropertyData.Modifier()) { result, stringValue in
+      let modifier = PropertyData.Modifier(stringValue: stringValue)
       return result.union(modifier)
     }
 
@@ -193,11 +210,9 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
   }
 }
 
-// MARK: - TypeProperties
+// MARK: - PropertyData
 
-/// Information about a type as well as its associated properties
-public struct TypeProperties: Hashable {
-
+public struct PropertyData: Hashable {
   public struct Modifier: Hashable, OptionSet {
     public let rawValue: Int
 
@@ -233,51 +248,12 @@ public struct TypeProperties: Hashable {
     }
   }
 
-  public struct PropertyData: Hashable {
-    /// The name of the property
-    public let name: String
-    /// The Type annotation of the property if it's present
-    public let typeAnnotation: String?
-    /// Any comments associated with the property
-    public let comment: String
-    /// Modifier set for this type
-    public let modifiers: Modifier
-  }
-
-  /// The name of the type.
+  /// The name of the property
   public let name: String
-  /// The properties on this type
-  public let properties: Set<PropertyData>
-}
-
-extension TypeProperties {
-  struct MergeError: Error, CustomStringConvertible {
-
-    init(errorMessage: String) {
-      self.errorMessage = errorMessage
-    }
-
-    var description: String { errorMessage }
-
-    private let errorMessage: String
-  }
-}
-
-extension TypeProperties.MergeError {
-  static var invalidNames = TypeProperties.MergeError(
-    errorMessage: "Invalid types - the type names must match to be merged.")
-}
-
-extension TypeProperties {
-  public func merge(with other: TypeProperties?) throws -> TypeProperties {
-    guard let other = other else {
-      return self
-    }
-    guard name == other.name else {
-      throw MergeError.invalidNames
-    }
-    return TypeProperties(
-      name: name,
-      properties: properties.union(other.properties))
-  }
+  /// The Type annotation of the property if it's present
+  public let typeAnnotation: String?
+  /// Any comments associated with the property
+  public let comment: String
+  /// Modifier set for this type
+  public let modifiers: Modifier
 }

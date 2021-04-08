@@ -31,68 +31,60 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
   private var sut: TypeSyntaxVisitor!
 
   override func spec() {
-    describe("TypeProperties.merge(other:)") {
-      let type1 = TypeProperties(
-        name: "MyType",
-        properties: [
-          TypeProperties.PropertyData(
+
+    describe("TypeSyntaxVisitor.merge(_:into:)") {
+
+      context("when there is no existing data about properties") {
+
+        context("and the new data is empty") {
+          it("returns the new data") {
+            let result = TypeSyntaxVisitor.merge([], into: nil)
+            expect(result).to(equal([]))
+          }
+        }
+
+        context("and the new data describes one or more properties") {
+          context("returns the new data") {
+            let newPropertyData = PropertyData(
+              name: "thing",
+              typeAnnotation: "String",
+              comment: "",
+              modifiers: [.public, .instance])
+
+            let result = TypeSyntaxVisitor.merge([newPropertyData], into: nil)
+            expect(result).to(equal([newPropertyData]))
+          }
+        }
+      }
+
+      context("when there is existing data about properties") {
+
+        it("merges the existing and new data") {
+          let newPropertyData = PropertyData(
             name: "thing",
             typeAnnotation: "String",
             comment: "",
             modifiers: [.public, .instance])
-      ])
-      let type2 = TypeProperties(
-        name: "MyType",
-        properties: [
-          TypeProperties.PropertyData(
-            name: "foo",
-            typeAnnotation: "Int",
-            comment: "",
-            modifiers: [.public, .instance])
-      ])
-      let type3 = TypeProperties(
-        name: "AnotherType",
-        properties: [
-          TypeProperties.PropertyData(
-            name: "foo",
-            typeAnnotation: "Int",
-            comment: "",
-            modifiers: [.public, .instance])
-      ])
-
-      context("when both types have the same name") {
-        let result = try? type1.merge(with: type2)
-        it("succeeds") {
-          expect(result?.name) == "MyType"
-        }
-
-        it("has merged props") {
-          let set = Set(result?.properties ?? [])
-          let expectedSet: Set<TypeProperties.PropertyData> = [
-            TypeProperties.PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "",
-              modifiers: [.public, .instance]),
-            TypeProperties.PropertyData(
+          let existingPropertiesData: Set<PropertyData> = [
+            .init(
               name: "foo",
               typeAnnotation: "Int",
               comment: "",
-              modifiers: [.public, .instance])
+              modifiers: [.public, .instance]),
+            .init(
+              name: "bar",
+              typeAnnotation: "String",
+              comment: "",
+              modifiers: [.fileprivate])
           ]
-          expect(set) == expectedSet
-        }
-      }
 
-      context("when the types don't match") {
-        it("fails to merge and asserts") {
-          expect(try type1.merge(with: type3)).to(throwError())
-        }
-      }
+          let result = TypeSyntaxVisitor.merge(
+            [newPropertyData],
+            into: existingPropertiesData)
 
-      context("when the other type is nil") {
-        it("returns the original") {
-          expect(try? type1.merge(with: nil)) == type1
+          expect(result.count).to(equal(3))
+          expect(result.contains(newPropertyData)).to(beTrue())
+          expect(result.isSuperset(of: existingPropertiesData)).to(beTrue())
         }
       }
     }
