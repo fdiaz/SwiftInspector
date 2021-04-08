@@ -79,12 +79,9 @@ public final class TypeSyntaxVisitor: SyntaxVisitor {
   private let typeName: String
 
   private func processNode<Node>(_ node: Node, withName name: String, members: MemberDeclListSyntax) where Node: SyntaxProtocol {
-    var result = [TypeProperties.PropertyData]()
-    let propertyVisitor = PropertySyntaxVisitor(typeName: name) { info in
-      result.append(info)
-    }
+    let propertyVisitor = PropertySyntaxVisitor(typeName: name)
     propertyVisitor.walk(node)
-    onNodeVisit(.init(name: name, properties: result))
+    onNodeVisit(.init(name: name, properties: propertyVisitor.propertiesData))
   }
 }
 
@@ -92,10 +89,12 @@ public final class TypeSyntaxVisitor: SyntaxVisitor {
 
 private final class PropertySyntaxVisitor: SyntaxVisitor {
 
-  init(typeName: String, onNodeVisit: @escaping (_ info: TypeProperties.PropertyData) -> Void) {
+  init(typeName: String) {
     self.typeName = typeName
-    self.onNodeVisit = onNodeVisit
   }
+
+  /// Information about each of the properties found on the type.
+  private(set) var propertiesData = [TypeProperties.PropertyData]()
 
   override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     var leadingTrivia: Trivia? = node.leadingTrivia
@@ -112,7 +111,7 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
           let typeAnnotation = binding.typeAnnotation,
           let simpleTypeIdentifier = typeAnnotation.type.as(SimpleTypeIdentifierSyntax.self)
         {
-          onNodeVisit(.init(
+          propertiesData.append(.init(
             name: identifier.identifier.text,
             typeAnnotation: simpleTypeIdentifier.name.text,
             comment: comment(from: leadingTrivia),
@@ -125,7 +124,7 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
         // public let thing: String = "Hello" has a type annotation, String which makes this easy
         // public let thing = "Hello" does not have a type annotation, and I don't know how to handle this case.
         // TODO: Include logic to get types of any variable declaration
-        onNodeVisit(.init(
+        propertiesData.append(.init(
           name: identifier.identifier.text,
           typeAnnotation: nil,
           comment: comment(from: leadingTrivia),
@@ -139,7 +138,6 @@ private final class PropertySyntaxVisitor: SyntaxVisitor {
   // MARK: Private
 
   private let typeName: String
-  private let onNodeVisit: (_ info: TypeProperties.PropertyData) -> Void
 
   private func comment(from trivia: Trivia?) -> String {
     guard let trivia = trivia else { return "" }
