@@ -99,7 +99,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
                       public final class FakeType {}
                       """
 
-        it("returns type info with empty property list") {
+        it("returns empty property list") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
           expect(sut.propertiesData).to(beEmpty())
         }
