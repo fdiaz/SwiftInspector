@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 import Foundation
+import SwiftInspectorVisitors
 import SwiftSyntax
 
 // MARK: - PropertyAnalyzer

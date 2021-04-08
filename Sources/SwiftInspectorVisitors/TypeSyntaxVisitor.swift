@@ -24,42 +24,46 @@ import SwiftSyntax
 
 // MARK: - TypeSyntaxVisitor
 
-private final class TypeSyntaxVisitor: SyntaxVisitor {
+public final class TypeSyntaxVisitor: SyntaxVisitor {
 
-  init(typeName: String, onNodeVisit: @escaping (_ info: TypeProperties) -> Void) {
+  // MARK: Lifecycle
+
+  public init(typeName: String, onNodeVisit: @escaping (_ info: TypeProperties) -> Void) {
     self.onNodeVisit = onNodeVisit
     self.typeName = typeName
   }
 
-  override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+  // MARK: Public
+
+  public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
     if node.identifier.text == typeName {
       processNode(node, withName: node.identifier.text, members: node.members.members)
     }
     return .visitChildren
   }
 
-  override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
     if node.identifier.text == typeName {
       processNode(node, withName: node.identifier.text, members: node.members.members)
     }
     return .visitChildren
   }
 
-  override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
     if node.identifier.text == typeName {
       processNode(node, withName: node.identifier.text, members: node.members.members)
     }
     return .visitChildren
   }
 
-  override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
     if node.identifier.text == typeName {
       processNode(node, withName: node.identifier.text, members: node.members.members)
     }
     return .visitChildren
   }
 
-  override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
     if
       let typeIdentifier = node.extendedType.as(SimpleTypeIdentifierSyntax.self),
       typeIdentifier.name.text == typeName
@@ -267,7 +271,7 @@ extension TypeProperties.MergeError {
 }
 
 extension TypeProperties {
-  func merge(with other: TypeProperties?) throws -> TypeProperties {
+  public func merge(with other: TypeProperties?) throws -> TypeProperties {
     guard let other = other else {
       return self
     }
