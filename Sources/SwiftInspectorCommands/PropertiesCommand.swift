@@ -26,7 +26,7 @@ import ArgumentParser
 import Foundation
 import SwiftInspectorAnalyzers
 
-final class PropertyAnalyzerCommand: ParsableCommand {
+final class PropertiesCommand: ParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "properties",
     abstract: "Finds property information for the provided type"

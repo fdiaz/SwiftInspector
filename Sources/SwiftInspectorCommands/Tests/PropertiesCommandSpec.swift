@@ -29,7 +29,7 @@ import SwiftInspectorTestHelpers
 
 @testable import SwiftInspectorAnalyzers
 
-final class PropertyAnalyzerCommandSpec: QuickSpec {
+final class PropertiesCommandSpec: QuickSpec {
   override func spec() {
     describe("run") {
 
