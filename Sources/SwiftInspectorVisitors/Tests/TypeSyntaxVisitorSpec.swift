@@ -28,8 +28,6 @@ import SwiftInspectorTestHelpers
 @testable import SwiftInspectorVisitors
 
 final class TypeSyntaxVisitorSpec: QuickSpec {
-  private var sut: TypeSyntaxVisitor!
-
   override func spec() {
 
     describe("TypeSyntaxVisitor.merge(_:into:)") {
@@ -89,21 +87,13 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
     }
 
-    var fileURL: URL!
-    var sut = PropertyAnalyzer(typeName: "FakeType")
+    describe("visit") {
+      var sut: TypeSyntaxVisitor!
 
-    beforeEach {
-      sut = PropertyAnalyzer(typeName: "FakeType")
-    }
-
-    afterEach {
-      guard let fileURL = fileURL else {
-        return
+      beforeEach {
+        sut = TypeSyntaxVisitor(typeName: "FakeType")
       }
-      try? Temporary.removeItem(at: fileURL)
-    }
 
-    describe("analyze(fileURL:)") {
       context("when there are no properties") {
         beforeEach {
           let content = """
