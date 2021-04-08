@@ -28,6 +28,7 @@ import Foundation
 import SwiftInspectorTestHelpers
 
 @testable import SwiftInspectorAnalyzers
+@testable import SwiftInspectorVisitors
 
 final class PropertyAnalyzerSpec: QuickSpec {
   override func spec() {
