@@ -95,12 +95,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there are no properties") {
-        beforeEach {
-          let content = """
-                        public final class FakeType {}
-                        """
-          fileURL = try? Temporary.makeFile(content: content)
-        }
+        let content = """
+                      public final class FakeType {}
+                      """
 
         it("returns type info with empty property list") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -109,14 +106,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a property") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            public var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          public var thing: String = "Hello, World"
         }
+        """
 
         it("detects the type name") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -142,18 +136,15 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a property in a nested type with the same type name") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            public var thing: String = "Hello, World"
+        let content = """
+        public final class FakeType {
+          public var thing: String = "Hello, World"
 
-            enum FakeType {
-              static let foo: String = "Hola"
-            }
+          enum FakeType {
+            static let foo: String = "Hola"
           }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
         }
+        """
 
         it("detects the type name") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -186,14 +177,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a property (struct)") {
-        beforeEach {
-          let content = """
-          public struct FakeType {
-            public var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public struct FakeType {
+          public var thing: String = "Hello, World"
         }
+        """
 
         it("detects the type name") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -213,14 +201,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a property (enum)") {
-        beforeEach {
-          let content = """
-          public enum FakeType {
-            public var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public enum FakeType {
+          public var thing: String = "Hello, World"
         }
+        """
 
         it("detects the type name") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -240,14 +225,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a property (protocol)") {
-        beforeEach {
-          let content = """
-          public protocol FakeType {
-            var thing: String { get }
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public protocol FakeType {
+          var thing: String { get }
         }
+        """
 
         it("detects the type name") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -267,16 +249,13 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a property extension") {
-        beforeEach {
-          let content = """
-          public class FakeType { }
+        let content = """
+        public class FakeType { }
 
-          extension FakeType {
-            var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        extension FakeType {
+          var thing: String = "Hello, World"
         }
+        """
 
         it("detects the type name") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -296,15 +275,12 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there are multiple properties") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            public var thing: String = "Hello, World"
-            var foo: Int = 4
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          public var thing: String = "Hello, World"
+          var foo: Int = 4
         }
+        """
 
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -326,14 +302,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there are multiple properties on the same line") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            public var thing: String, foo: Int
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          public var thing: String, foo: Int
         }
+        """
 
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -355,14 +328,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a static property") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            public static var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          public static var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -377,14 +347,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a static property in reverse order") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            static public var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          static public var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -399,14 +366,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a private property") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            private static var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          private static var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -421,14 +385,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a public private(set) property") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            public private(set) var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          public private(set) var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -443,14 +404,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a public internal(set) property") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            public internal(set) var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          public internal(set) var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -465,14 +423,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a internal public(set) property") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            internal public(set) var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          internal public(set) var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -487,14 +442,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a fileprivate property") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            fileprivate static var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          fileprivate static var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -509,14 +461,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is no type annotation") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            private static var thing = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          private static var thing = "Hello, World"
         }
+        """
 
         it("detects the property with no type information") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -531,14 +480,11 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a property attribute") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            @objc public var thing = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          @objc public var thing = "Hello, World"
         }
+        """
 
         it("detects the property with no type information") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -553,15 +499,12 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a line comment") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            // The thing
-            public var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          // The thing
+          public var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property with the comment") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -576,16 +519,13 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a multi-line comment") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            // The thing
-            // is such a thing
-            public var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          // The thing
+          // is such a thing
+          public var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property with the comment") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -600,15 +540,12 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a doc line comment") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            /// The thing
-            public var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          /// The thing
+          public var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property with the comment") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -623,15 +560,12 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a block comment") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            /* The thing */
-            public var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          /* The thing */
+          public var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property with the comment") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -646,15 +580,12 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
 
       context("when there is a doc block comment") {
-        beforeEach {
-          let content = """
-          public final class FakeType {
-            /** The thing */
-            public var thing: String = "Hello, World"
-          }
-          """
-          fileURL = try? Temporary.makeFile(content: content)
+        let content = """
+        public final class FakeType {
+          /** The thing */
+          public var thing: String = "Hello, World"
         }
+        """
 
         it("detects the property with the comment") {
           let result = try? sut.analyze(fileURL: fileURL)
