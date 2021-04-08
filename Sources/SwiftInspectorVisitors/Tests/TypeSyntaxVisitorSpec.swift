@@ -100,8 +100,8 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
                       """
 
         it("returns type info with empty property list") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties).to(beEmpty())
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData).to(beEmpty())
         }
       }
 
@@ -113,15 +113,15 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("returns nil if the type name is not present") {
-          let sut = PropertyAnalyzer(typeName: "AnotherType")
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result).to(beNil())
+          let sut = TypeSyntaxVisitor(typeName: "AnotherType")
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData).to(beNil())
         }
 
         it("detects the properties") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -148,9 +148,8 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
          what happens in this scenario.
          */
         it("detects and merges the properties") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          let propSet = Set(result?.properties ?? [])
-          let expectedPropSet: Set<TypeProperties.PropertyData> = [
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          let expectedPropSet: Set<PropertyData> = [
             .init(
               name: "thing",
               typeAnnotation: "String",
@@ -162,7 +161,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
               comment: "",
               modifiers: [.internal, .static])
           ]
-          expect(propSet) == expectedPropSet
+          expect(sut.propertiesData) == expectedPropSet
         }
       }
 
@@ -174,9 +173,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the properties") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -193,9 +192,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the properties") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -212,9 +211,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the properties") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -233,9 +232,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the properties") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -253,9 +252,8 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the properties") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          let propSet = Set(result?.properties ?? [])
-          let expectedPropSet: Set<TypeProperties.PropertyData> = [
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          let expectedPropSet: Set<PropertyData> = [
             .init(
               name: "thing",
               typeAnnotation: "String",
@@ -267,7 +265,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
               comment: "",
               modifiers: [.internal, .instance])
           ]
-          expect(propSet) == expectedPropSet
+          expect(sut.propertiesData) == expectedPropSet
         }
       }
 
@@ -279,9 +277,8 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the properties") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          let propSet = Set(result?.properties ?? [])
-          let expectedPropSet: Set<TypeProperties.PropertyData> = [
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          let expectedPropSet: Set<PropertyData> = [
             .init(
               name: "thing",
               typeAnnotation: "String",
@@ -293,7 +290,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
               comment: "",
               modifiers: [.public, .instance])
           ]
-          expect(propSet) == expectedPropSet
+          expect(sut.propertiesData) == expectedPropSet
         }
       }
 
@@ -305,9 +302,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -324,9 +321,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -343,9 +340,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -362,9 +359,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -381,9 +378,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -400,9 +397,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -419,9 +416,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -438,9 +435,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with no type information") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: nil,
               comment: "",
@@ -457,9 +454,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with no type information") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: nil,
               comment: "",
@@ -477,9 +474,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with the comment") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "// The thing",
@@ -498,9 +495,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with the comment") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "// The thing\n// is such a thing",
@@ -518,9 +515,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with the comment") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "/// The thing",
@@ -538,9 +535,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with the comment") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "/* The thing */",
@@ -558,9 +555,9 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with the comment") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.properties) == [
-            TypeProperties.PropertyData(
+          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          expect(sut.propertiesData) == [
+            PropertyData(
               name: "thing",
               typeAnnotation: "String",
               comment: "/** The thing */",
