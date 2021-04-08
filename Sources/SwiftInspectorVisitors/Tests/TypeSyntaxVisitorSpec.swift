@@ -112,11 +112,6 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         }
         """
 
-        it("detects the type name") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.name) == "FakeType"
-        }
-
         it("returns nil if the type name is not present") {
           let sut = PropertyAnalyzer(typeName: "AnotherType")
           let result = try? sut.analyze(fileURL: fileURL)
@@ -145,11 +140,6 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
           }
         }
         """
-
-        it("detects the type name") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.name) == "FakeType"
-        }
 
         /*
          This is actually not the ideal result of this and is a limitation of the implementation
@@ -183,11 +173,6 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         }
         """
 
-        it("detects the type name") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.name) == "FakeType"
-        }
-
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
@@ -207,11 +192,6 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         }
         """
 
-        it("detects the type name") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.name) == "FakeType"
-        }
-
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
           expect(result?.properties) == [
@@ -230,11 +210,6 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
           var thing: String { get }
         }
         """
-
-        it("detects the type name") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.name) == "FakeType"
-        }
 
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
@@ -256,11 +231,6 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
           var thing: String = "Hello, World"
         }
         """
-
-        it("detects the type name") {
-          let result = try? sut.analyze(fileURL: fileURL)
-          expect(result?.name) == "FakeType"
-        }
 
         it("detects the properties") {
           let result = try? sut.analyze(fileURL: fileURL)
