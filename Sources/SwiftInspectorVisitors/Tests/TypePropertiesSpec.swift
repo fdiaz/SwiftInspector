@@ -26,7 +26,7 @@ import Nimble
 import Quick
 import Foundation
 
-@testable import SwiftInspectorAnalyzers
+@testable import SwiftInspectorVisitors
 
 final class TypePropertiesSpec: QuickSpec {
   override func spec() {
