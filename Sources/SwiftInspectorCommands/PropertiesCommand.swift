@@ -42,10 +42,10 @@ final class PropertiesCommand: ParsableCommand {
   /// Runs the command
   func run() throws {
     let cachedSyntaxTree = CachedSyntaxTree()
+    let analyzer = StandardAnalyzer(cachedSyntaxTree: cachedSyntaxTree)
 
-    let analyzer = PropertyAnalyzer(typeName: name, cachedSyntaxTree: cachedSyntaxTree)
     let fileURL = URL(fileURLWithPath: path)
-    if let propertyInformation = try analyzer.analyze(fileURL: fileURL) {
+    if let propertyInformation = try analyzer.analyzeProperties(in: fileURL, for: name) {
       print(outputString(from: propertyInformation))
     }
   }

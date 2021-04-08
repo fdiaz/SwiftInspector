@@ -24,28 +24,15 @@ import Foundation
 import SwiftInspectorVisitors
 import SwiftSyntax
 
-// MARK: - PropertyAnalyzer
+extension StandardAnalyzer {
 
-public final class PropertyAnalyzer: Analyzer {
-
-  /// - Parameter typeName: The name of the type to get property information for
-  /// - Parameter cachedSyntaxTree: The cached syntax tree to return the AST tree from
-  public init(typeName: String, cachedSyntaxTree: CachedSyntaxTree = .init()) {
-    self.typeName = typeName
-    self.cachedSyntaxTree = cachedSyntaxTree
-  }
-
-  /// Finds property information for the provided type in the Swift file
-  /// - Parameter fileURL: The fileURL where the Swift file is located
-  public func analyze(fileURL: URL) throws -> Set<PropertyData>? {
-    let syntax: SourceFileSyntax = try cachedSyntaxTree.syntaxTree(for: fileURL)
+  public func analyzeProperties(
+    in fileURL: URL,
+    for typeName: String) throws
+  -> Set<PropertyData>?
+  {
     let visitor = TypeSyntaxVisitor(typeName: typeName)
-    visitor.walk(syntax)
+    try analyze(fileURL: fileURL, withVisitor: visitor)
     return visitor.propertiesData
   }
-
-  // MARK: Private
-
-  private let cachedSyntaxTree: CachedSyntaxTree
-  private let typeName: String
 }
