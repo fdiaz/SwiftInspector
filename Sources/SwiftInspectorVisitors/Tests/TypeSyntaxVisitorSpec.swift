@@ -222,24 +222,77 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         }
       }
 
-      context("when there is a property extension") {
-        let content = """
-        public class FakeType { }
+      context("when there is a property (extension)") {
 
-        extension FakeType {
-          var thing: String = "Hello, World"
+        context("following the type declaration") {
+
+          context("and the type declaration has no properties") {
+            let content = """
+            public class FakeType { }
+
+            extension FakeType {
+              var thing: String = "Hello, World"
+            }
+            """
+
+            it("detects the property in the extension") {
+              try VisitorExecutor.walkVisitor(sut, overContent: content)
+              expect(sut.propertiesData) == [
+                PropertyData(
+                  name: "thing",
+                  typeAnnotation: "String",
+                  comment: "",
+                  modifiers: [.internal, .instance])
+              ]
+            }
+          }
+
+          context("and the type declaration has properties") {
+            let content = """
+            public class FakeType {
+              var thing: String = "Hello, World"
+            }
+
+            extension FakeType {
+              var anotherThing: String = "Goodbye, World"
+            }
+            """
+
+            it("detects properties in the declaration and extension") {
+              try VisitorExecutor.walkVisitor(sut, overContent: content)
+              expect(sut.propertiesData) == [
+                PropertyData(
+                  name: "thing",
+                  typeAnnotation: "String",
+                  comment: "",
+                  modifiers: [.internal, .instance]),
+                PropertyData(
+                  name: "anotherThing",
+                  typeAnnotation: "String",
+                  comment: "",
+                  modifiers: [.internal, .instance])
+              ]
+            }
+          }
         }
-        """
 
-        it("detects the properties") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "",
-              modifiers: [.internal, .instance])
-          ]
+        context("and no type declaration") {
+          let content = """
+          extension FakeType {
+            var thing: String = "Hello, World"
+          }
+          """
+
+          it("detects the property in the extension") {
+            try VisitorExecutor.walkVisitor(sut, overContent: content)
+            expect(sut.propertiesData) == [
+              PropertyData(
+                name: "thing",
+                typeAnnotation: "String",
+                comment: "",
+                modifiers: [.internal, .instance])
+            ]
+          }
         }
       }
 
