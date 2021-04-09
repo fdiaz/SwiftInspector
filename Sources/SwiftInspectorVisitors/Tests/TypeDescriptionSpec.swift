@@ -126,6 +126,37 @@ final class TypeDescriptionSpec: QuickSpec {
     }
     """.data(using: .utf8)!
 
+  let arrayTestCase = TypeDescription.array(element: .simple(name: "Foo"))
+  let arrayTestCaseData = """
+    {
+      "caseDescription": "array",
+      "typeDescription": {
+        "caseDescription": "simple",
+        "text": "Foo",
+        "typeDescriptions": []
+      }
+    }
+    """.data(using: .utf8)!
+
+  let dictionaryTestCase = TypeDescription.dictionary(
+    key: .simple(name: "Foo"),
+    value: .simple(name: "Bar"))
+  let dictionaryTestCaseData = """
+    {
+      "caseDescription": "dictionary",
+      "dictionaryKey": {
+        "caseDescription": "simple",
+        "text": "Foo",
+        "typeDescriptions": []
+      },
+      "dictionaryValue": {
+        "caseDescription": "simple",
+        "text": "Bar",
+        "typeDescriptions": []
+      }
+    }
+    """.data(using: .utf8)!
+
   let tupleTestCase = TypeDescription.tuple(
     [
       .simple(name: "Foo"),
@@ -197,6 +228,18 @@ final class TypeDescriptionSpec: QuickSpec {
         }
       }
 
+      context("that represents an array type") {
+        it("decodes the encoded type description") {
+          expect(try decoder.decode(TypeDescription.self, from: self.arrayTestCaseData)) == self.arrayTestCase
+        }
+      }
+
+      context("that represents a dictionary type") {
+        it("decodes the encoded type description") {
+          expect(try decoder.decode(TypeDescription.self, from: self.dictionaryTestCaseData)) == self.dictionaryTestCase
+        }
+      }
+
       context("that represents a tuple type") {
         it("decodes the encoded type description") {
           expect(try decoder.decode(TypeDescription.self, from: self.tupleTestCaseData)) == self.tupleTestCase
@@ -255,6 +298,18 @@ final class TypeDescriptionSpec: QuickSpec {
       context("utilizing a composition type") {
         it("successfully decodes the data") {
           expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.compositionTestCase))) == self.compositionTestCase
+        }
+      }
+
+      context("utilizing an array type") {
+        it("successfully decodes the data") {
+          expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.arrayTestCase))) == self.arrayTestCase
+        }
+      }
+
+      context("utilizing a dictionary type") {
+        it("successfully decodes the data") {
+          expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.dictionaryTestCase))) == self.dictionaryTestCase
         }
       }
 

@@ -36,6 +36,10 @@ public enum TypeDescription: Codable, Hashable {
   indirect case optional(TypeDescription)
   /// An implicitly unwrapped optional type. eg. Int!
   indirect case implicitlyUnwrappedOptional(TypeDescription)
+  /// An array. e.g. [Int]
+  indirect case array(element: TypeDescription)
+  /// A dictionary. e.g. [Int: String]
+  indirect case dictionary(key: TypeDescription, value: TypeDescription)
   /// A tuple. e.g. (Int, String)
   indirect case tuple([TypeDescription])
   /// A type that can't be represented by the above cases.
@@ -99,6 +103,10 @@ public enum TypeDescription: Codable, Hashable {
       } else {
         return "\(parentType.asSource).\(name)<\(generics.map { $0.asSource }.joined(separator: ", "))>"
       }
+    case let .array(element):
+      return "Array<\(element.asSource)>"
+    case let .dictionary(key, value):
+      return "Dictionary<\(key.asSource), \(value.asSource)>"
     case let .tuple(types):
       return "(\(types.map { $0.asSource }.joined(separator: ", ")))"
     case let .unknown(text):
@@ -137,6 +145,15 @@ public enum TypeDescription: Codable, Hashable {
       let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
       self = .composition(typeDescriptions)
 
+    case Self.arrayDescription:
+      let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
+      self = .array(element: typeDescription)
+
+    case Self.dictionaryDescription:
+      let key = try values.decode(Self.self, forKey: .dictionaryKey)
+      let value = try values.decode(Self.self, forKey: .dictionaryValue)
+      self = .dictionary(key: key, value: value)
+
     case Self.tupleDescription:
       let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
       self = .tuple(typeDescriptions)
@@ -156,7 +173,8 @@ public enum TypeDescription: Codable, Hashable {
     case let .unknown(text):
       try container.encode(text, forKey: .text)
     case let .optional(type),
-         let .implicitlyUnwrappedOptional(type):
+         let .implicitlyUnwrappedOptional(type),
+         let .array(type):
       try container.encode(type, forKey: .typeDescription)
     case let .tuple(types),
          let .composition(types):
@@ -165,6 +183,9 @@ public enum TypeDescription: Codable, Hashable {
       try container.encode(name, forKey: .text)
       try container.encode(parentType, forKey: .typeDescription)
       try container.encode(generics, forKey: .typeDescriptions)
+    case let .dictionary(key, value):
+      try container.encode(key, forKey: .dictionaryKey)
+      try container.encode(value, forKey: .dictionaryValue)
     }
   }
 
@@ -177,6 +198,10 @@ public enum TypeDescription: Codable, Hashable {
     case typeDescription
     /// The value for this key is the associated value of type [TypeDescription]
     case typeDescriptions
+    /// The value for this key is a dictionary's key of type TypeDescription
+    case dictionaryKey
+    /// The value for this key is a dictionary's value of type TypeDescription
+    case dictionaryValue
   }
 
   public enum CodingError: Error {
@@ -195,6 +220,10 @@ public enum TypeDescription: Codable, Hashable {
       return Self.optionalDescription
     case .simple:
       return Self.simpleDescription
+    case .array:
+      return Self.arrayDescription
+    case .dictionary:
+      return Self.dictionaryDescription
     case .tuple:
       return Self.tupleDescription
     case .unknown:
@@ -207,6 +236,8 @@ public enum TypeDescription: Codable, Hashable {
   private static let compositionDescription = "composition"
   private static let optionalDescription = "optional"
   private static let implicitlyUnwrappedOptionalDescription = "implicitlyUnwrappedOptional"
+  private static let arrayDescription = "array"
+  private static let dictionaryDescription = "dictionary"
   private static let tupleDescription = "tuple"
   private static let unknownDescription = "unknown"
 }
@@ -247,18 +278,12 @@ extension TypeSyntax {
       return .implicitlyUnwrappedOptional(typeIdentifier.wrappedType.typeDescription)
 
     } else if let typeIdentifier = self.as(ArrayTypeSyntax.self) {
-      // An array of the form [Type] is synonymous with Array<Type>.
-      // Utilize a simple type rather than creating another enum case.
-      let elementDescription = typeIdentifier.elementType.typeDescription.asSource
-      return .simple(name: "Array<\(elementDescription)>")
+      return .array(element: typeIdentifier.elementType.typeDescription)
 
     } else if let typeIdentifier = self.as(DictionaryTypeSyntax.self) {
-      // An array of the form [KeyType: ValueType] is synonymous with Dictionary<KeyType, ValueType>.
-      // Utilize a simple type rather than creating another enum case.
-      let keyDescription = typeIdentifier.keyType.typeDescription
-      let valueDescription = typeIdentifier.valueType.typeDescription
-      return .simple(
-        name: "Dictionary<\(keyDescription.asSource), \(valueDescription.asSource)>")
+      return .dictionary(
+        key: typeIdentifier.keyType.typeDescription,
+        value: typeIdentifier.valueType.typeDescription)
 
     } else if let typeIdentifiers = self.as(TupleTypeSyntax.self) {
       return .tuple(typeIdentifiers.elements.map { $0.type.typeDescription })
