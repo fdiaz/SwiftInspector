@@ -87,7 +87,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
       }
     }
 
-    describe("visit") {
+    describe("visit(_:)") {
       var sut: TypeSyntaxVisitor!
 
       beforeEach {
