@@ -33,55 +33,66 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
     describe("TypeSyntaxVisitor.merge(_:into:)") {
 
       context("when there is no existing data about properties") {
+        let existingPropertiesData: Set<PropertyData>? = nil
 
         context("and the new data is empty") {
+          let newPropertiesData: Set<PropertyData> = []
+
           it("returns the new data") {
-            let result = TypeSyntaxVisitor.merge([], into: nil)
-            expect(result).to(equal([]))
+            let result = TypeSyntaxVisitor.merge(
+              newPropertiesData,
+              into: existingPropertiesData)
+            expect(result).to(equal(newPropertiesData))
           }
         }
 
         context("and the new data describes one or more properties") {
-          context("returns the new data") {
-            let newPropertyData = PropertyData(
+          let newPropertiesData: Set<PropertyData> = [
+            .init(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
               modifiers: [.public, .instance])
+          ]
 
-            let result = TypeSyntaxVisitor.merge([newPropertyData], into: nil)
-            expect(result).to(equal([newPropertyData]))
+          context("returns the new data") {
+            let result = TypeSyntaxVisitor.merge(
+              newPropertiesData,
+              into: existingPropertiesData)
+            expect(result).to(equal(newPropertiesData))
           }
         }
       }
 
       context("when there is existing data about properties") {
-
-        it("merges the existing and new data") {
-          let newPropertyData = PropertyData(
-            name: "thing",
+        let existingPropertiesData: Set<PropertyData> = [
+          .init(
+            name: "foo",
+            typeAnnotation: "Int",
+            comment: "",
+            modifiers: [.public, .instance]),
+          .init(
+            name: "bar",
             typeAnnotation: "String",
             comment: "",
-            modifiers: [.public, .instance])
-          let existingPropertiesData: Set<PropertyData> = [
+            modifiers: [.fileprivate])
+        ]
+
+        it("merges the existing and new data") {
+          let newPropertiesData: Set<PropertyData> = [
             .init(
-              name: "foo",
-              typeAnnotation: "Int",
-              comment: "",
-              modifiers: [.public, .instance]),
-            .init(
-              name: "bar",
+              name: "thing",
               typeAnnotation: "String",
               comment: "",
-              modifiers: [.fileprivate])
+              modifiers: [.public, .instance])
           ]
 
           let result = TypeSyntaxVisitor.merge(
-            [newPropertyData],
+            newPropertiesData,
             into: existingPropertiesData)
 
           expect(result.count).to(equal(3))
-          expect(result.contains(newPropertyData)).to(beTrue())
+          expect(result.isSuperset(of: newPropertiesData)).to(beTrue())
           expect(result.isSuperset(of: existingPropertiesData)).to(beTrue())
         }
       }
