@@ -166,10 +166,10 @@ final class NestableTypeVisitorSpec: QuickSpec {
             }
           }
 
-          context("with a single generic") {
+          context("with two generic parameters") {
             it("finds the generic name") {
               let content = """
-                public struct SomeStruct<T> {}
+                public struct SomeStruct<A, B> {}
                 """
 
               try VisitorExecutor.walkVisitor(
@@ -178,7 +178,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
 
               let structInfo = self.sut.structs.first
               expect(structInfo?.name) == "SomeStruct"
-              expect(structInfo?.genericParameters.map { $0.name }) == ["T"]
+              expect(structInfo?.genericParameters.map { $0.name }) == ["A", "B"]
             }
           }
 
@@ -265,10 +265,10 @@ final class NestableTypeVisitorSpec: QuickSpec {
             }
           }
 
-          context("with a single generic") {
+          context("with three generic parameters") {
             it("finds the generic name") {
               let content = """
-                public enum SomeEnum<T> {}
+                public enum SomeEnum<A, B, C: Equatable> {}
                 """
 
               try VisitorExecutor.walkVisitor(
@@ -277,7 +277,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
 
               let enumsInfo = self.sut.enums.first
               expect(enumsInfo?.name) == "SomeEnum"
-              expect(enumsInfo?.genericParameters.map { $0.name }) == ["T"]
+              expect(enumsInfo?.genericParameters.map { $0.name }) == ["A", "B", "C"]
             }
           }
 
