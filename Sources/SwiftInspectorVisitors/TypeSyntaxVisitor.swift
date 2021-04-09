@@ -24,6 +24,8 @@ import SwiftSyntax
 
 // MARK: - TypeSyntaxVisitor
 
+/// Finds all properties associated with a type name. Since this visitor does not have access to a fully qualfied type name, the resulting
+/// properties may be associated with more than one distinct type.
 public final class TypeSyntaxVisitor: SyntaxVisitor {
 
   // MARK: Lifecycle
