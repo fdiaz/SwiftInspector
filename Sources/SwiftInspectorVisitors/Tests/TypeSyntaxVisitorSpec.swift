@@ -78,7 +78,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
             modifiers: [.fileprivate])
         ]
 
-        it("merges the existing and new data") {
+        it("merges the existing data with new data") {
           let newPropertiesData: Set<PropertyData> = [
             .init(
               name: "thing",
@@ -91,9 +91,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
             newPropertiesData,
             into: existingPropertiesData)
 
-          expect(result.count).to(equal(3))
-          expect(result.isSuperset(of: newPropertiesData)).to(beTrue())
-          expect(result.isSuperset(of: existingPropertiesData)).to(beTrue())
+          expect(result).to(equal(existingPropertiesData.union(newPropertiesData)))
         }
       }
     }
