@@ -67,6 +67,22 @@ final class NestableTypeVisitorSpec: QuickSpec {
             }
           }
 
+          context("with a single generic") {
+            it("finds the generic name") {
+              let content = """
+                public class SomeClass<T> {}
+                """
+
+              try VisitorExecutor.walkVisitor(
+                self.sut,
+                overContent: content)
+
+              let classInfo = self.sut.classes.first
+              expect(classInfo?.name) == "SomeClass"
+              expect(classInfo?.genericParameters.map { $0.name }) == ["T"]
+            }
+          }
+
           context("with a single type conformance") {
             it("finds the type name") {
               let content = """
@@ -150,6 +166,22 @@ final class NestableTypeVisitorSpec: QuickSpec {
             }
           }
 
+          context("with a single generic") {
+            it("finds the generic name") {
+              let content = """
+                public struct SomeStruct<T> {}
+                """
+
+              try VisitorExecutor.walkVisitor(
+                self.sut,
+                overContent: content)
+
+              let structInfo = self.sut.structs.first
+              expect(structInfo?.name) == "SomeStruct"
+              expect(structInfo?.genericParameters.map { $0.name }) == ["T"]
+            }
+          }
+
           context("with a single type conformance") {
             it("finds the type name") {
               let content = """
@@ -230,6 +262,22 @@ final class NestableTypeVisitorSpec: QuickSpec {
 
             it("does not find a struct") {
               expect(self.sut.structs.count) == 0
+            }
+          }
+
+          context("with a single generic") {
+            it("finds the generic name") {
+              let content = """
+                public enum SomeEnum<T> {}
+                """
+
+              try VisitorExecutor.walkVisitor(
+                self.sut,
+                overContent: content)
+
+              let enumsInfo = self.sut.enums.first
+              expect(enumsInfo?.name) == "SomeEnum"
+              expect(enumsInfo?.genericParameters.map { $0.name }) == ["T"]
             }
           }
 
