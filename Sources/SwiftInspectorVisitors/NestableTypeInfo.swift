@@ -27,6 +27,7 @@ public struct NestableTypeInfo: Codable, Hashable {
   public let inheritsFromTypes: [TypeDescription]
   public let parentType: TypeDescription?
   public let modifiers: Set<String>
+  public let genericParameters: [GenericParameter]
   // TODO: also find and expose properties on this type
 }
 
