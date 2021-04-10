@@ -25,8 +25,9 @@
 import ArgumentParser
 import Foundation
 import SwiftInspectorAnalyzers
+import SwiftInspectorVisitors
 
-final class PropertyAnalyzerCommand: ParsableCommand {
+final class PropertiesCommand: ParsableCommand {
   static var configuration = CommandConfiguration(
     commandName: "properties",
     abstract: "Finds property information for the provided type"
@@ -41,10 +42,10 @@ final class PropertyAnalyzerCommand: ParsableCommand {
   /// Runs the command
   func run() throws {
     let cachedSyntaxTree = CachedSyntaxTree()
+    let analyzer = StandardAnalyzer(cachedSyntaxTree: cachedSyntaxTree)
 
-    let analyzer = PropertyAnalyzer(typeName: name, cachedSyntaxTree: cachedSyntaxTree)
     let fileURL = URL(fileURLWithPath: path)
-    if let propertyInformation = try analyzer.analyze(fileURL: fileURL) {
+    if let propertyInformation = try analyzer.analyzeProperties(in: fileURL, for: name) {
       print(outputString(from: propertyInformation))
     }
   }
@@ -63,9 +64,9 @@ final class PropertyAnalyzerCommand: ParsableCommand {
     }
   }
 
-  private func outputString(from statement: TypeProperties) -> String {
-    statement.properties.map { propInfo in
-      "\(statement.name),\(propInfo.name),\(propInfo.modifiers)"
+  private func outputString(from propertiesData: Set<PropertyData>) -> String {
+    propertiesData.map { propInfo in
+      "\(name),\(propInfo.name),\(propInfo.modifiers)"
     }.joined(separator: "\n")
   }
 }
@@ -74,7 +75,7 @@ private let nameArgumentHelp = ArgumentHelp(
   "The name of the type to find property information on",
   discussion: "This may be a enum, class, struct, or protocol.")
 
-extension TypeProperties.Modifier: CustomStringConvertible, CustomDebugStringConvertible {
+extension PropertyData.Modifier: CustomStringConvertible, CustomDebugStringConvertible {
   public var description: String {
     var outputValues: [String] = []
     // Order is important here! Access control modifiers should always go before scope modifiers
