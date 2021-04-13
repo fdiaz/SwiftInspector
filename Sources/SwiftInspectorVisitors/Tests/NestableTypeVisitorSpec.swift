@@ -201,7 +201,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               expect(structInfo?.genericParameters.map { $0.name }) == ["A", "B"]
             }
 
-            context("that is constrained with a where clause") {
+            context("where one parameter is constrained by a where clause") {
               it("finds the constraint") {
                 let content = """
                 public struct SomeStruct<A, B>: SomeProtocol where A: CustomStringConvertible {
@@ -320,7 +320,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               expect(enumsInfo?.genericParameters.map { $0.name }) == ["A", "B", "C"]
             }
 
-            context("that is constrained with a where clause") {
+            context("where one parameter is constrained by a where clause") {
               it("finds the constraint") {
                 let content = """
                 public enum SomeEnum<A, B, C>: SomeProtocol where A: CustomStringConvertible {
