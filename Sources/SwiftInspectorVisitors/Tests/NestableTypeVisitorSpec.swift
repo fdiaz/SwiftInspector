@@ -67,7 +67,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             }
           }
 
-          context("with a single generic") {
+          context("with a single generic parameter") {
             it("finds the generic name") {
               let content = """
                 public class SomeClass<T> {}
@@ -80,6 +80,26 @@ final class NestableTypeVisitorSpec: QuickSpec {
               let classInfo = self.sut.classes.first
               expect(classInfo?.name) == "SomeClass"
               expect(classInfo?.genericParameters.map { $0.name }) == ["T"]
+            }
+
+            context("that is constrained with a where clause") {
+              it("finds the constraint") {
+                let content = """
+                public class SomeClass<T>: SomeProtocol where T: CustomStringConvertible {
+                  public typealias SomeProtocolAssociatedType = A
+                }
+                """
+
+                try VisitorExecutor.walkVisitor(
+                  self.sut,
+                  overContent: content)
+
+                let classInfo = self.sut.classes.first
+                expect(classInfo?.name) == "SomeClass"
+                expect(classInfo?.genericRequirements.first?.leftType.asSource) == "T"
+                expect(classInfo?.genericRequirements.first?.rightType.asSource) == "CustomStringConvertible"
+                expect(classInfo?.genericRequirements.first?.relationship) == .conformsTo
+              }
             }
           }
 
@@ -180,6 +200,26 @@ final class NestableTypeVisitorSpec: QuickSpec {
               expect(structInfo?.name) == "SomeStruct"
               expect(structInfo?.genericParameters.map { $0.name }) == ["A", "B"]
             }
+
+            context("where one parameter is constrained by a where clause") {
+              it("finds the constraint") {
+                let content = """
+                public struct SomeStruct<A, B>: SomeProtocol where A: CustomStringConvertible {
+                  public typealias SomeProtocolAssociatedType = A
+                }
+                """
+
+                try VisitorExecutor.walkVisitor(
+                  self.sut,
+                  overContent: content)
+
+                let structInfo = self.sut.structs.first
+                expect(structInfo?.name) == "SomeStruct"
+                expect(structInfo?.genericRequirements.first?.leftType.asSource) == "A"
+                expect(structInfo?.genericRequirements.first?.rightType.asSource) == "CustomStringConvertible"
+                expect(structInfo?.genericRequirements.first?.relationship) == .conformsTo
+              }
+            }
           }
 
           context("with a single type conformance") {
@@ -278,6 +318,26 @@ final class NestableTypeVisitorSpec: QuickSpec {
               let enumsInfo = self.sut.enums.first
               expect(enumsInfo?.name) == "SomeEnum"
               expect(enumsInfo?.genericParameters.map { $0.name }) == ["A", "B", "C"]
+            }
+
+            context("where one parameter is constrained by a where clause") {
+              it("finds the constraint") {
+                let content = """
+                public enum SomeEnum<A, B, C>: SomeProtocol where A: CustomStringConvertible {
+                  public typealias SomeProtocolAssociatedType = A
+                }
+                """
+
+                try VisitorExecutor.walkVisitor(
+                  self.sut,
+                  overContent: content)
+
+                let enumInfo = self.sut.enums.first
+                expect(enumInfo?.name) == "SomeEnum"
+                expect(enumInfo?.genericRequirements.first?.leftType.asSource) == "A"
+                expect(enumInfo?.genericRequirements.first?.rightType.asSource) == "CustomStringConvertible"
+                expect(enumInfo?.genericRequirements.first?.relationship) == .conformsTo
+              }
             }
           }
 

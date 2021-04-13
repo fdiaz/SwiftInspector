@@ -154,13 +154,19 @@ public final class NestableTypeVisitor: SyntaxVisitor {
         genericParameterVisitor.walk(genericParameterClause)
       }
 
+      let genericRequirementVisitor = GenericRequirementVisitor()
+      if let genericWhereClause = node.genericWhereClause {
+        genericRequirementVisitor.walk(genericWhereClause)
+      }
+
       topLevelDeclaration = topLevelDeclarationCreator(
         .init(
           name: node.identifier.text,
           inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
           parentType: parentType,
           modifiers: Set(declarationModifierVisitor.modifiers),
-          genericParameters: genericParameterVisitor.genericParameters))
+          genericParameters: genericParameterVisitor.genericParameters,
+          genericRequirements: genericRequirementVisitor.genericRequirements))
 
       return .visitChildren
     }

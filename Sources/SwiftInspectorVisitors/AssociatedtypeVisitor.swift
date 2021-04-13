@@ -36,9 +36,9 @@ public final class AssociatedtypeVisitor: SyntaxVisitor {
       typeInheritanceVisitor.walk(inheritanceClause)
     }
 
-    let genericRequirementsVisitor = GenericRequirementVisitor()
+    let genericRequirementVisitor = GenericRequirementVisitor()
     if let genericWhereClause = node.genericWhereClause {
-      genericRequirementsVisitor.walk(genericWhereClause)
+      genericRequirementVisitor.walk(genericWhereClause)
     }
 
     associatedTypes.append(
@@ -46,7 +46,7 @@ public final class AssociatedtypeVisitor: SyntaxVisitor {
         name: name,
         inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
         initializer: node.initializer?.value.typeDescription,
-        genericRequirements: genericRequirementsVisitor.genericRequirements))
+        genericRequirements: genericRequirementVisitor.genericRequirements))
 
     return .skipChildren
   }
