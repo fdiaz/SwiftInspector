@@ -43,9 +43,9 @@ public final class ProtocolVisitor: SyntaxVisitor {
     if let inheritanceClause = node.inheritanceClause {
       typeInheritanceVisitor.walk(inheritanceClause)
     }
-    let genericRequirementsVisitor = GenericRequirementVisitor()
+    let genericRequirementVisitor = GenericRequirementVisitor()
     if let genericWhereClause = node.genericWhereClause {
-      genericRequirementsVisitor.walk(genericWhereClause)
+      genericRequirementVisitor.walk(genericWhereClause)
     }
 
     let declarationModifierVisitor = DeclarationModifierVisitor()
@@ -60,7 +60,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
       name: name,
       associatedTypes: associatedtypeVisitor.associatedTypes,
       inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
-      genericRequirements: genericRequirementsVisitor.genericRequirements,
+      genericRequirements: genericRequirementVisitor.genericRequirements,
       modifiers: .init(declarationModifierVisitor.modifiers),
       innerTypealiases: typealiasVisitor.typealiases)
 
