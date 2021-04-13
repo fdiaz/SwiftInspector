@@ -29,6 +29,7 @@ protocol NestableDeclSyntax: SyntaxProtocol {
   var identifier: TokenSyntax { get }
   var inheritanceClause: TypeInheritanceClauseSyntax? { get }
   var genericParameterClause: GenericParameterClauseSyntax? { get }
+  var genericWhereClause: GenericWhereClauseSyntax? { get }
 }
 
 extension ClassDeclSyntax: NestableDeclSyntax {}
