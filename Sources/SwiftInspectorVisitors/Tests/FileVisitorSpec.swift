@@ -64,7 +64,9 @@ final class FileVisitorSpec: QuickSpec {
                 typealias InnerTypealias = Void
               }
 
-              protocol TestProtocol {}
+              protocol TestProtocol {
+                typealias InnerTypealias = Void
+              }
 
               // TODO: propagate this generic constraint to inner types.
               extension Array where Element == Int {
@@ -208,6 +210,14 @@ final class FileVisitorSpec: QuickSpec {
         it("finds TestProtocol") {
           let matching = self.sut.fileInfo.protocols.filter {
             $0.name == "TestProtocol"
+          }
+          expect(matching.count) == 1
+        }
+
+        it("finds TestProtocol.InnerTypealias") {
+          let matching = self.sut.fileInfo.typealiases.filter {
+            $0.name == "InnerTypealias"
+              && $0.parentType?.asSource == "TestProtocol"
           }
           expect(matching.count) == 1
         }
