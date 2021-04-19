@@ -48,6 +48,7 @@ public final class FileVisitor: SyntaxVisitor {
 
     if let protocolInfo = protocolVisitor.protocolInfo {
       fileInfo.appendProtocol(protocolInfo)
+      fileInfo.appendTypealiases(protocolInfo.innerTypealiases)
     }
 
     // We don't need to visit children because our visitor just did that for us.
