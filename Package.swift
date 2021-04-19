@@ -10,9 +10,9 @@ let package = Package(
   ],
   products: [
     .executable(name: "swiftinspector", targets: ["SwiftInspector"]),
-    .library(name: "SwiftInspectorCommands", targets: ["SwiftInspectorCommands"]),
     .library(name: "SwiftInspectorAnalyzers", targets: ["SwiftInspectorAnalyzers"]),
     .library(name: "SwiftInspectorVisitors", targets: ["SwiftInspectorVisitors"]),
+    .library(name: "SwiftInspectorTestHelpers", targets: ["SwiftInspectorTestHelpers"]),
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.3.1")),
