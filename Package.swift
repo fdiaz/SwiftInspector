@@ -21,7 +21,7 @@ let package = Package(
     .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "3.0.0")),
   ],
   targets: [
-    .target(
+    .executableTarget(
       name: "SwiftInspector",
       dependencies: [
         "SwiftInspectorCommands",
