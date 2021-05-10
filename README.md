@@ -14,7 +14,7 @@ This project is currently under development and can have breaking API changes.
 
 ## Requirements
 
-- Swift 5.3
+- Swift 5.4
 
 ## Install
 
