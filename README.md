@@ -41,3 +41,5 @@ The default branch of this repository is `main`. Between the initial commit and 
 ## License
 
 [MIT](LICENSE)
+
+![Powered by MacStadium](img/macstadium.png)
