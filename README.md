@@ -1,4 +1,4 @@
-# SwiftInspector
+![swiftinspector](img/swiftinspector.png)
 
 ![](https://github.com/fdiaz/SwiftInspector/workflows/macOS/badge.svg) 
 [![codecov](https://codecov.io/gh/fdiaz/SwiftInspector/branch/main/graph/badge.svg)](https://codecov.io/gh/fdiaz/SwiftInspector)
