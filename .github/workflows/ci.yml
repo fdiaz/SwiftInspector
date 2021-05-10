@@ -4,18 +4,23 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: self-hosted
     steps:
     # Checks-out the repo. More at: https://github.com/actions/checkout
     - uses: actions/checkout@v2
+
     - name: Select Xcode version
-      run: sudo xcode-select -switch /Applications/Xcode_12.app
+      run: xcversion select 12.4
+
     - name: Build project
       run: swift build
+
     - name: Run tests and gather code coverage
       run: swift test --enable-code-coverage
+
     - name: Prepare code coverage
       run: xcrun llvm-cov export -format="lcov" .build/debug/SwiftInspectorPackageTests.xctest/Contents/MacOS/SwiftInspectorPackageTests -instr-profile .build/debug/codecov/default.profdata > info.lcov
+
     - name: Upload code coverage
       run: bash <(curl https://codecov.io/bash)
       env:
