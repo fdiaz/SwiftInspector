@@ -5,12 +5,13 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: self-hosted
+
     steps:
     # Checks-out the repo. More at: https://github.com/actions/checkout
     - uses: actions/checkout@v2
 
     - name: Select Xcode version
-      run: xcversion select 12.4
+      run: xcversion select 12.5
 
     - name: Build project
       run: swift build
