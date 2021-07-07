@@ -33,21 +33,21 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
     describe("TypeSyntaxVisitor.merge(_:into:)") {
 
       context("when there is no existing data about properties") {
-        let existingPropertiesData: Set<PropertyData>? = nil
+        let existingPropertiesInfo: Set<PropertyInfo>? = nil
 
         context("and the new data is empty") {
-          let newPropertiesData: Set<PropertyData> = []
+          let newPropertiesInfo: Set<PropertyInfo> = []
 
           it("returns the new data") {
             let result = TypeSyntaxVisitor.merge(
-              newPropertiesData,
-              into: existingPropertiesData)
-            expect(result).to(equal(newPropertiesData))
+              newPropertiesInfo,
+              into: existingPropertiesInfo)
+            expect(result).to(equal(newPropertiesInfo))
           }
         }
 
         context("and the new data describes one or more properties") {
-          let newPropertiesData: Set<PropertyData> = [
+          let newPropertiesInfo: Set<PropertyInfo> = [
             .init(
               name: "thing",
               typeAnnotation: "String",
@@ -57,15 +57,15 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
           context("returns the new data") {
             let result = TypeSyntaxVisitor.merge(
-              newPropertiesData,
-              into: existingPropertiesData)
-            expect(result).to(equal(newPropertiesData))
+              newPropertiesInfo,
+              into: existingPropertiesInfo)
+            expect(result).to(equal(newPropertiesInfo))
           }
         }
       }
 
       context("when there is existing data about properties") {
-        let existingPropertiesData: Set<PropertyData> = [
+        let existingPropertiesInfo: Set<PropertyInfo> = [
           .init(
             name: "foo",
             typeAnnotation: "Int",
@@ -79,7 +79,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         ]
 
         it("merges the existing data with new data") {
-          let newPropertiesData: Set<PropertyData> = [
+          let newPropertiesInfo: Set<PropertyInfo> = [
             .init(
               name: "thing",
               typeAnnotation: "String",
@@ -88,10 +88,10 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
           ]
 
           let result = TypeSyntaxVisitor.merge(
-            newPropertiesData,
-            into: existingPropertiesData)
+            newPropertiesInfo,
+            into: existingPropertiesInfo)
 
-          expect(result).to(equal(existingPropertiesData.union(newPropertiesData)))
+          expect(result).to(equal(existingPropertiesInfo.union(newPropertiesInfo)))
         }
       }
     }
@@ -110,7 +110,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
         it("returns empty property list") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData).to(beEmpty())
+          expect(sut.propertiesInfo).to(beEmpty())
         }
       }
 
@@ -124,13 +124,13 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         it("returns nil if the type name is not present") {
           let sut = TypeSyntaxVisitor(typeName: "AnotherType")
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData).to(beNil())
+          expect(sut.propertiesInfo).to(beNil())
         }
 
         it("detects the properties") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
+          expect(sut.propertiesInfo) == [
+            PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -158,7 +158,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
          */
         it("detects and merges the properties") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          let expectedPropSet: Set<PropertyData> = [
+          let expectedPropSet: Set<PropertyInfo> = [
             .init(
               name: "thing",
               typeAnnotation: "String",
@@ -170,7 +170,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
               comment: "",
               modifiers: [.internal, .static])
           ]
-          expect(sut.propertiesData) == expectedPropSet
+          expect(sut.propertiesInfo) == expectedPropSet
         }
       }
 
@@ -183,8 +183,8 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
         it("detects the properties") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
+          expect(sut.propertiesInfo) == [
+            PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -202,8 +202,8 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
         it("detects the properties") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
+          expect(sut.propertiesInfo) == [
+            PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -221,8 +221,8 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
         it("detects the properties") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
+          expect(sut.propertiesInfo) == [
+            PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
               comment: "",
@@ -246,8 +246,8 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
             it("detects the property in the extension") {
               try VisitorExecutor.walkVisitor(sut, overContent: content)
-              expect(sut.propertiesData) == [
-                PropertyData(
+              expect(sut.propertiesInfo) == [
+                PropertyInfo(
                   name: "thing",
                   typeAnnotation: "String",
                   comment: "",
@@ -269,13 +269,13 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
             it("detects properties in the declaration and extension") {
               try VisitorExecutor.walkVisitor(sut, overContent: content)
-              expect(sut.propertiesData) == [
-                PropertyData(
+              expect(sut.propertiesInfo) == [
+                PropertyInfo(
                   name: "thing",
                   typeAnnotation: "String",
                   comment: "",
                   modifiers: [.internal, .instance]),
-                PropertyData(
+                PropertyInfo(
                   name: "anotherThing",
                   typeAnnotation: "String",
                   comment: "",
@@ -294,8 +294,8 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
           it("detects the property in the extension") {
             try VisitorExecutor.walkVisitor(sut, overContent: content)
-            expect(sut.propertiesData) == [
-              PropertyData(
+            expect(sut.propertiesInfo) == [
+              PropertyInfo(
                 name: "thing",
                 typeAnnotation: "String",
                 comment: "",
@@ -315,7 +315,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
         it("detects the properties") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          let expectedPropSet: Set<PropertyData> = [
+          let expectedPropSet: Set<PropertyInfo> = [
             .init(
               name: "thing",
               typeAnnotation: "String",
@@ -327,304 +327,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
               comment: "",
               modifiers: [.internal, .instance])
           ]
-          expect(sut.propertiesData) == expectedPropSet
-        }
-      }
-
-      context("when there are multiple properties on the same line") {
-        let content = """
-        public final class FakeType {
-          public var thing: String, foo: Int
-        }
-        """
-
-        it("detects the properties") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          let expectedPropSet: Set<PropertyData> = [
-            .init(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "",
-              modifiers: [.public, .instance]),
-            .init(
-              name: "foo",
-              typeAnnotation: "Int",
-              comment: "",
-              modifiers: [.public, .instance])
-          ]
-          expect(sut.propertiesData) == expectedPropSet
-        }
-      }
-
-      context("when there is a static property") {
-        let content = """
-        public final class FakeType {
-          public static var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "",
-              modifiers: [.public, .static])
-          ]
-        }
-      }
-
-      context("when there is a static property in reverse order") {
-        let content = """
-        public final class FakeType {
-          static public var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "",
-              modifiers: [.public, .static])
-          ]
-        }
-      }
-
-      context("when there is a private property") {
-        let content = """
-        public final class FakeType {
-          private static var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "",
-              modifiers: [.private, .static])
-          ]
-        }
-      }
-
-      context("when there is a public private(set) property") {
-        let content = """
-        public final class FakeType {
-          public private(set) var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "",
-              modifiers: [.public, .privateSet, .instance])
-          ]
-        }
-      }
-
-      context("when there is a public internal(set) property") {
-        let content = """
-        public final class FakeType {
-          public internal(set) var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "",
-              modifiers: [.public, .internalSet, .instance])
-          ]
-        }
-      }
-
-      context("when there is a internal public(set) property") {
-        let content = """
-        public final class FakeType {
-          internal public(set) var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "",
-              modifiers: [.publicSet, .internal, .instance])
-          ]
-        }
-      }
-
-      context("when there is a fileprivate property") {
-        let content = """
-        public final class FakeType {
-          fileprivate static var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "",
-              modifiers: [.fileprivate, .static])
-          ]
-        }
-      }
-
-      context("when there is no type annotation") {
-        let content = """
-        public final class FakeType {
-          private static var thing = "Hello, World"
-        }
-        """
-
-        it("detects the property with no type information") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: nil,
-              comment: "",
-              modifiers: [.private, .static])
-          ]
-        }
-      }
-
-      context("when there is a property attribute") {
-        let content = """
-        public final class FakeType {
-          @objc public var thing = "Hello, World"
-        }
-        """
-
-        it("detects the property with no type information") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: nil,
-              comment: "",
-              modifiers: [.public, .instance])
-          ]
-        }
-      }
-
-      context("when there is a line comment") {
-        let content = """
-        public final class FakeType {
-          // The thing
-          public var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property with the comment") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "// The thing",
-              modifiers: [.public, .instance])
-          ]
-        }
-      }
-
-      context("when there is a multi-line comment") {
-        let content = """
-        public final class FakeType {
-          // The thing
-          // is such a thing
-          public var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property with the comment") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "// The thing\n// is such a thing",
-              modifiers: [.public, .instance])
-          ]
-        }
-      }
-
-      context("when there is a doc line comment") {
-        let content = """
-        public final class FakeType {
-          /// The thing
-          public var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property with the comment") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "/// The thing",
-              modifiers: [.public, .instance])
-          ]
-        }
-      }
-
-      context("when there is a block comment") {
-        let content = """
-        public final class FakeType {
-          /* The thing */
-          public var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property with the comment") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "/* The thing */",
-              modifiers: [.public, .instance])
-          ]
-        }
-      }
-
-      context("when there is a doc block comment") {
-        let content = """
-        public final class FakeType {
-          /** The thing */
-          public var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property with the comment") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
-            PropertyData(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "/** The thing */",
-              modifiers: [.public, .instance])
-          ]
+          expect(sut.propertiesInfo) == expectedPropSet
         }
       }
 

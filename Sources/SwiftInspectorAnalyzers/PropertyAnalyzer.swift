@@ -29,10 +29,10 @@ extension StandardAnalyzer {
   public func analyzeProperties(
     in fileURL: URL,
     for typeName: String) throws
-  -> Set<PropertyData>?
+  -> Set<PropertyInfo>?
   {
     let visitor = TypeSyntaxVisitor(typeName: typeName)
     try analyze(fileURL: fileURL, withVisitor: visitor)
-    return visitor.propertiesData
+    return visitor.propertiesInfo
   }
 }
