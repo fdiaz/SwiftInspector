@@ -32,6 +32,6 @@ extension SyntaxVisitor {
   ///   - content: The content to turn into source and walk.
   public func walkContent(_ content: String) throws {
     let syntax: SourceFileSyntax = try SyntaxParser.parse(source: content)
-    self.walk(syntax)
+    walk(syntax)
   }
 }
