@@ -46,9 +46,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 public class SomeClass {}
                 """
 
-              try? VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try? self.sut.walkContent(content)
             }
 
             it("finds the type name") {
@@ -73,9 +71,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 public class SomeClass<T> {}
                 """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let classInfo = self.sut.classes.first
               expect(classInfo?.name) == "SomeClass"
@@ -90,9 +86,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 }
                 """
 
-                try VisitorExecutor.walkVisitor(
-                  self.sut,
-                  overContent: content)
+                try self.sut.walkContent(content)
 
                 let classInfo = self.sut.classes.first
                 expect(classInfo?.name) == "SomeClass"
@@ -109,9 +103,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 public class SomeClass: Equatable {}
                 """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let classInfo = self.sut.classes.first
               expect(classInfo?.name) == "SomeClass"
@@ -126,9 +118,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 public class SomeClass: Foo, Bar {}
                 """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let classInfo = self.sut.classes.first
               expect(classInfo?.name) == "SomeClass"
@@ -145,9 +135,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 }
                 """
 
-              try? VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try? self.sut.walkContent(content)
             }
 
             it("finds the typealias") {
@@ -165,9 +153,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 public struct SomeStruct {}
                 """
 
-              try? VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try? self.sut.walkContent(content)
             }
 
             it("finds the type name") {
@@ -192,9 +178,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 public struct SomeStruct<A, B> {}
                 """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let structInfo = self.sut.structs.first
               expect(structInfo?.name) == "SomeStruct"
@@ -209,9 +193,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 }
                 """
 
-                try VisitorExecutor.walkVisitor(
-                  self.sut,
-                  overContent: content)
+                try self.sut.walkContent(content)
 
                 let structInfo = self.sut.structs.first
                 expect(structInfo?.name) == "SomeStruct"
@@ -228,9 +210,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 public struct SomeStruct: Equatable {}
                 """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let structInfo = self.sut.structs.first
               expect(structInfo?.name) == "SomeStruct"
@@ -245,9 +225,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 public struct SomeStruct: Foo, Bar {}
                 """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let structInfo = self.sut.structs.first
               expect(structInfo?.name) == "SomeStruct"
@@ -264,9 +242,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 }
                 """
 
-              try? VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try? self.sut.walkContent(content)
             }
 
             it("finds the typealias") {
@@ -284,9 +260,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               public enum SomeEnum {}
               """
 
-              try? VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try? self.sut.walkContent(content)
             }
 
             it("finds the type name") {
@@ -311,9 +285,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 public enum SomeEnum<A, B, C: Equatable> {}
                 """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let enumsInfo = self.sut.enums.first
               expect(enumsInfo?.name) == "SomeEnum"
@@ -328,9 +300,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 }
                 """
 
-                try VisitorExecutor.walkVisitor(
-                  self.sut,
-                  overContent: content)
+                try self.sut.walkContent(content)
 
                 let enumInfo = self.sut.enums.first
                 expect(enumInfo?.name) == "SomeEnum"
@@ -347,9 +317,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               public enum SomeEnum: Equatable {}
               """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let classInfo = self.sut.enums.first
               expect(classInfo?.name) == "SomeEnum"
@@ -364,9 +332,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               public enum SomeEnum: Foo, Bar {}
               """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let classInfo = self.sut.enums.first
               expect(classInfo?.name) == "SomeEnum"
@@ -383,9 +349,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 }
                 """
 
-              try? VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try? self.sut.walkContent(content)
             }
 
             it("finds the typealias") {
@@ -417,9 +381,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               }
               """
 
-            try? VisitorExecutor.walkVisitor(
-              self.sut,
-              overContent: content)
+            try? self.sut.walkContent(content)
           }
 
           it("finds FooClass") {
@@ -523,9 +485,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               }
               """
 
-            try? VisitorExecutor.walkVisitor(
-              self.sut,
-              overContent: content)
+            try? self.sut.walkContent(content)
           }
 
           it("finds FooStruct") {
@@ -619,9 +579,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               }
               """
 
-            try? VisitorExecutor.walkVisitor(
-              self.sut,
-              overContent: content)
+            try? self.sut.walkContent(content)
           }
 
           it("finds FooEnum") {
@@ -707,9 +665,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               }
               """
 
-            try? VisitorExecutor.walkVisitor(
-              self.sut,
-              overContent: content)
+            try? self.sut.walkContent(content)
           }
 
           it("finds FooClass") {
@@ -810,9 +766,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               }
               """
 
-            try? VisitorExecutor.walkVisitor(
-              self.sut,
-              overContent: content)
+            try? self.sut.walkContent(content)
           }
 
           it("finds FooStruct") {
@@ -924,9 +878,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               }
               """
 
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
         }
 
         it("finds FooEnum") {
@@ -1024,10 +976,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The ClassVisitor is only meant to be used over a single class.
             // Using a ClassVisitor over a block that has multiple top-level
             // classes is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
 
@@ -1041,10 +990,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The ClassVisitor is only meant to be used over a single class.
             // Using a ClassVisitor over a block that has a top-level struct
             // is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
 
@@ -1058,10 +1004,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The ClassVisitor is only meant to be used over a single class.
             // Using a ClassVisitor over a block that has a top-level enum
             // is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
       }
@@ -1077,10 +1020,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has multiple top-level
             // structs is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
 
@@ -1094,10 +1034,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has a top-level class
             // is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
 
@@ -1111,10 +1048,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has a top-level enum
             // is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
       }
@@ -1130,10 +1064,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has multiple top-level
             // classes is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
 
@@ -1147,10 +1078,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has a top-level struct
             // is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
 
@@ -1164,10 +1092,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has a top-level class
             // is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
       }
@@ -1182,10 +1107,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
         // The NestableTypeVisitor is only meant to be used over a single nestable type.
         // Using a NestableTypeVisitor over a block that has a top-level protocol
         // is API misuse.
-        expect(try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content))
-          .to(throwAssertion())
+        expect(try self.sut.walkContent(content)).to(throwAssertion())
       }
     }
 
@@ -1198,10 +1120,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
         // The NestableTypeVisitor is only meant to be used over a single nestable type.
         // Using a NestableTypeVisitor over a block that has an extension
         // is API misuse.
-        expect(try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content))
-          .to(throwAssertion())
+        expect(try self.sut.walkContent(content)).to(throwAssertion())
       }
     }
 
@@ -1214,10 +1133,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
         // The NestableTypeVisitor is only meant to be used over a single nestable type.
         // Using a NestableTypeVisitor over a block that has a top-level typealias
         // is API misuse.
-        expect(try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content))
-          .to(throwAssertion())
+        expect(try self.sut.walkContent(content)).to(throwAssertion())
       }
     }
   }

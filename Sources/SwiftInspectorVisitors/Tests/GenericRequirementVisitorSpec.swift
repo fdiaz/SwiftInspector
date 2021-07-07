@@ -44,9 +44,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             public protocol SomeGenericProtocol: GenericProtocol {}
             """
 
-          try VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try self.sut.walkContent(content)
 
           expect(self.sut.genericRequirements).to(beEmpty())
         }
@@ -60,9 +58,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          try VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try self.sut.walkContent(content)
 
           expect(self.sut.genericRequirements.first?.leftType.asSource) == "LeftType"
           expect(self.sut.genericRequirements.first?.rightType.asSource) == "RightType"
@@ -78,9 +74,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          try VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try self.sut.walkContent(content)
 
           expect(self.sut.genericRequirements.first?.leftType.asSource) == "FooModule.LeftType"
           expect(self.sut.genericRequirements.first?.rightType.asSource) == "RightType"
@@ -96,9 +90,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          try VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try self.sut.walkContent(content)
 
           expect(self.sut.genericRequirements.first?.leftType.asSource) == "LeftType"
           expect(self.sut.genericRequirements.first?.rightType.asSource) == "FooModule.RightType"
@@ -115,9 +107,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
         }
 
         it("finds the first requirement") {
@@ -139,9 +129,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             extension Array {}
             """
 
-          try VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try self.sut.walkContent(content)
 
           expect(self.sut.genericRequirements.first).to(beNil())
         }
@@ -155,9 +143,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          try VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try self.sut.walkContent(content)
 
           expect(self.sut.genericRequirements.first?.leftType.asSource) == "Element"
           expect(self.sut.genericRequirements.first?.rightType.asSource) == "AnyObject"
@@ -174,9 +160,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             {}
             """
 
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
         }
         it("finds the first requirement") {
           expect(self.sut.genericRequirements.first?.leftType.asSource) == "Key"
@@ -199,9 +183,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
             }
             """
 
-          try VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try self.sut.walkContent(content)
 
           expect(self.sut.genericRequirements.first).to(beNil())
         }
@@ -214,9 +196,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
               Element: AnyObject
             """
 
-          try VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try self.sut.walkContent(content)
 
           expect(self.sut.genericRequirements.first?.leftType.asSource) == "Element"
           expect(self.sut.genericRequirements.first?.rightType.asSource) == "AnyObject"
@@ -231,9 +211,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
               Element == Array<Int>
             """
 
-          try VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try self.sut.walkContent(content)
 
           expect(self.sut.genericRequirements.first?.leftType.asSource) == "Element"
           expect(self.sut.genericRequirements.first?.rightType.asSource) == "Array<Int>"
@@ -249,9 +227,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
               Value == CustomStringConvertible
             """
 
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
         }
 
         it("finds the first requirement") {
@@ -275,9 +251,7 @@ final class GenericRequirementVisitorSpec: QuickSpec {
               }
               """
 
-          try VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try self.sut.walkContent(content)
 
           expect(self.sut.genericRequirements.first?.leftType.asSource) == "Element"
           expect(self.sut.genericRequirements.first?.rightType.asSource) == "CustomStringConvertible"

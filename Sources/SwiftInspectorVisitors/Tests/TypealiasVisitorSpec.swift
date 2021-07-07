@@ -44,9 +44,7 @@ final class TypealiasVisitorSpec: QuickSpec {
             public typealias CountableClosedRange<Bound> = ClosedRange<Bound> where Bound : Strideable, Bound.Stride : SignedInteger
             """
 
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
 
           associatedTypeNameToInfoMap = self.sut.typealiases
             .reduce(into: [String: TypealiasInfo]()) { (result, typealiasInfo) in

@@ -44,7 +44,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
             let content = """
             class SomeObject: Foo {}
             """
-            try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+            try? self.sut.walkContent(content)
           }
 
           it("returns the conforming type name") {
@@ -57,7 +57,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
             let content = """
             class SomeObject: Swift.Equatable {}
             """
-            try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+            try? self.sut.walkContent(content)
           }
 
           it("returns the conforming type name") {
@@ -70,7 +70,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
             let content = """
             class SomeObject: Foo, Bar, FooBar {}
             """
-            try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+            try? self.sut.walkContent(content)
           }
 
           it("returns the conforming type names") {
@@ -84,7 +84,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
             class SomeObject: Foo, Bar,
               FooBar {}
             """
-            try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+            try? self.sut.walkContent(content)
           }
 
           it("returns the conforming type names") {
@@ -98,7 +98,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
             protocol Protocol: FooProviding & BarProviding
               & FooBarProviding {}
             """
-            try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+            try? self.sut.walkContent(content)
           }
 
           it("returns the conforming type names") {
@@ -114,7 +114,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
             struct SomeStruct: Foo {}
           }
           """
-          try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+          try? self.sut.walkContent(content)
         }
 
         it("does not find the inner type's conformance the conforming type names") {
@@ -129,7 +129,7 @@ final class TypeInheritanceVisitorSpec: QuickSpec {
             struct SomeStruct: Foo {}
           }
           """
-          try? VisitorExecutor.walkVisitor(self.sut, overContent: content)
+          try? self.sut.walkContent(content)
         }
 
         it("only finds the outer type's conformance") {

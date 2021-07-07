@@ -45,9 +45,7 @@ final class ImportVisitorSpec: QuickSpec {
                       """
 
         it("returns an empty array") {
-          try VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try self.sut.walkContent(content)
 
           expect(self.sut.imports).to(beEmpty())
         }
@@ -61,9 +59,7 @@ final class ImportVisitorSpec: QuickSpec {
                         public final class Some {
                         }
                         """
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
         }
 
         it("returns the appropriate main module name") {
@@ -87,9 +83,7 @@ final class ImportVisitorSpec: QuickSpec {
 
                         public final protocol Some {}
                         """
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
         }
 
         it("returns the appropriate attribute name") {
@@ -104,9 +98,7 @@ final class ImportVisitorSpec: QuickSpec {
 
                         public final struct Some {}
                         """
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
         }
 
         it("returns the appropriate main module name") {
@@ -130,9 +122,7 @@ final class ImportVisitorSpec: QuickSpec {
 
                         public final enum Some {}
                         """
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
         }
 
         it("returns the appropriate main module name") {
@@ -157,9 +147,7 @@ final class ImportVisitorSpec: QuickSpec {
 
                         public final class Some {}
                         """
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
         }
 
         it("returns the appropriate main module name for all imports") {

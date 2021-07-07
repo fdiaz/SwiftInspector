@@ -44,7 +44,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the properties") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           let expectedPropSet: Set<PropertyInfo> = [
             .init(
               name: "thing",
@@ -69,7 +69,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -88,7 +88,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -107,7 +107,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -126,7 +126,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -145,7 +145,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -164,7 +164,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -183,7 +183,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -202,7 +202,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with no type information") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -221,7 +221,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with no type information") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -241,7 +241,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with the comment") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -262,7 +262,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with the comment") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -282,7 +282,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with the comment") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -302,7 +302,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with the comment") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -322,7 +322,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the property with the comment") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
