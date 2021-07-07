@@ -37,7 +37,7 @@ public final class TypeSyntaxVisitor: SyntaxVisitor {
   // MARK: Public
 
   /// Information about each of the properties found on the type. `nil` if the type is not found.
-  public private(set) var propertiesData: Set<PropertyData>?
+  public private(set) var propertiesData: Set<PropertyInfo>?
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
     if node.identifier.text == typeName {
@@ -81,9 +81,9 @@ public final class TypeSyntaxVisitor: SyntaxVisitor {
 
   /// Merges the new property data with property data we've already found.
   static func merge(
-    _ newPropertiesData: Set<PropertyData>,
-    into existingPropertiesData: Set<PropertyData>?)
-  -> Set<PropertyData>
+    _ newPropertiesData: Set<PropertyInfo>,
+    into existingPropertiesData: Set<PropertyInfo>?)
+  -> Set<PropertyInfo>
   {
     if let existingPropertiesData = existingPropertiesData {
       return newPropertiesData.union(existingPropertiesData)
@@ -100,6 +100,6 @@ public final class TypeSyntaxVisitor: SyntaxVisitor {
   private func processNode<Node>(_ node: Node, members: MemberDeclListSyntax) where Node: SyntaxProtocol {
     let propertyVisitor = PropertySyntaxVisitor()
     propertyVisitor.walk(node)
-    propertiesData = Self.merge(propertyVisitor.propertiesData, into: propertiesData)
+    propertiesData = Self.merge(propertyVisitor.propertiesInfo, into: propertiesData)
   }
 }

@@ -64,7 +64,7 @@ final class PropertiesCommand: ParsableCommand {
     }
   }
 
-  private func outputString(from propertiesData: Set<PropertyData>) -> String {
+  private func outputString(from propertiesData: Set<PropertyInfo>) -> String {
     propertiesData.map { propInfo in
       "\(name),\(propInfo.name),\(propInfo.modifiers)"
     }.joined(separator: "\n")
@@ -75,7 +75,7 @@ private let nameArgumentHelp = ArgumentHelp(
   "The name of the type to find property information on",
   discussion: "This may be a enum, class, struct, or protocol.")
 
-extension PropertyData.Modifier: CustomStringConvertible, CustomDebugStringConvertible {
+extension PropertyInfo.Modifier: CustomStringConvertible, CustomDebugStringConvertible {
   public var description: String {
     var outputValues: [String] = []
     // Order is important here! Access control modifiers should always go before scope modifiers

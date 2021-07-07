@@ -28,7 +28,7 @@ import SwiftSyntax
 public final class PropertySyntaxVisitor: SyntaxVisitor {
 
   /// Information about each of the properties found on the type.
-  private(set) var propertiesData: Set<PropertyData> = []
+  private(set) var propertiesInfo: Set<PropertyInfo> = []
 
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     var leadingTrivia: Trivia? = node.leadingTrivia
@@ -45,7 +45,7 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
           let typeAnnotation = binding.typeAnnotation,
           let simpleTypeIdentifier = typeAnnotation.type.as(SimpleTypeIdentifierSyntax.self)
         {
-          propertiesData.insert(.init(
+          propertiesInfo.insert(.init(
             name: identifier.identifier.text,
             typeAnnotation: simpleTypeIdentifier.name.text,
             comment: comment(from: leadingTrivia),
@@ -58,7 +58,7 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
         // public let thing: String = "Hello" has a type annotation, String which makes this easy
         // public let thing = "Hello" does not have a type annotation, and I don't know how to handle this case.
         // TODO: Include logic to get types of any variable declaration
-        propertiesData.insert(.init(
+        propertiesInfo.insert(.init(
           name: identifier.identifier.text,
           typeAnnotation: nil,
           comment: comment(from: leadingTrivia),
@@ -84,7 +84,7 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
     }.joined(separator: "\n")
   }
 
-  private func findModifiers(from node: VariableDeclSyntax) -> PropertyData.Modifier {
+  private func findModifiers(from node: VariableDeclSyntax) -> PropertyInfo.Modifier {
     let modifiersString: [String] = node.children
       .compactMap { $0.as(ModifierListSyntax.self) }
       .reduce(into: []) { result, syntax in
@@ -103,8 +103,8 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
         result.append(contentsOf: modifiers)
       }
 
-    var modifier = modifiersString.reduce(PropertyData.Modifier()) { result, stringValue in
-      let modifier = PropertyData.Modifier(stringValue: stringValue)
+    var modifier = modifiersString.reduce(PropertyInfo.Modifier()) { result, stringValue in
+      let modifier = PropertyInfo.Modifier(stringValue: stringValue)
       return result.union(modifier)
     }
 
@@ -125,9 +125,9 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
   }
 }
 
-// MARK: - PropertyData
+// MARK: - PropertyInfo
 
-public struct PropertyData: Hashable {
+public struct PropertyInfo: Hashable {
   public struct Modifier: Hashable, OptionSet {
     public let rawValue: Int
 
