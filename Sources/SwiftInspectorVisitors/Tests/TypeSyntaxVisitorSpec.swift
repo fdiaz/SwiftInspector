@@ -33,21 +33,21 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
     describe("TypeSyntaxVisitor.merge(_:into:)") {
 
       context("when there is no existing data about properties") {
-        let existingPropertiesData: Set<PropertyInfo>? = nil
+        let existingPropertiesInfo: Set<PropertyInfo>? = nil
 
         context("and the new data is empty") {
-          let newPropertiesData: Set<PropertyInfo> = []
+          let newPropertiesInfo: Set<PropertyInfo> = []
 
           it("returns the new data") {
             let result = TypeSyntaxVisitor.merge(
-              newPropertiesData,
-              into: existingPropertiesData)
-            expect(result).to(equal(newPropertiesData))
+              newPropertiesInfo,
+              into: existingPropertiesInfo)
+            expect(result).to(equal(newPropertiesInfo))
           }
         }
 
         context("and the new data describes one or more properties") {
-          let newPropertiesData: Set<PropertyInfo> = [
+          let newPropertiesInfo: Set<PropertyInfo> = [
             .init(
               name: "thing",
               typeAnnotation: "String",
@@ -57,15 +57,15 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
           context("returns the new data") {
             let result = TypeSyntaxVisitor.merge(
-              newPropertiesData,
-              into: existingPropertiesData)
-            expect(result).to(equal(newPropertiesData))
+              newPropertiesInfo,
+              into: existingPropertiesInfo)
+            expect(result).to(equal(newPropertiesInfo))
           }
         }
       }
 
       context("when there is existing data about properties") {
-        let existingPropertiesData: Set<PropertyInfo> = [
+        let existingPropertiesInfo: Set<PropertyInfo> = [
           .init(
             name: "foo",
             typeAnnotation: "Int",
@@ -79,7 +79,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         ]
 
         it("merges the existing data with new data") {
-          let newPropertiesData: Set<PropertyInfo> = [
+          let newPropertiesInfo: Set<PropertyInfo> = [
             .init(
               name: "thing",
               typeAnnotation: "String",
@@ -88,10 +88,10 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
           ]
 
           let result = TypeSyntaxVisitor.merge(
-            newPropertiesData,
-            into: existingPropertiesData)
+            newPropertiesInfo,
+            into: existingPropertiesInfo)
 
-          expect(result).to(equal(existingPropertiesData.union(newPropertiesData)))
+          expect(result).to(equal(existingPropertiesInfo.union(newPropertiesInfo)))
         }
       }
     }
@@ -110,7 +110,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
         it("returns empty property list") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData).to(beEmpty())
+          expect(sut.propertiesInfo).to(beEmpty())
         }
       }
 
@@ -124,12 +124,12 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         it("returns nil if the type name is not present") {
           let sut = TypeSyntaxVisitor(typeName: "AnotherType")
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData).to(beNil())
+          expect(sut.propertiesInfo).to(beNil())
         }
 
         it("detects the properties") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
+          expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
@@ -170,7 +170,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
               comment: "",
               modifiers: [.internal, .static])
           ]
-          expect(sut.propertiesData) == expectedPropSet
+          expect(sut.propertiesInfo) == expectedPropSet
         }
       }
 
@@ -183,7 +183,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
         it("detects the properties") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
+          expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
@@ -202,7 +202,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
         it("detects the properties") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
+          expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
@@ -221,7 +221,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
         it("detects the properties") {
           try VisitorExecutor.walkVisitor(sut, overContent: content)
-          expect(sut.propertiesData) == [
+          expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
@@ -246,7 +246,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
             it("detects the property in the extension") {
               try VisitorExecutor.walkVisitor(sut, overContent: content)
-              expect(sut.propertiesData) == [
+              expect(sut.propertiesInfo) == [
                 PropertyInfo(
                   name: "thing",
                   typeAnnotation: "String",
@@ -269,7 +269,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
             it("detects properties in the declaration and extension") {
               try VisitorExecutor.walkVisitor(sut, overContent: content)
-              expect(sut.propertiesData) == [
+              expect(sut.propertiesInfo) == [
                 PropertyInfo(
                   name: "thing",
                   typeAnnotation: "String",
@@ -294,7 +294,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
           it("detects the property in the extension") {
             try VisitorExecutor.walkVisitor(sut, overContent: content)
-            expect(sut.propertiesData) == [
+            expect(sut.propertiesInfo) == [
               PropertyInfo(
                 name: "thing",
                 typeAnnotation: "String",
@@ -327,7 +327,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
               comment: "",
               modifiers: [.internal, .instance])
           ]
-          expect(sut.propertiesData) == expectedPropSet
+          expect(sut.propertiesInfo) == expectedPropSet
         }
       }
 

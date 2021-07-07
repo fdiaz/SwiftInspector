@@ -64,8 +64,8 @@ final class PropertiesCommand: ParsableCommand {
     }
   }
 
-  private func outputString(from propertiesData: Set<PropertyInfo>) -> String {
-    propertiesData.map { propInfo in
+  private func outputString(from propertiesInfo: Set<PropertyInfo>) -> String {
+    propertiesInfo.map { propInfo in
       "\(name),\(propInfo.name),\(propInfo.modifiers)"
     }.joined(separator: "\n")
   }

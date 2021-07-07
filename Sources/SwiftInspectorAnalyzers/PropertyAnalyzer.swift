@@ -33,6 +33,6 @@ extension StandardAnalyzer {
   {
     let visitor = TypeSyntaxVisitor(typeName: typeName)
     try analyze(fileURL: fileURL, withVisitor: visitor)
-    return visitor.propertiesData
+    return visitor.propertiesInfo
   }
 }
