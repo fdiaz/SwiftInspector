@@ -27,10 +27,6 @@ import SwiftSyntax
 
 public final class PropertySyntaxVisitor: SyntaxVisitor {
 
-  init(typeName: String) {
-    self.typeName = typeName
-  }
-
   /// Information about each of the properties found on the type.
   private(set) var propertiesData: Set<PropertyData> = []
 
@@ -74,8 +70,6 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
   }
 
   // MARK: Private
-
-  private let typeName: String
 
   private func comment(from trivia: Trivia?) -> String {
     guard let trivia = trivia else { return "" }

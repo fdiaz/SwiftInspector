@@ -98,7 +98,7 @@ public final class TypeSyntaxVisitor: SyntaxVisitor {
   private let typeName: String
 
   private func processNode<Node>(_ node: Node, members: MemberDeclListSyntax) where Node: SyntaxProtocol {
-    let propertyVisitor = PropertySyntaxVisitor(typeName: typeName)
+    let propertyVisitor = PropertySyntaxVisitor()
     propertyVisitor.walk(node)
     propertiesData = Self.merge(propertyVisitor.propertiesData, into: propertiesData)
   }
