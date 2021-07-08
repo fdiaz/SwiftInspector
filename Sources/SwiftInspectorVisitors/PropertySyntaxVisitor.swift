@@ -33,30 +33,20 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     let modifier = findModifiers(from: node)
 
-    node.bindings.forEach { binding in
+    var lastFoundType: String?
+    node.bindings.reversed().forEach { binding in
       if let identifier = binding.pattern.as(IdentifierPatternSyntax.self) {
-        if
-          let typeAnnotation = binding.typeAnnotation,
-          let simpleTypeIdentifier = typeAnnotation.type.as(SimpleTypeIdentifierSyntax.self)
-        {
-          propertiesInfo.insert(.init(
-                                  name: identifier.identifier.text,
-                                  typeAnnotation: simpleTypeIdentifier.name.text,
-                                  modifiers: modifier))
-          return
-        }
-        // no type annotation was found. In this case it's much more complicated to get
-        // the type information for a variable.
-        // e.g.:
-        // public let thing: String = "Hello" has a type annotation, String which makes this easy
-        // public let thing = "Hello" does not have a type annotation, and I don't know how to handle this case.
-        // TODO: Include logic to get types of any variable declaration
+        let typeName = findTypeName(from: binding.typeAnnotation)
+        // If we find a type name on the n element, but n-1 doesn't have an explicit type name, n-1 has the same type as n
+        // e.g. let red: Int, green, blue: Double
+        // where both green and blue are of type Double
+        if let typeName = typeName { lastFoundType = typeName }
         propertiesInfo.insert(.init(
                                 name: identifier.identifier.text,
-                                typeAnnotation: nil,
+                                typeAnnotation: typeName ?? lastFoundType,
                                 modifiers: modifier))
-      }
     }
+  }
 
     return .skipChildren
   }
@@ -101,6 +91,19 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
     }
 
     return modifier
+  }
+
+  private func findTypeName(from node: TypeAnnotationSyntax?) -> String? {
+    guard
+      let typeAnnotation = node,
+      let simpleTypeIdentifier = typeAnnotation.type.as(SimpleTypeIdentifierSyntax.self) else {
+      // No type annotation was found.
+      // e.g.:
+      // public let thing: String = "Hello" has a type annotation, String which makes this easy
+      // public let thing = "Hello" does not have a type annotation.
+      return nil
+    }
+    return simpleTypeIdentifier.name.text
   }
 }
 

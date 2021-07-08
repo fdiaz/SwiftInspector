@@ -40,12 +40,14 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
         let content = """
         public final class FakeType {
           public var thing: String, foo: Int
+          let red, green, blue: Double
+          let seconds: Int, hours, years: Double
         }
         """
 
-        it("detects the properties") {
+        it("detects properties with different types") {
           try sut.walkContent(content)
-          let expectedPropSet: Set<PropertyInfo> = [
+          let expected: [PropertyInfo] = [
             .init(
               name: "thing",
               typeAnnotation: "String",
@@ -55,7 +57,45 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
               typeAnnotation: "Int",
               modifiers: [.public, .instance])
           ]
-          expect(sut.propertiesInfo) == expectedPropSet
+          expect(sut.propertiesInfo).to(contain(expected))
+        }
+
+        it("detects properties with the same type") {
+          try sut.walkContent(content)
+          let expected: [PropertyInfo] = [
+            .init(
+              name: "green",
+              typeAnnotation: "Double",
+              modifiers: [.internal, .instance]),
+            .init(
+              name: "red",
+              typeAnnotation: "Double",
+              modifiers: [.internal, .instance]),
+              .init(
+                name: "blue",
+                typeAnnotation: "Double",
+                modifiers: [.internal, .instance])
+          ]
+          expect(sut.propertiesInfo).to(contain(expected))
+        }
+
+        it("detects properties in a line with both different and equal types") {
+          try sut.walkContent(content)
+          let expected: [PropertyInfo] = [
+            .init(
+              name: "seconds",
+              typeAnnotation: "Int",
+              modifiers: [.internal, .instance]),
+            .init(
+              name: "hours",
+              typeAnnotation: "Double",
+              modifiers: [.internal, .instance]),
+            .init(
+              name: "years",
+              typeAnnotation: "Double",
+              modifiers: [.internal, .instance])
+          ]
+          expect(sut.propertiesInfo).to(contain(expected))
         }
       }
 
