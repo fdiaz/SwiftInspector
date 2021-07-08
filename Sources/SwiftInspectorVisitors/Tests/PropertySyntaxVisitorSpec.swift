@@ -49,12 +49,10 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
             .init(
               name: "thing",
               typeAnnotation: "String",
-              comment: "",
               modifiers: [.public, .instance]),
             .init(
               name: "foo",
               typeAnnotation: "Int",
-              comment: "",
               modifiers: [.public, .instance])
           ]
           expect(sut.propertiesInfo) == expectedPropSet
@@ -74,7 +72,6 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
-              comment: "",
               modifiers: [.public, .static])
           ]
         }
@@ -93,7 +90,6 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
-              comment: "",
               modifiers: [.public, .static])
           ]
         }
@@ -112,7 +108,6 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
-              comment: "",
               modifiers: [.private, .static])
           ]
         }
@@ -131,7 +126,6 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
-              comment: "",
               modifiers: [.public, .privateSet, .instance])
           ]
         }
@@ -150,7 +144,6 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
-              comment: "",
               modifiers: [.public, .internalSet, .instance])
           ]
         }
@@ -169,7 +162,6 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
-              comment: "",
               modifiers: [.publicSet, .internal, .instance])
           ]
         }
@@ -188,7 +180,6 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
-              comment: "",
               modifiers: [.fileprivate, .static])
           ]
         }
@@ -207,7 +198,6 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeAnnotation: nil,
-              comment: "",
               modifiers: [.private, .static])
           ]
         }
@@ -226,108 +216,6 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeAnnotation: nil,
-              comment: "",
-              modifiers: [.public, .instance])
-          ]
-        }
-      }
-
-      context("when there is a line comment") {
-        let content = """
-        public final class FakeType {
-          // The thing
-          public var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property with the comment") {
-          try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
-            PropertyInfo(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "// The thing",
-              modifiers: [.public, .instance])
-          ]
-        }
-      }
-
-      context("when there is a multi-line comment") {
-        let content = """
-        public final class FakeType {
-          // The thing
-          // is such a thing
-          public var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property with the comment") {
-          try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
-            PropertyInfo(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "// The thing\n// is such a thing",
-              modifiers: [.public, .instance])
-          ]
-        }
-      }
-
-      context("when there is a doc line comment") {
-        let content = """
-        public final class FakeType {
-          /// The thing
-          public var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property with the comment") {
-          try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
-            PropertyInfo(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "/// The thing",
-              modifiers: [.public, .instance])
-          ]
-        }
-      }
-
-      context("when there is a block comment") {
-        let content = """
-        public final class FakeType {
-          /* The thing */
-          public var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property with the comment") {
-          try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
-            PropertyInfo(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "/* The thing */",
-              modifiers: [.public, .instance])
-          ]
-        }
-      }
-
-      context("when there is a doc block comment") {
-        let content = """
-        public final class FakeType {
-          /** The thing */
-          public var thing: String = "Hello, World"
-        }
-        """
-
-        it("detects the property with the comment") {
-          try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
-            PropertyInfo(
-              name: "thing",
-              typeAnnotation: "String",
-              comment: "/** The thing */",
               modifiers: [.public, .instance])
           ]
         }

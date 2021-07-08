@@ -31,13 +31,7 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
   private(set) var propertiesInfo: Set<PropertyInfo> = []
 
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
-    var leadingTrivia: Trivia? = node.leadingTrivia
     let modifier = findModifiers(from: node)
-
-    node.modifiers?.forEach { modifier in
-      // leading trivia is on the first modifier, or the node itself if no modifiers are present
-      leadingTrivia = leadingTrivia ?? modifier.leadingTrivia
-    }
 
     node.bindings.forEach { binding in
       if let identifier = binding.pattern.as(IdentifierPatternSyntax.self) {
@@ -46,10 +40,9 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
           let simpleTypeIdentifier = typeAnnotation.type.as(SimpleTypeIdentifierSyntax.self)
         {
           propertiesInfo.insert(.init(
-            name: identifier.identifier.text,
-            typeAnnotation: simpleTypeIdentifier.name.text,
-            comment: comment(from: leadingTrivia),
-            modifiers: modifier))
+                                  name: identifier.identifier.text,
+                                  typeAnnotation: simpleTypeIdentifier.name.text,
+                                  modifiers: modifier))
           return
         }
         // no type annotation was found. In this case it's much more complicated to get
@@ -59,10 +52,9 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
         // public let thing = "Hello" does not have a type annotation, and I don't know how to handle this case.
         // TODO: Include logic to get types of any variable declaration
         propertiesInfo.insert(.init(
-          name: identifier.identifier.text,
-          typeAnnotation: nil,
-          comment: comment(from: leadingTrivia),
-          modifiers: modifier))
+                                name: identifier.identifier.text,
+                                typeAnnotation: nil,
+                                modifiers: modifier))
       }
     }
 
@@ -70,19 +62,6 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
   }
 
   // MARK: Private
-
-  private func comment(from trivia: Trivia?) -> String {
-    guard let trivia = trivia else { return "" }
-    return trivia.compactMap { piece -> String? in
-      switch piece {
-      case .lineComment(let str): return str
-      case .blockComment(let str): return str
-      case .docLineComment(let str): return str
-      case .docBlockComment(let str): return str
-      default: return nil
-      }
-    }.joined(separator: "\n")
-  }
 
   private func findModifiers(from node: VariableDeclSyntax) -> PropertyInfo.Modifier {
     let modifiersString: [String] = node.children
@@ -99,7 +78,7 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
               return modifierSyntax.name.text + leftParen.text + detail.text + rightParen.text
             }
             return modifierSyntax.name.text
-        }
+          }
         result.append(contentsOf: modifiers)
       }
 
@@ -110,8 +89,8 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
 
     // If there are no explicit modifiers, this is an internal property
     if !modifier.contains(.public) &&
-      !modifier.contains(.fileprivate) &&
-      !modifier.contains(.private)
+        !modifier.contains(.fileprivate) &&
+        !modifier.contains(.private)
     {
       modifier = modifier.union(.internal)
     }
@@ -127,7 +106,7 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
 
 // MARK: - PropertyInfo
 
-public struct PropertyInfo: Hashable {
+public struct PropertyInfo: Hashable, CustomDebugStringConvertible {
   public struct Modifier: Hashable, OptionSet {
     public let rawValue: Int
 
@@ -167,8 +146,10 @@ public struct PropertyInfo: Hashable {
   public let name: String
   /// The Type annotation of the property if it's present
   public let typeAnnotation: String?
-  /// Any comments associated with the property
-  public let comment: String
   /// Modifier set for this type
   public let modifiers: Modifier
+
+  public var debugDescription: String {
+    "\(modifiers.rawValue) \(name) \(typeAnnotation ?? "")"
+  }
 }
