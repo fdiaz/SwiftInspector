@@ -43,7 +43,7 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
         if let typeName = typeName { lastFoundType = typeName }
         propertiesInfo.insert(.init(
                                 name: identifier.identifier.text,
-                                typeAnnotation: typeName ?? lastFoundType,
+                                typeAnnotation: lastFoundType,
                                 modifiers: modifier))
     }
   }
