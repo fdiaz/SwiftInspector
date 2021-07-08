@@ -33,7 +33,6 @@ public struct InspectorCommand: ParsableCommand {
     subcommands: [
       ImportsCommand.self,
       InitializerCommand.self,
-      PropertiesCommand.self,
       StaticUsageCommand.self,
       TypealiasCommand.self,
       TypesCommand.self,
