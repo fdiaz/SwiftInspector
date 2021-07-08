@@ -79,9 +79,7 @@ final class FileVisitorSpec: QuickSpec {
               typealias SortableSet<Element: Hashable & Comparable> = Set<Element>
               """
 
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
         }
 
         it("finds the import") {

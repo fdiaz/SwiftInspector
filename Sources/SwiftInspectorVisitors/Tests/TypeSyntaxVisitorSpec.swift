@@ -109,7 +109,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
                       """
 
         it("returns empty property list") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo).to(beEmpty())
         }
       }
@@ -123,12 +123,12 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
 
         it("returns nil if the type name is not present") {
           let sut = TypeSyntaxVisitor(typeName: "AnotherType")
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo).to(beNil())
         }
 
         it("detects the properties") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -157,7 +157,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
          what happens in this scenario.
          */
         it("detects and merges the properties") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           let expectedPropSet: Set<PropertyInfo> = [
             .init(
               name: "thing",
@@ -182,7 +182,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the properties") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -201,7 +201,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the properties") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -220,7 +220,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the properties") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           expect(sut.propertiesInfo) == [
             PropertyInfo(
               name: "thing",
@@ -245,7 +245,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
             """
 
             it("detects the property in the extension") {
-              try VisitorExecutor.walkVisitor(sut, overContent: content)
+              try sut.walkContent(content)
               expect(sut.propertiesInfo) == [
                 PropertyInfo(
                   name: "thing",
@@ -268,7 +268,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
             """
 
             it("detects properties in the declaration and extension") {
-              try VisitorExecutor.walkVisitor(sut, overContent: content)
+              try sut.walkContent(content)
               expect(sut.propertiesInfo) == [
                 PropertyInfo(
                   name: "thing",
@@ -293,7 +293,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
           """
 
           it("detects the property in the extension") {
-            try VisitorExecutor.walkVisitor(sut, overContent: content)
+            try sut.walkContent(content)
             expect(sut.propertiesInfo) == [
               PropertyInfo(
                 name: "thing",
@@ -314,7 +314,7 @@ final class TypeSyntaxVisitorSpec: QuickSpec {
         """
 
         it("detects the properties") {
-          try VisitorExecutor.walkVisitor(sut, overContent: content)
+          try sut.walkContent(content)
           let expectedPropSet: Set<PropertyInfo> = [
             .init(
               name: "thing",

@@ -343,7 +343,7 @@ final class TypeDescriptionSpec: QuickSpec {
               """
 
           visitor = SimpleTypeIdentifierSyntaxVisitor()
-          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          try? visitor.walkContent(content)
         }
 
         it("Finds the type") {
@@ -368,7 +368,7 @@ final class TypeDescriptionSpec: QuickSpec {
               """
 
             visitor = MemberTypeIdentifierSyntaxVisitor()
-            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+            try? visitor.walkContent(content)
           }
 
           it("Finds the type") {
@@ -383,7 +383,7 @@ final class TypeDescriptionSpec: QuickSpec {
               """
 
             visitor = MemberTypeIdentifierSyntaxVisitor()
-            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+            try? visitor.walkContent(content)
           }
 
           it("Finds the type") {
@@ -398,7 +398,7 @@ final class TypeDescriptionSpec: QuickSpec {
               """
 
             visitor = MemberTypeIdentifierSyntaxVisitor()
-            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+            try? visitor.walkContent(content)
           }
 
           it("Finds the type") {
@@ -413,7 +413,7 @@ final class TypeDescriptionSpec: QuickSpec {
               """
 
             visitor = MemberTypeIdentifierSyntaxVisitor()
-            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+            try? visitor.walkContent(content)
           }
 
           it("Finds the type") {
@@ -440,7 +440,7 @@ final class TypeDescriptionSpec: QuickSpec {
             """
 
           visitor = CompositionTypeSyntaxVisitor()
-          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          try? visitor.walkContent(content)
         }
 
         it("Finds the types") {
@@ -467,7 +467,7 @@ final class TypeDescriptionSpec: QuickSpec {
             """
 
           visitor = OptionalTypeSyntaxVisitor()
-          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          try? visitor.walkContent(content)
         }
 
         it("Finds the type") {
@@ -494,7 +494,7 @@ final class TypeDescriptionSpec: QuickSpec {
             """
 
           visitor = ImplicitlyUnwrappedOptionalTypeSyntaxVisitor()
-          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          try? visitor.walkContent(content)
         }
 
         it("Finds the type") {
@@ -518,7 +518,7 @@ final class TypeDescriptionSpec: QuickSpec {
             """
 
           visitor = ArrayTypeSyntaxVisitor()
-          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          try? visitor.walkContent(content)
         }
 
         it("Finds the type") {
@@ -543,7 +543,7 @@ final class TypeDescriptionSpec: QuickSpec {
             """
 
             visitor = SimpleTypeIdentifierSyntaxVisitor()
-            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+            try? visitor.walkContent(content)
           }
 
           it("Finds the type") {
@@ -558,7 +558,7 @@ final class TypeDescriptionSpec: QuickSpec {
             """
 
             visitor = SimpleTypeIdentifierSyntaxVisitor()
-            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+            try? visitor.walkContent(content)
           }
 
           it("Finds the type") {
@@ -584,7 +584,7 @@ final class TypeDescriptionSpec: QuickSpec {
             """
 
           visitor = DictionaryTypeSyntaxVisitor()
-          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          try? visitor.walkContent(content)
         }
 
         it("Finds the type") {
@@ -609,7 +609,7 @@ final class TypeDescriptionSpec: QuickSpec {
             """
 
             visitor = SimpleTypeIdentifierSyntaxVisitor()
-            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+            try? visitor.walkContent(content)
           }
 
           it("Finds the type") {
@@ -624,7 +624,7 @@ final class TypeDescriptionSpec: QuickSpec {
             """
 
             visitor = SimpleTypeIdentifierSyntaxVisitor()
-            try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+            try? visitor.walkContent(content)
           }
 
           it("Finds the type") {
@@ -651,7 +651,7 @@ final class TypeDescriptionSpec: QuickSpec {
               """
 
           visitor = TupleTypeSyntaxVisitor()
-          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          try? visitor.walkContent(content)
         }
 
         it("Finds the type") {
@@ -677,7 +677,7 @@ final class TypeDescriptionSpec: QuickSpec {
               """
 
           visitor = ClassRestrictionTypeSyntaxVisitor()
-          try? VisitorExecutor.walkVisitor(visitor, overContent: content)
+          try? visitor.walkContent(content)
         }
 
         it("Finds returns the type as AnyObject") {

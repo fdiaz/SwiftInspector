@@ -54,9 +54,7 @@ final class AssociatedtypeVisitorSpec: QuickSpec {
             }
             """
 
-          try? VisitorExecutor.walkVisitor(
-            self.sut,
-            overContent: content)
+          try? self.sut.walkContent(content)
 
           associatedTypeNameToInfoMap = self.sut.associatedTypes
             .reduce(into: [String: AssociatedtypeInfo]()) { (result, associatedTypeInfo) in

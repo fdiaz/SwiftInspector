@@ -23,29 +23,15 @@
 // SOFTWARE.
 
 import Foundation
-import Nimble
-import Quick
 import SwiftSyntax
 
-@testable import SwiftInspectorTestHelpers
-
-final class VisitorExecutorSpec: QuickSpec {
-
-  private final class MockVisitor: SyntaxVisitor {
-    var ifStatementSyntaxVisitCount = 0
-    override func visitPost(_ node: IfStmtSyntax) {
-      ifStatementSyntaxVisitCount += 1
-    }
-  }
-
-  override func spec() {
-    describe("walk(:)") {
-      it("walks the visitor over the content") {
-        let visitor = MockVisitor()
-        try VisitorExecutor.walkVisitor(visitor, overContent: "if true {}")
-
-        expect(visitor.ifStatementSyntaxVisitCount) == 1
-      }
-    }
+extension SyntaxVisitor {
+  /// Walks the visitor along the content's syntax.
+  ///
+  /// - Parameters:
+  ///   - content: The content to turn into source and walk.
+  public func walkContent(_ content: String) throws {
+    let syntax: SourceFileSyntax = try SyntaxParser.parse(source: content)
+    walk(syntax)
   }
 }

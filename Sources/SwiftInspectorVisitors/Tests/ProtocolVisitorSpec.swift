@@ -45,9 +45,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               public protocol SomeProtocol {}
               """
 
-            try? VisitorExecutor.walkVisitor(
-              self.sut,
-              overContent: content)
+            try? self.sut.walkContent(content)
           }
           it("finds the type name") {
             expect(self.sut.protocolInfo?.name) == "SomeProtocol"
@@ -72,9 +70,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               public protocol SomeProtocol: Equatable {}
               """
 
-            try VisitorExecutor.walkVisitor(
-              self.sut,
-              overContent: content)
+            try self.sut.walkContent(content)
 
             let protocolInfo = self.sut.protocolInfo
             expect(protocolInfo?.name) == "SomeProtocol"
@@ -89,9 +85,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               public protocol SomeProtocol: Foo, Bar {}
               """
 
-            try VisitorExecutor.walkVisitor(
-              self.sut,
-              overContent: content)
+            try self.sut.walkContent(content)
 
             let protocolInfo = self.sut.protocolInfo
             expect(protocolInfo?.name) == "SomeProtocol"
@@ -106,9 +100,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               public protocol SomeProtocol: Collection where Element == Int {}
               """
 
-            try VisitorExecutor.walkVisitor(
-              self.sut,
-              overContent: content)
+            try self.sut.walkContent(content)
 
             let protocolInfo = self.sut.protocolInfo
             expect(protocolInfo?.name) == "SomeProtocol"
@@ -127,9 +119,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               {}
               """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let protocolInfo = self.sut.protocolInfo
               expect(protocolInfo?.name) == "SomeProtocol"
@@ -148,9 +138,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               public protocol SomeProtocol: Collection where Element: Int {}
               """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let protocolInfo = self.sut.protocolInfo
               expect(protocolInfo?.name) == "SomeProtocol"
@@ -171,9 +159,7 @@ final class ProtocolVisitorSpec: QuickSpec {
                 }
                 """
 
-              try? VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try? self.sut.walkContent(content)
 
               associatedTypeNameToInfoMap = self.sut.protocolInfo?.associatedTypes
                 .reduce(into: [String: AssociatedtypeInfo]()) { (result, associatedTypeInfo) in
@@ -198,9 +184,7 @@ final class ProtocolVisitorSpec: QuickSpec {
                 }
                 """
 
-              try VisitorExecutor.walkVisitor(
-                self.sut,
-                overContent: content)
+              try self.sut.walkContent(content)
 
               let protocolInfo = self.sut.protocolInfo
               expect(protocolInfo?.innerTypealiases.first?.name) == "Test"
@@ -220,10 +204,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               // The ProtocolVisitor is only meant to be used over a single protocol.
               // Using a ProtocolVisitor over a block that has multiple top-level
               // protocols is API misuse.
-              expect(try VisitorExecutor.walkVisitor(
-                      self.sut,
-                      overContent: content))
-                .to(throwAssertion())
+              expect(try self.sut.walkContent(content)).to(throwAssertion())
             }
           }
 
@@ -237,10 +218,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               // The ProtocolVisitor is only meant to be used over a single protocol.
               // Using a ProtocolVisitor over a block that has a top-level class
               // is API misuse.
-              expect(try VisitorExecutor.walkVisitor(
-                      self.sut,
-                      overContent: content))
-                .to(throwAssertion())
+              expect(try self.sut.walkContent(content)).to(throwAssertion())
             }
           }
 
@@ -254,10 +232,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               // The ProtocolVisitor is only meant to be used over a single protocol.
               // Using a ProtocolVisitor over a block that has a top-level enum
               // is API misuse.
-              expect(try VisitorExecutor.walkVisitor(
-                      self.sut,
-                      overContent: content))
-                .to(throwAssertion())
+              expect(try self.sut.walkContent(content)).to(throwAssertion())
             }
           }
         }
@@ -271,10 +246,7 @@ final class ProtocolVisitorSpec: QuickSpec {
             // The ProtocolVisitor is only meant to be used over a single protocol.
             // Using a ProtocolVisitor over a block that has a top-level class
             // is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
 
@@ -287,10 +259,7 @@ final class ProtocolVisitorSpec: QuickSpec {
             // The ProtocolVisitor is only meant to be used over a single protocol.
             // Using a ProtocolVisitor over a block that has a top-level class
             // is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
 
@@ -303,10 +272,7 @@ final class ProtocolVisitorSpec: QuickSpec {
             // The ProtocolVisitor is only meant to be used over a single protocol.
             // Using a ProtocolVisitor over a block that has a top-level enum
             // is API misuse.
-            expect(try VisitorExecutor.walkVisitor(
-                    self.sut,
-                    overContent: content))
-              .to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(throwAssertion())
           }
         }
       }
