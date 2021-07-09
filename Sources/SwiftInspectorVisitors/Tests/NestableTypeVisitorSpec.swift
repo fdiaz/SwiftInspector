@@ -873,6 +873,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                   public enum BarBarFooEnum {}
                 }
                 public class FooFooClass {
+                  let someFooFooClassProperty: Int = 2
                   public enum BarFooFooEnum {}
                 }
               }
@@ -951,6 +952,12 @@ final class NestableTypeVisitorSpec: QuickSpec {
               && $0.parentType?.asSource == "FooEnum"
           }
           expect(matching.count) == 1
+        }
+
+        it("finds the property declared in FooEnum.FooFooClass") {
+          let fooFooClass = self.sut.classes.filter { $0.name == "FooFooClass" }
+          let property = fooFooClass.first?.properties.first
+          expect(property?.name) == "someFooFooClassProperty"
         }
 
         it("finds FooEnum.FooFooClass.BarFooFooEnum") {

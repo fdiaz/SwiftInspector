@@ -23,12 +23,12 @@
 import Foundation
 import SwiftSyntax
 
-// MARK: - PropertySyntaxVisitor
+// MARK: - PropertyVisitor
 
-public final class PropertySyntaxVisitor: SyntaxVisitor {
+public final class PropertyVisitor: SyntaxVisitor {
 
   /// Information about each of the properties found on the type.
-  private(set) var propertiesInfo: Set<PropertyInfo> = []
+  private(set) var properties: [PropertyInfo] = []
 
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     let modifier = findModifiers(from: node)
@@ -41,12 +41,12 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
         // e.g. let red: Int, green, blue: Double
         // where both green and blue are of type Double
         if let typeName = typeName { lastFoundType = typeName }
-        propertiesInfo.insert(.init(
-                                name: identifier.identifier.text,
-                                typeAnnotation: lastFoundType,
-                                modifiers: modifier))
+        properties.append(.init(
+                            name: identifier.identifier.text,
+                            typeAnnotation: lastFoundType,
+                            modifiers: modifier))
+      }
     }
-  }
 
     return .skipChildren
   }
@@ -109,8 +109,8 @@ public final class PropertySyntaxVisitor: SyntaxVisitor {
 
 // MARK: - PropertyInfo
 
-public struct PropertyInfo: Hashable, CustomDebugStringConvertible {
-  public struct Modifier: Hashable, OptionSet {
+public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
+  public struct Modifier: Codable, Hashable, OptionSet {
     public let rawValue: Int
 
     // general accessors

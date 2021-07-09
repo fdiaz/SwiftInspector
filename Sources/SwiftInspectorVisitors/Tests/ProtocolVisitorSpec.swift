@@ -191,6 +191,23 @@ final class ProtocolVisitorSpec: QuickSpec {
               expect(protocolInfo?.innerTypealiases.first?.initializer?.asSource) == "Any"
             }
           }
+
+          context("with properties") {
+            it("finds the properties") {
+              let content = """
+                public protocol SomeProtocol {
+                  var foo: Int { get set }
+                  var bar: Double { get }
+                }
+                """
+
+              try self.sut.walkContent(content)
+
+              let protocolInfo = self.sut.protocolInfo
+              expect(protocolInfo?.properties.first?.name) == "foo"
+              expect(protocolInfo?.properties.last?.name) == "bar"
+            }
+          }
         }
 
         context("visiting a code block with multiple top-level declarations") {

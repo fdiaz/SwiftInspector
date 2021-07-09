@@ -27,13 +27,13 @@ import Nimble
 
 @testable import SwiftInspectorVisitors
 
-final class PropertySyntaxVisitorSpec: QuickSpec {
+final class PropertyVisitorSpec: QuickSpec {
   override func spec() {
     describe("visit(_:)") {
-      var sut: PropertySyntaxVisitor!
+      var sut: PropertyVisitor!
 
       beforeEach {
-        sut = PropertySyntaxVisitor()
+        sut = PropertyVisitor()
       }
 
       context("when there are multiple properties on the same line") {
@@ -57,7 +57,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
               typeAnnotation: "Int",
               modifiers: [.public, .instance])
           ]
-          expect(sut.propertiesInfo).to(contain(expected))
+          expect(sut.properties).to(contain(expected))
         }
 
         it("detects properties with the same type") {
@@ -76,7 +76,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
                 typeAnnotation: "Double",
                 modifiers: [.internal, .instance])
           ]
-          expect(sut.propertiesInfo).to(contain(expected))
+          expect(sut.properties).to(contain(expected))
         }
 
         it("detects properties in a line with both different and equal types") {
@@ -95,7 +95,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
               typeAnnotation: "Double",
               modifiers: [.internal, .instance])
           ]
-          expect(sut.propertiesInfo).to(contain(expected))
+          expect(sut.properties).to(contain(expected))
         }
       }
 
@@ -108,7 +108,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
 
         it("detects the property") {
           try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
+          expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
@@ -126,7 +126,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
 
         it("detects the property") {
           try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
+          expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
@@ -144,7 +144,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
 
         it("detects the property") {
           try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
+          expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
@@ -162,7 +162,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
 
         it("detects the property") {
           try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
+          expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
@@ -180,7 +180,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
 
         it("detects the property") {
           try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
+          expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
@@ -198,7 +198,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
 
         it("detects the property") {
           try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
+          expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
@@ -216,7 +216,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
 
         it("detects the property") {
           try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
+          expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
@@ -234,7 +234,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
 
         it("detects the property with no type information") {
           try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
+          expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: nil,
@@ -252,7 +252,7 @@ final class PropertySyntaxVisitorSpec: QuickSpec {
 
         it("detects the property with no type information") {
           try sut.walkContent(content)
-          expect(sut.propertiesInfo) == [
+          expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
               typeAnnotation: nil,
