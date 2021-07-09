@@ -28,7 +28,7 @@ import SwiftSyntax
 public final class PropertyVisitor: SyntaxVisitor {
 
   /// Information about each of the properties found on the type.
-  private(set) var propertiesInfo: [PropertyInfo] = []
+  private(set) var properties: [PropertyInfo] = []
 
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     let modifier = findModifiers(from: node)
@@ -41,7 +41,7 @@ public final class PropertyVisitor: SyntaxVisitor {
         // e.g. let red: Int, green, blue: Double
         // where both green and blue are of type Double
         if let typeName = typeName { lastFoundType = typeName }
-        propertiesInfo.append(.init(
+        properties.append(.init(
                                 name: identifier.identifier.text,
                                 typeAnnotation: lastFoundType,
                                 modifiers: modifier))

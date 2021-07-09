@@ -66,7 +66,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
       genericRequirements: genericRequirementVisitor.genericRequirements,
       modifiers: .init(declarationModifierVisitor.modifiers),
       innerTypealiases: typealiasVisitor.typealiases,
-      properties: propertiesVisitor.propertiesInfo)
+      properties: propertiesVisitor.properties)
 
     return .skipChildren
   }

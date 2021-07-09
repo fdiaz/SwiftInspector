@@ -68,7 +68,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
       inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
       genericRequirements: genericRequirementVisitor.genericRequirements,
       modifiers: .init(declarationModifierVisitor.modifiers),
-      properties: propertyVisitor.propertiesInfo)
+      properties: propertyVisitor.properties)
     return .visitChildren
   }
 

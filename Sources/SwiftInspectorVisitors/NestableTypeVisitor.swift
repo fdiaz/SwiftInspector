@@ -170,7 +170,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
           modifiers: Set(declarationModifierVisitor.modifiers),
           genericParameters: genericParameterVisitor.genericParameters,
           genericRequirements: genericRequirementVisitor.genericRequirements,
-          properties: propertyVisitor.propertiesInfo))
+          properties: propertyVisitor.properties))
 
       return .visitChildren
     }
