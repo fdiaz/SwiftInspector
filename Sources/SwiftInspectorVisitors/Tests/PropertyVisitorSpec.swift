@@ -33,7 +33,7 @@ final class PropertyVisitorSpec: QuickSpec {
       var sut: PropertyVisitor!
 
       beforeEach {
-        sut = PropertyVisitor()
+        sut = PropertyVisitor(visitTypeDeclarationChildren: true)
       }
 
       context("when there are multiple properties on the same line") {
@@ -258,6 +258,41 @@ final class PropertyVisitorSpec: QuickSpec {
               typeAnnotation: nil,
               modifiers: [.public, .instance])
           ]
+        }
+      }
+
+      context("when visitTypeDeclarationChildren is set to false") {
+        let content = """
+        let hex: Int
+        final struct FakeType {
+          let timestamp: Int
+        }
+        """
+
+        beforeEach {
+          sut = PropertyVisitor(visitTypeDeclarationChildren: false)
+        }
+
+        it("detect properties outside the type declaration") {
+          try sut.walkContent(content)
+          let expected: [PropertyInfo] = [
+            .init(
+              name: "hex",
+              typeAnnotation: "Int",
+              modifiers: [.internal, .instance])
+          ]
+          expect(sut.properties).to(contain(expected))
+        }
+
+        it("does not detect properties within type declaration") {
+          try sut.walkContent(content)
+          let notExpected: [PropertyInfo] = [
+            .init(
+              name: "timestamp",
+              typeAnnotation: "Int",
+              modifiers: [.internal, .instance])
+          ]
+          expect(sut.properties).notTo(contain(notExpected))
         }
       }
 
