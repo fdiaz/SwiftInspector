@@ -273,6 +273,12 @@ final class PropertyVisitorSpec: QuickSpec {
         enum FakeEnum {
           var timestamp: Int { 0 }
         }
+        protocol FakeProtocol {
+          var timestamp: Int { get }
+        }
+        extension FakeProtocol {
+          var timestamp: Int { 0 }
+        }
         """
 
         beforeEach {
