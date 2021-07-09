@@ -59,43 +59,23 @@ public final class PropertyVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    if visitTypeDeclarationChildren {
-      return .visitChildren
-    } else {
-      return .skipChildren
-    }
+    visitTypeDeclarationChildren ? .visitChildren : .skipChildren
   }
 
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    if visitTypeDeclarationChildren {
-      return .visitChildren
-    } else {
-      return .skipChildren
-    }
+    visitTypeDeclarationChildren ? .visitChildren : .skipChildren
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    if visitTypeDeclarationChildren {
-      return .visitChildren
-    } else {
-      return .skipChildren
-    }
+    visitTypeDeclarationChildren ? .visitChildren : .skipChildren
   }
 
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
-    if visitTypeDeclarationChildren {
-      return .visitChildren
-    } else {
-      return .skipChildren
-    }
+    visitTypeDeclarationChildren ? .visitChildren : .skipChildren
   }
 
   public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
-    if visitTypeDeclarationChildren {
-      return .visitChildren
-    } else {
-      return .skipChildren
-    }
+    visitTypeDeclarationChildren ? .visitChildren : .skipChildren
   }
 
   // MARK: Private
