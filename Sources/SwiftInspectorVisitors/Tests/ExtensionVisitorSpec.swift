@@ -110,6 +110,23 @@ final class ExtensionVisitorSpec: QuickSpec {
             expect(extensionInfo?.inheritsFromTypes.map { $0.asSource }) == ["Foo", "Bar"]
           }
         }
+
+        context("with computed properties") {
+          it("finds the inheritance types") {
+            let content = """
+              public extension Foo {
+                var some: Int {
+                  1
+                }
+              }
+              """
+
+            try self.sut.walkContent(content)
+
+            let extensionInfo = self.sut.extensionInfo
+            expect(extensionInfo?.properties.first?.name) == "some"
+          }
+        }
       }
 
       context("visiting a code block with nested declarations") {
