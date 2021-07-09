@@ -33,16 +33,14 @@ final class PropertyVisitorSpec: QuickSpec {
       var sut: PropertyVisitor!
 
       beforeEach {
-        sut = PropertyVisitor(visitTypeDeclarationChildren: true)
+        sut = PropertyVisitor()
       }
 
       context("when there are multiple properties on the same line") {
         let content = """
-        public final class FakeClass {
-          public var thing: String, foo: Int
-          let red, green, blue: Double
-          let seconds: Int, hours, years: Double
-        }
+        public var thing: String, foo: Int
+        let red, green, blue: Double
+        let seconds: Int, hours, years: Double
         """
 
         it("detects properties with different types") {
@@ -101,9 +99,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a static property") {
         let content = """
-        public struct FakeStruct {
-          public static var thing: String = "Hello, World"
-        }
+        public static var thing: String = "Hello, World"
         """
 
         it("detects the property") {
@@ -119,9 +115,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a static property in reverse order") {
         let content = """
-        public enum FakeEnum {
-          static public var thing: String = "Hello, World"
-        }
+        static public var thing: String = "Hello, World"
         """
 
         it("detects the property") {
@@ -137,9 +131,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a private property") {
         let content = """
-        public final class FakeClass {
-          private static var thing: String = "Hello, World"
-        }
+        private static var thing: String = "Hello, World"
         """
 
         it("detects the property") {
@@ -155,9 +147,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a public private(set) property") {
         let content = """
-        public final class FakeClass {
-          public private(set) var thing: String = "Hello, World"
-        }
+        public private(set) var thing: String = "Hello, World"
         """
 
         it("detects the property") {
@@ -173,9 +163,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a public internal(set) property") {
         let content = """
-        public final class FakeClass {
-          public internal(set) var thing: String = "Hello, World"
-        }
+        public internal(set) var thing: String = "Hello, World"
         """
 
         it("detects the property") {
@@ -191,9 +179,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a internal public(set) property") {
         let content = """
-        public final class FakeClass {
-          internal public(set) var thing: String = "Hello, World"
-        }
+        internal public(set) var thing: String = "Hello, World"
         """
 
         it("detects the property") {
@@ -209,9 +195,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a fileprivate property") {
         let content = """
-        public final class FakeClass {
-          fileprivate static var thing: String = "Hello, World"
-        }
+        fileprivate static var thing: String = "Hello, World"
         """
 
         it("detects the property") {
@@ -227,9 +211,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is no type annotation") {
         let content = """
-        public final class FakeClass {
-          private static var thing = "Hello, World"
-        }
+        private static var thing = "Hello, World"
         """
 
         it("detects the property with no type information") {
@@ -245,9 +227,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a property attribute") {
         let content = """
-        public final class FakeClass {
-          @objc public var thing = "Hello, World"
-        }
+        @objc public var thing = "Hello, World"
         """
 
         it("detects the property with no type information") {
@@ -261,7 +241,7 @@ final class PropertyVisitorSpec: QuickSpec {
         }
       }
 
-      context("when visitTypeDeclarationChildren is set to false") {
+      context("when there is a type declaration in content") {
         let content = """
         let hex: Int
         final class FakeClass {
@@ -280,10 +260,6 @@ final class PropertyVisitorSpec: QuickSpec {
           var timestamp: Int { 0 }
         }
         """
-
-        beforeEach {
-          sut = PropertyVisitor(visitTypeDeclarationChildren: false)
-        }
 
         it("detect properties outside the type declaration") {
           try sut.walkContent(content)

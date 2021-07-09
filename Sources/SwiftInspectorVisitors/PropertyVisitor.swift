@@ -27,13 +27,6 @@ import SwiftSyntax
 
 public final class PropertyVisitor: SyntaxVisitor {
 
-  /// Initializes a property visitor.
-  /// - Parameter visitTypeDeclarationChildren: When `true`, this property visitor will visit the children of type declaration nodes.
-  public init(visitTypeDeclarationChildren: Bool = false) {
-    self.visitTypeDeclarationChildren = visitTypeDeclarationChildren
-    super.init()
-  }
-
   /// Information about each of the properties found on the type.
   private(set) var properties: [PropertyInfo] = []
 
@@ -59,28 +52,26 @@ public final class PropertyVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    visitTypeDeclarationChildren ? .visitChildren : .skipChildren
+    .skipChildren
   }
 
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    visitTypeDeclarationChildren ? .visitChildren : .skipChildren
+    .skipChildren
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    visitTypeDeclarationChildren ? .visitChildren : .skipChildren
+    .skipChildren
   }
 
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
-    visitTypeDeclarationChildren ? .visitChildren : .skipChildren
+    .skipChildren
   }
 
   public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
-    visitTypeDeclarationChildren ? .visitChildren : .skipChildren
+    .skipChildren
   }
 
   // MARK: Private
-
-  private let visitTypeDeclarationChildren: Bool
 
   private func findModifiers(from node: VariableDeclSyntax) -> PropertyInfo.Modifier {
     let modifiersString: [String] = node.children
