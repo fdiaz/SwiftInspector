@@ -42,11 +42,11 @@ public final class PropertyVisitor: SyntaxVisitor {
         // where both green and blue are of type Double
         if let typeName = typeName { lastFoundType = typeName }
         properties.append(.init(
-                                name: identifier.identifier.text,
-                                typeAnnotation: lastFoundType,
-                                modifiers: modifier))
+                            name: identifier.identifier.text,
+                            typeAnnotation: lastFoundType,
+                            modifiers: modifier))
+      }
     }
-  }
 
     return .skipChildren
   }
