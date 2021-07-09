@@ -264,8 +264,14 @@ final class PropertyVisitorSpec: QuickSpec {
       context("when visitTypeDeclarationChildren is set to false") {
         let content = """
         let hex: Int
-        final struct FakeType {
+        final class FakeClass {
           let timestamp: Int
+        }
+        struct FakeStruct {
+          let timestamp: Int
+        }
+        enum FakeEnum {
+          var timestamp: Int { 0 }
         }
         """
 
