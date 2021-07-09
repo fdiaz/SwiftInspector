@@ -112,7 +112,7 @@ final class ExtensionVisitorSpec: QuickSpec {
         }
 
         context("with computed properties") {
-          it("finds the inheritance types") {
+          it("finds the properties") {
             let content = """
               public extension Foo {
                 var some: Int {

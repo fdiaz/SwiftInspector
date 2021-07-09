@@ -193,7 +193,7 @@ final class ProtocolVisitorSpec: QuickSpec {
           }
 
           context("with properties") {
-            it("finds the typealias") {
+            it("finds the properties") {
               let content = """
                 public protocol SomeProtocol {
                   var foo: Int { get set }
