@@ -960,6 +960,11 @@ final class NestableTypeVisitorSpec: QuickSpec {
           expect(property?.name) == "someFooFooClassProperty"
         }
 
+        it("does not find a property for FooEnum") {
+          let fooEnum = self.sut.enums.filter { $0.name == "FooEnum" }
+          expect(fooEnum.first?.properties).to(beEmpty())
+        }
+
         it("finds FooEnum.FooFooClass.BarFooFooEnum") {
           let matching = self.sut.enums.filter {
             $0.name == "BarFooFooEnum"

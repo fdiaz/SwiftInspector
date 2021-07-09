@@ -51,6 +51,26 @@ public final class PropertyVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
+  public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+    .skipChildren
+  }
+
+  public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
+    .skipChildren
+  }
+
+  public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
+    .skipChildren
+  }
+
+  public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
+    .skipChildren
+  }
+
+  public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
+    .skipChildren
+  }
+
   // MARK: Private
 
   private func findModifiers(from node: VariableDeclSyntax) -> PropertyInfo.Modifier {
