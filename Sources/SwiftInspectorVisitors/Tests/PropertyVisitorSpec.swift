@@ -38,7 +38,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there are multiple properties on the same line") {
         let content = """
-        public final class FakeType {
+        public final class FakeClass {
           public var thing: String, foo: Int
           let red, green, blue: Double
           let seconds: Int, hours, years: Double
@@ -101,7 +101,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a static property") {
         let content = """
-        public final class FakeType {
+        public struct FakeStruct {
           public static var thing: String = "Hello, World"
         }
         """
@@ -119,7 +119,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a static property in reverse order") {
         let content = """
-        public final class FakeType {
+        public enum FakeEnum {
           static public var thing: String = "Hello, World"
         }
         """
@@ -137,7 +137,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a private property") {
         let content = """
-        public final class FakeType {
+        public final class FakeClass {
           private static var thing: String = "Hello, World"
         }
         """
@@ -155,7 +155,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a public private(set) property") {
         let content = """
-        public final class FakeType {
+        public final class FakeClass {
           public private(set) var thing: String = "Hello, World"
         }
         """
@@ -173,7 +173,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a public internal(set) property") {
         let content = """
-        public final class FakeType {
+        public final class FakeClass {
           public internal(set) var thing: String = "Hello, World"
         }
         """
@@ -191,7 +191,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a internal public(set) property") {
         let content = """
-        public final class FakeType {
+        public final class FakeClass {
           internal public(set) var thing: String = "Hello, World"
         }
         """
@@ -209,7 +209,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a fileprivate property") {
         let content = """
-        public final class FakeType {
+        public final class FakeClass {
           fileprivate static var thing: String = "Hello, World"
         }
         """
@@ -227,7 +227,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is no type annotation") {
         let content = """
-        public final class FakeType {
+        public final class FakeClass {
           private static var thing = "Hello, World"
         }
         """
@@ -245,7 +245,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       context("when there is a property attribute") {
         let content = """
-        public final class FakeType {
+        public final class FakeClass {
           @objc public var thing = "Hello, World"
         }
         """
