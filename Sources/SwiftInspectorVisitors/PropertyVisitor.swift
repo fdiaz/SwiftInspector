@@ -62,8 +62,6 @@ public final class PropertyVisitor: SyntaxVisitor {
     if visitTypeDeclarationChildren {
       return .visitChildren
     } else {
-      // We've encountered a nested type declaration.
-      // Skip it to avoid scanning a child type's properties.
       return .skipChildren
     }
   }
@@ -72,8 +70,6 @@ public final class PropertyVisitor: SyntaxVisitor {
     if visitTypeDeclarationChildren {
       return .visitChildren
     } else {
-      // We've encountered a nested type declaration.
-      // Skip it to avoid scanning a child type's properties.
       return .skipChildren
     }
   }
@@ -82,8 +78,22 @@ public final class PropertyVisitor: SyntaxVisitor {
     if visitTypeDeclarationChildren {
       return .visitChildren
     } else {
-      // We've encountered a nested type declaration.
-      // Skip it to avoid scanning a child type's properties.
+      return .skipChildren
+    }
+  }
+
+  public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
+    if visitTypeDeclarationChildren {
+      return .visitChildren
+    } else {
+      return .skipChildren
+    }
+  }
+
+  public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
+    if visitTypeDeclarationChildren {
+      return .visitChildren
+    } else {
       return .skipChildren
     }
   }
