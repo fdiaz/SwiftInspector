@@ -56,16 +56,18 @@ public final class ProtocolVisitor: SyntaxVisitor {
     let typealiasVisitor = TypealiasVisitor(parentType: .simple(name: name))
     typealiasVisitor.walk(node.members)
 
+    let propertiesVisitor = PropertySyntaxVisitor()
+    propertiesVisitor.walk(node.members)
+
     protocolInfo = ProtocolInfo(
       name: name,
       associatedTypes: associatedtypeVisitor.associatedTypes,
       inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
       genericRequirements: genericRequirementVisitor.genericRequirements,
       modifiers: .init(declarationModifierVisitor.modifiers),
-      innerTypealiases: typealiasVisitor.typealiases)
+      innerTypealiases: typealiasVisitor.typealiases,
+      properties: propertiesVisitor.propertiesInfo)
 
-    // We don't (yet) care about what is in this protocol. When we start looking for
-    // properties on this protocol we'll need to start visiting children.
     return .skipChildren
   }
 
@@ -100,5 +102,5 @@ public struct ProtocolInfo: Codable, Hashable {
   public let genericRequirements: [GenericRequirement]
   public let modifiers: Set<String>
   public let innerTypealiases: [TypealiasInfo]
-  // TODO: also find and expose properties on a protocol
+  public let properties: [PropertyInfo]
 }
