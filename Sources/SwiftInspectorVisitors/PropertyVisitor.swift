@@ -58,6 +58,36 @@ public final class PropertyVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
+  public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+    if visitTypeDeclarationChildren {
+      return .visitChildren
+    } else {
+      // We've encountered a nested type declaration.
+      // Skip it to avoid scanning a child type's properties.
+      return .skipChildren
+    }
+  }
+
+  public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
+    if visitTypeDeclarationChildren {
+      return .visitChildren
+    } else {
+      // We've encountered a nested type declaration.
+      // Skip it to avoid scanning a child type's properties.
+      return .skipChildren
+    }
+  }
+
+  public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
+    if visitTypeDeclarationChildren {
+      return .visitChildren
+    } else {
+      // We've encountered a nested type declaration.
+      // Skip it to avoid scanning a child type's properties.
+      return .skipChildren
+    }
+  }
+
   // MARK: Private
 
   private let visitTypeDeclarationChildren: Bool
