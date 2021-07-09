@@ -29,7 +29,7 @@ public struct NestableTypeInfo: Codable, Hashable {
   public let modifiers: Set<String>
   public let genericParameters: [GenericParameter]
   public let genericRequirements: [GenericRequirement]
-  // TODO: also find and expose properties on this type
+  public let properties: [PropertyInfo]
 }
 
 public typealias ClassInfo = NestableTypeInfo
