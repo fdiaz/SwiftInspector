@@ -94,7 +94,6 @@ public final class ProtocolVisitor: SyntaxVisitor {
 
     // We don't need to visit children because our visitor just did that for us.
     return .skipChildren
-
   }
 
   public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
