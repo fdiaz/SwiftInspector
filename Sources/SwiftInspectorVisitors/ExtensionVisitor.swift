@@ -60,7 +60,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
       declarationModifierVisitor.walk(modifiers)
     }
 
-    let propertyVisitor = PropertySyntaxVisitor()
+    let propertyVisitor = PropertyVisitor()
     propertyVisitor.walk(node.members)
 
     extensionInfo = ExtensionInfo(

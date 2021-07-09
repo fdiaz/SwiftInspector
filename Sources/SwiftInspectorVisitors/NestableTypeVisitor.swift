@@ -159,7 +159,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
         genericRequirementVisitor.walk(genericWhereClause)
       }
 
-      let propertyVisitor = PropertySyntaxVisitor()
+      let propertyVisitor = PropertyVisitor()
       propertyVisitor.walk(node)
 
       topLevelDeclaration = topLevelDeclarationCreator(

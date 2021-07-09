@@ -56,7 +56,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
     let typealiasVisitor = TypealiasVisitor(parentType: .simple(name: name))
     typealiasVisitor.walk(node.members)
 
-    let propertiesVisitor = PropertySyntaxVisitor()
+    let propertiesVisitor = PropertyVisitor()
     propertiesVisitor.walk(node.members)
 
     protocolInfo = ProtocolInfo(

@@ -27,13 +27,13 @@ import Nimble
 
 @testable import SwiftInspectorVisitors
 
-final class PropertySyntaxVisitorSpec: QuickSpec {
+final class PropertyVisitorSpec: QuickSpec {
   override func spec() {
     describe("visit(_:)") {
-      var sut: PropertySyntaxVisitor!
+      var sut: PropertyVisitor!
 
       beforeEach {
-        sut = PropertySyntaxVisitor()
+        sut = PropertyVisitor()
       }
 
       context("when there are multiple properties on the same line") {

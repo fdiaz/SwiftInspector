@@ -23,9 +23,9 @@
 import Foundation
 import SwiftSyntax
 
-// MARK: - PropertySyntaxVisitor
+// MARK: - PropertyVisitor
 
-public final class PropertySyntaxVisitor: SyntaxVisitor {
+public final class PropertyVisitor: SyntaxVisitor {
 
   /// Information about each of the properties found on the type.
   private(set) var propertiesInfo: [PropertyInfo] = []
