@@ -160,7 +160,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
       }
 
       let propertyVisitor = PropertyVisitor()
-      propertyVisitor.walk(node)
+      propertyVisitor.walk(node.members)
 
       topLevelDeclaration = topLevelDeclarationCreator(
         .init(

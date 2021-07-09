@@ -30,6 +30,7 @@ protocol NestableDeclSyntax: SyntaxProtocol {
   var inheritanceClause: TypeInheritanceClauseSyntax? { get }
   var genericParameterClause: GenericParameterClauseSyntax? { get }
   var genericWhereClause: GenericWhereClauseSyntax? { get }
+  var members: MemberDeclBlockSyntax { get }
 }
 
 extension ClassDeclSyntax: NestableDeclSyntax {}
