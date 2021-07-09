@@ -26,7 +26,17 @@ import SwiftSyntax
 
 public final class ProtocolVisitor: SyntaxVisitor {
 
-  public private(set) var protocolInfo: ProtocolInfo?
+  public var protocolInfo: ProtocolInfo? {
+    guard let name = name else { return nil }
+    return ProtocolInfo(
+      name: name,
+      associatedTypes: associatedtypes,
+      inheritsFromTypes: inheritsFromTypes ?? [],
+      genericRequirements: genericRequirements ?? [],
+      modifiers: modifiers ?? .init(),
+      innerTypealiases: typealiases,
+      properties: properties)
+  }
 
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
 
@@ -35,40 +45,27 @@ public final class ProtocolVisitor: SyntaxVisitor {
       return .skipChildren
     }
     let name = node.identifier.text
-
-    let associatedtypeVisitor = AssociatedtypeVisitor()
-    associatedtypeVisitor.walk(node.members)
+    self.name = name
+    parentType = .simple(name: name)
 
     let typeInheritanceVisitor = TypeInheritanceVisitor()
     if let inheritanceClause = node.inheritanceClause {
       typeInheritanceVisitor.walk(inheritanceClause)
+      inheritsFromTypes = typeInheritanceVisitor.inheritsFromTypes
     }
     let genericRequirementVisitor = GenericRequirementVisitor()
     if let genericWhereClause = node.genericWhereClause {
       genericRequirementVisitor.walk(genericWhereClause)
+      genericRequirements = genericRequirementVisitor.genericRequirements
     }
 
     let declarationModifierVisitor = DeclarationModifierVisitor()
     if let modifiers = node.modifiers {
       declarationModifierVisitor.walk(modifiers)
+      self.modifiers = .init(declarationModifierVisitor.modifiers)
     }
 
-    let typealiasVisitor = TypealiasVisitor(parentType: .simple(name: name))
-    typealiasVisitor.walk(node.members)
-
-    let propertiesVisitor = PropertyVisitor()
-    propertiesVisitor.walk(node.members)
-
-    protocolInfo = ProtocolInfo(
-      name: name,
-      associatedTypes: associatedtypeVisitor.associatedTypes,
-      inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
-      genericRequirements: genericRequirementVisitor.genericRequirements,
-      modifiers: .init(declarationModifierVisitor.modifiers),
-      innerTypealiases: typealiasVisitor.typealiases,
-      properties: propertiesVisitor.properties)
-
-    return .skipChildren
+    return .visitChildren
   }
 
   public override func visitPost(_ node: ProtocolDeclSyntax) {
@@ -90,9 +87,45 @@ public final class ProtocolVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
+  public override func visit(_ node: AssociatedtypeDeclSyntax) -> SyntaxVisitorContinueKind {
+    let associatedtypeVisitor = AssociatedtypeVisitor()
+    associatedtypeVisitor.walk(node)
+    associatedtypes.append(contentsOf: associatedtypeVisitor.associatedTypes)
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+
+  }
+
+  public override func visit(_ node: TypealiasDeclSyntax) -> SyntaxVisitorContinueKind {
+    let typealiasVisitor = TypealiasVisitor(parentType: parentType)
+    typealiasVisitor.walk(node)
+    typealiases.append(contentsOf: typealiasVisitor.typealiases)
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+  }
+
+  public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
+    let propertiesVisitor = PropertyVisitor()
+    propertiesVisitor.walk(node)
+    properties.append(contentsOf: propertiesVisitor.properties)
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+  }
+
   // MARK: Private
 
   private var hasFinishedParsingProtocol = false
+  private var name: String?
+  private var modifiers: Set<String>?
+  private var inheritsFromTypes: [TypeDescription]?
+  private var genericRequirements: [GenericRequirement]?
+  private var associatedtypes: [AssociatedtypeInfo] = []
+  private var typealiases: [TypealiasInfo] = []
+  private var properties: [PropertyInfo] = []
+  private var parentType: TypeDescription?
 }
 
 public struct ProtocolInfo: Codable, Hashable {
