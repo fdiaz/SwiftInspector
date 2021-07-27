@@ -145,9 +145,9 @@ final class PropertyVisitorSpec: QuickSpec {
         }
       }
 
-      context("when there is a public private(set) property") {
+      context("when there is a open private(set) property") {
         let content = """
-        public private(set) var thing: String = "Hello, World"
+        open private(set) var thing: String = "Hello, World"
         """
 
         it("detects the property") {
@@ -156,7 +156,7 @@ final class PropertyVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeAnnotation: "String",
-              modifiers: [.public, .privateSet, .instance])
+              modifiers: [.open, .privateSet, .instance])
           ]
         }
       }

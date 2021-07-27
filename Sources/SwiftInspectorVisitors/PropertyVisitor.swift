@@ -98,7 +98,8 @@ public final class PropertyVisitor: SyntaxVisitor {
     }
 
     // If there are no explicit modifiers, this is an internal property
-    if !modifier.contains(.public) &&
+    if !modifier.contains(.open) &&
+        !modifier.contains(.public) &&
         !modifier.contains(.fileprivate) &&
         !modifier.contains(.private)
     {
@@ -134,17 +135,18 @@ public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
     public let rawValue: Int
 
     // general accessors
-    public static let `internal` = Modifier(rawValue: 1 << 0)
-    public static let `public` = Modifier(rawValue: 1 << 1)
-    public static let `private` = Modifier(rawValue: 1 << 2)
-    public static let `fileprivate` = Modifier(rawValue: 1 << 3)
+    public static let `open` = Modifier(rawValue: 1 << 0)
+    public static let `internal` = Modifier(rawValue: 1 << 1)
+    public static let `public` = Modifier(rawValue: 1 << 2)
+    public static let `private` = Modifier(rawValue: 1 << 3)
+    public static let `fileprivate` = Modifier(rawValue: 1 << 4)
     // set accessors
-    public static let privateSet = Modifier(rawValue: 1 << 4)
-    public static let internalSet = Modifier(rawValue: 1 << 5)
-    public static let publicSet = Modifier(rawValue: 1 << 6)
+    public static let privateSet = Modifier(rawValue: 1 << 5)
+    public static let internalSet = Modifier(rawValue: 1 << 6)
+    public static let publicSet = Modifier(rawValue: 1 << 7)
     // access control
-    public static let `instance` = Modifier(rawValue: 1 << 7)
-    public static let `static` = Modifier(rawValue: 1 << 8)
+    public static let `instance` = Modifier(rawValue: 1 << 8)
+    public static let `static` = Modifier(rawValue: 1 << 9)
 
     public init(rawValue: Int)  {
       self.rawValue = rawValue
@@ -152,6 +154,7 @@ public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
 
     public init(stringValue: String) {
       switch stringValue {
+      case "open": self = .open
       case "public": self = .public
       case "private": self = .private
       case "fileprivate": self = .fileprivate
