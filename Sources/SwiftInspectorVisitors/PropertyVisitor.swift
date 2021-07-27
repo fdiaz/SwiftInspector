@@ -33,17 +33,17 @@ public final class PropertyVisitor: SyntaxVisitor {
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     let modifier = findModifiers(from: node)
 
-    var lastFoundType: String?
+    var lastFoundType: TypeDescription?
     node.bindings.reversed().forEach { binding in
       if let identifier = binding.pattern.as(IdentifierPatternSyntax.self) {
-        let typeName = findTypeName(from: binding.typeAnnotation)
+        let typeName = findTypeDescription(from: binding.typeAnnotation)
         // If we find a type name on the n element, but n-1 doesn't have an explicit type name, n-1 has the same type as n
         // e.g. let red: Int, green, blue: Double
         // where both green and blue are of type Double
         if let typeName = typeName { lastFoundType = typeName }
         properties.append(.init(
                             name: identifier.identifier.text,
-                            typeAnnotation: lastFoundType,
+                            typeDescription: lastFoundType,
                             modifiers: modifier))
       }
     }
@@ -98,7 +98,8 @@ public final class PropertyVisitor: SyntaxVisitor {
     }
 
     // If there are no explicit modifiers, this is an internal property
-    if !modifier.contains(.public) &&
+    if !modifier.contains(.open) &&
+        !modifier.contains(.public) &&
         !modifier.contains(.fileprivate) &&
         !modifier.contains(.private)
     {
@@ -113,17 +114,17 @@ public final class PropertyVisitor: SyntaxVisitor {
     return modifier
   }
 
-  private func findTypeName(from node: TypeAnnotationSyntax?) -> String? {
+  private func findTypeDescription(from node: TypeAnnotationSyntax?) -> TypeDescription? {
     guard
       let typeAnnotation = node,
-      let simpleTypeIdentifier = typeAnnotation.type.as(SimpleTypeIdentifierSyntax.self) else {
+      let typeSyntax = typeAnnotation.type.as(TypeSyntax.self) else {
       // No type annotation was found.
       // e.g.:
       // public let thing: String = "Hello" has a type annotation, String which makes this easy
       // public let thing = "Hello" does not have a type annotation.
       return nil
     }
-    return simpleTypeIdentifier.name.text
+    return typeSyntax.typeDescription
   }
 }
 
@@ -134,17 +135,18 @@ public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
     public let rawValue: Int
 
     // general accessors
-    public static let `internal` = Modifier(rawValue: 1 << 0)
-    public static let `public` = Modifier(rawValue: 1 << 1)
-    public static let `private` = Modifier(rawValue: 1 << 2)
-    public static let `fileprivate` = Modifier(rawValue: 1 << 3)
+    public static let `open` = Modifier(rawValue: 1 << 0)
+    public static let `internal` = Modifier(rawValue: 1 << 1)
+    public static let `public` = Modifier(rawValue: 1 << 2)
+    public static let `private` = Modifier(rawValue: 1 << 3)
+    public static let `fileprivate` = Modifier(rawValue: 1 << 4)
     // set accessors
-    public static let privateSet = Modifier(rawValue: 1 << 4)
-    public static let internalSet = Modifier(rawValue: 1 << 5)
-    public static let publicSet = Modifier(rawValue: 1 << 6)
+    public static let privateSet = Modifier(rawValue: 1 << 5)
+    public static let internalSet = Modifier(rawValue: 1 << 6)
+    public static let publicSet = Modifier(rawValue: 1 << 7)
     // access control
-    public static let `instance` = Modifier(rawValue: 1 << 7)
-    public static let `static` = Modifier(rawValue: 1 << 8)
+    public static let `instance` = Modifier(rawValue: 1 << 8)
+    public static let `static` = Modifier(rawValue: 1 << 9)
 
     public init(rawValue: Int)  {
       self.rawValue = rawValue
@@ -152,6 +154,7 @@ public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
 
     public init(stringValue: String) {
       switch stringValue {
+      case "open": self = .open
       case "public": self = .public
       case "private": self = .private
       case "fileprivate": self = .fileprivate
@@ -167,12 +170,12 @@ public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
 
   /// The name of the property
   public let name: String
-  /// The Type annotation of the property if it's present
-  public let typeAnnotation: String?
+  /// The type of the property if it's present
+  public let typeDescription: TypeDescription?
   /// Modifier set for this type
   public let modifiers: Modifier
 
   public var debugDescription: String {
-    "\(modifiers.rawValue) \(name) \(typeAnnotation ?? "")"
+    "\(modifiers.rawValue) \(name) \(typeDescription?.asSource ?? "")"
   }
 }

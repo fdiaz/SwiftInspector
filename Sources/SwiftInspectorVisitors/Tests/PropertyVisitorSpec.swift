@@ -48,11 +48,11 @@ final class PropertyVisitorSpec: QuickSpec {
           let expected: [PropertyInfo] = [
             .init(
               name: "thing",
-              typeAnnotation: "String",
+              typeDescription: .simple(name: "String"),
               modifiers: [.public, .instance]),
             .init(
               name: "foo",
-              typeAnnotation: "Int",
+              typeDescription: .simple(name: "Int"),
               modifiers: [.public, .instance])
           ]
           expect(sut.properties).to(contain(expected))
@@ -63,15 +63,15 @@ final class PropertyVisitorSpec: QuickSpec {
           let expected: [PropertyInfo] = [
             .init(
               name: "green",
-              typeAnnotation: "Double",
+              typeDescription: .simple(name: "Double"),
               modifiers: [.internal, .instance]),
             .init(
               name: "red",
-              typeAnnotation: "Double",
+              typeDescription: .simple(name: "Double"),
               modifiers: [.internal, .instance]),
               .init(
                 name: "blue",
-                typeAnnotation: "Double",
+                typeDescription: .simple(name: "Double"),
                 modifiers: [.internal, .instance])
           ]
           expect(sut.properties).to(contain(expected))
@@ -82,15 +82,15 @@ final class PropertyVisitorSpec: QuickSpec {
           let expected: [PropertyInfo] = [
             .init(
               name: "seconds",
-              typeAnnotation: "Int",
+              typeDescription: .simple(name: "Int"),
               modifiers: [.internal, .instance]),
             .init(
               name: "hours",
-              typeAnnotation: "Double",
+              typeDescription: .simple(name: "Double"),
               modifiers: [.internal, .instance]),
             .init(
               name: "years",
-              typeAnnotation: "Double",
+              typeDescription: .simple(name: "Double"),
               modifiers: [.internal, .instance])
           ]
           expect(sut.properties).to(contain(expected))
@@ -107,7 +107,7 @@ final class PropertyVisitorSpec: QuickSpec {
           expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
-              typeAnnotation: "String",
+              typeDescription: .simple(name: "String"),
               modifiers: [.public, .static])
           ]
         }
@@ -123,7 +123,7 @@ final class PropertyVisitorSpec: QuickSpec {
           expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
-              typeAnnotation: "String",
+              typeDescription: .simple(name: "String"),
               modifiers: [.public, .static])
           ]
         }
@@ -139,15 +139,15 @@ final class PropertyVisitorSpec: QuickSpec {
           expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
-              typeAnnotation: "String",
+              typeDescription: .simple(name: "String"),
               modifiers: [.private, .static])
           ]
         }
       }
 
-      context("when there is a public private(set) property") {
+      context("when there is a open private(set) property") {
         let content = """
-        public private(set) var thing: String = "Hello, World"
+        open private(set) var thing: String = "Hello, World"
         """
 
         it("detects the property") {
@@ -155,8 +155,8 @@ final class PropertyVisitorSpec: QuickSpec {
           expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
-              typeAnnotation: "String",
-              modifiers: [.public, .privateSet, .instance])
+              typeDescription: .simple(name: "String"),
+              modifiers: [.open, .privateSet, .instance])
           ]
         }
       }
@@ -171,7 +171,7 @@ final class PropertyVisitorSpec: QuickSpec {
           expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
-              typeAnnotation: "String",
+              typeDescription: .simple(name: "String"),
               modifiers: [.public, .internalSet, .instance])
           ]
         }
@@ -187,7 +187,7 @@ final class PropertyVisitorSpec: QuickSpec {
           expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
-              typeAnnotation: "String",
+              typeDescription: .simple(name: "String"),
               modifiers: [.publicSet, .internal, .instance])
           ]
         }
@@ -203,7 +203,7 @@ final class PropertyVisitorSpec: QuickSpec {
           expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
-              typeAnnotation: "String",
+              typeDescription: .simple(name: "String"),
               modifiers: [.fileprivate, .static])
           ]
         }
@@ -219,7 +219,7 @@ final class PropertyVisitorSpec: QuickSpec {
           expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
-              typeAnnotation: nil,
+              typeDescription: nil,
               modifiers: [.private, .static])
           ]
         }
@@ -235,7 +235,7 @@ final class PropertyVisitorSpec: QuickSpec {
           expect(sut.properties) == [
             PropertyInfo(
               name: "thing",
-              typeAnnotation: nil,
+              typeDescription: nil,
               modifiers: [.public, .instance])
           ]
         }
@@ -266,7 +266,7 @@ final class PropertyVisitorSpec: QuickSpec {
           let expected: [PropertyInfo] = [
             .init(
               name: "hex",
-              typeAnnotation: "Int",
+              typeDescription: .simple(name: "Int"),
               modifiers: [.internal, .instance])
           ]
           expect(sut.properties).to(contain(expected))
@@ -277,7 +277,7 @@ final class PropertyVisitorSpec: QuickSpec {
           let notExpected: [PropertyInfo] = [
             .init(
               name: "timestamp",
-              typeAnnotation: "Int",
+              typeDescription: .simple(name: "Int"),
               modifiers: [.internal, .instance])
           ]
           expect(sut.properties).notTo(contain(notExpected))
