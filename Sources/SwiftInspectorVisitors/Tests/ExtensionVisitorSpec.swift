@@ -35,6 +35,11 @@ final class ExtensionVisitorSpec: QuickSpec {
   override func spec() {
     beforeEach {
       self.sut = ExtensionVisitor()
+      AssertionFailure.postNotification = true
+    }
+
+    afterEach {
+      AssertionFailure.postNotification = false
     }
 
     describe("visit(_:)") {
@@ -310,7 +315,7 @@ final class ExtensionVisitorSpec: QuickSpec {
             // The ExtensionVisitor is only meant to be used over a single extension.
             // Using a ExtensionVisitor over a block that has multiple top-level
             // extension is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
 
@@ -324,7 +329,7 @@ final class ExtensionVisitorSpec: QuickSpec {
             // The ExtensionVisitor is only meant to be used over a single extension.
             // Using a ExtensionVisitor over a block that has a top-level struct
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
 
@@ -338,7 +343,7 @@ final class ExtensionVisitorSpec: QuickSpec {
             // The ExtensionVisitor is only meant to be used over a single extension.
             // Using a ExtensionVisitor over a block that has a top-level class
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
 
@@ -352,7 +357,7 @@ final class ExtensionVisitorSpec: QuickSpec {
             // The ExtensionVisitor is only meant to be used over a single extension.
             // Using a ExtensionVisitor over a block that has a top-level enum
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
       }
@@ -366,7 +371,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           // The ExtensionVisitor is only meant to be used over a single extension.
           // Using a ExtensionVisitor over a block that has a top-level struct
           // is API misuse.
-          expect(try self.sut.walkContent(content)).to(throwAssertion())
+          expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
         }
       }
 
@@ -379,7 +384,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           // The ExtensionVisitor is only meant to be used over a single extension.
           // Using a ExtensionVisitor over a block that has a top-level class
           // is API misuse.
-          expect(try self.sut.walkContent(content)).to(throwAssertion())
+          expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
         }
       }
 
@@ -392,7 +397,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           // The ExtensionVisitor is only meant to be used over a single extension.
           // Using a ExtensionVisitor over a block that has a top-level enum
           // is API misuse.
-          expect(try self.sut.walkContent(content)).to(throwAssertion())
+          expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
         }
       }
 
@@ -405,7 +410,7 @@ final class ExtensionVisitorSpec: QuickSpec {
           // The ExtensionVisitor is only meant to be used over a single extension.
           // Using a ExtensionVisitor over a block that has a top-level protocol
           // is API misuse.
-          expect(try self.sut.walkContent(content)).to(throwAssertion())
+          expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
         }
       }
     }

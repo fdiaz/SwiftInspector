@@ -41,7 +41,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
 
     guard !hasFinishedParsingProtocol else {
-      assertionFailure("Encountered more than one top-level protocol. This is a usage error: a single ProtocolVisitor instance should start walking only over a node of type `ProtocolDeclSyntax`")
+      assertionFailureOrPostNotification("Encountered more than one top-level protocol. This is a usage error: a single ProtocolVisitor instance should start walking only over a node of type `ProtocolDeclSyntax`")
       return .skipChildren
     }
     let name = node.identifier.text
@@ -73,17 +73,17 @@ public final class ProtocolVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    assertionFailure("Encountered a top-level struct. This is a usage error: a single ProtocolVisitor instance should start walking only over a node of type `ProtocolDeclSyntax`")
+    assertionFailureOrPostNotification("Encountered a top-level struct. This is a usage error: a single ProtocolVisitor instance should start walking only over a node of type `ProtocolDeclSyntax`")
     return .skipChildren
   }
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    assertionFailure("Encountered a top-level class. This is a usage error: a single ProtocolVisitor instance should start walking only over a node of type `ProtocolDeclSyntax`")
+    assertionFailureOrPostNotification("Encountered a top-level class. This is a usage error: a single ProtocolVisitor instance should start walking only over a node of type `ProtocolDeclSyntax`")
     return .skipChildren
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    assertionFailure("Encountered a top-level enum. This is a usage error: a single ProtocolVisitor instance should start walking only over a node of type `ProtocolDeclSyntax`")
+    assertionFailureOrPostNotification("Encountered a top-level enum. This is a usage error: a single ProtocolVisitor instance should start walking only over a node of type `ProtocolDeclSyntax`")
     return .skipChildren
   }
 

@@ -35,6 +35,11 @@ final class NestableTypeVisitorSpec: QuickSpec {
   override func spec() {
     beforeEach {
       self.sut = NestableTypeVisitor()
+      AssertionFailure.postNotification = true
+    }
+
+    afterEach {
+      AssertionFailure.postNotification = false
     }
 
     describe("visit(_:)") {
@@ -988,7 +993,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The ClassVisitor is only meant to be used over a single class.
             // Using a ClassVisitor over a block that has multiple top-level
             // classes is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
 
@@ -1002,7 +1007,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The ClassVisitor is only meant to be used over a single class.
             // Using a ClassVisitor over a block that has a top-level struct
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
 
@@ -1016,7 +1021,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The ClassVisitor is only meant to be used over a single class.
             // Using a ClassVisitor over a block that has a top-level enum
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
       }
@@ -1032,7 +1037,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has multiple top-level
             // structs is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
 
@@ -1046,7 +1051,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has a top-level class
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
 
@@ -1060,7 +1065,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has a top-level enum
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
       }
@@ -1076,7 +1081,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has multiple top-level
             // classes is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
 
@@ -1090,7 +1095,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has a top-level struct
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
 
@@ -1104,7 +1109,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             // The NestableTypeVisitor is only meant to be used over a single nestable type.
             // Using a NestableTypeVisitor over a block that has a top-level class
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
       }
@@ -1119,7 +1124,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
         // The NestableTypeVisitor is only meant to be used over a single nestable type.
         // Using a NestableTypeVisitor over a block that has a top-level protocol
         // is API misuse.
-        expect(try self.sut.walkContent(content)).to(throwAssertion())
+        expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
       }
     }
 
@@ -1132,7 +1137,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
         // The NestableTypeVisitor is only meant to be used over a single nestable type.
         // Using a NestableTypeVisitor over a block that has an extension
         // is API misuse.
-        expect(try self.sut.walkContent(content)).to(throwAssertion())
+        expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
       }
     }
 
@@ -1145,7 +1150,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
         // The NestableTypeVisitor is only meant to be used over a single nestable type.
         // Using a NestableTypeVisitor over a block that has a top-level typealias
         // is API misuse.
-        expect(try self.sut.walkContent(content)).to(throwAssertion())
+        expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
       }
     }
   }

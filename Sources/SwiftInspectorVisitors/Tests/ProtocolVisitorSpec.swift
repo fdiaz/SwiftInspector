@@ -35,6 +35,11 @@ final class ProtocolVisitorSpec: QuickSpec {
   override func spec() {
     beforeEach {
       self.sut = ProtocolVisitor()
+      AssertionFailure.postNotification = true
+    }
+
+    afterEach {
+      AssertionFailure.postNotification = false
     }
 
     describe("visit(_:)") {
@@ -221,7 +226,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               // The ProtocolVisitor is only meant to be used over a single protocol.
               // Using a ProtocolVisitor over a block that has multiple top-level
               // protocols is API misuse.
-              expect(try self.sut.walkContent(content)).to(throwAssertion())
+              expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
             }
           }
 
@@ -235,7 +240,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               // The ProtocolVisitor is only meant to be used over a single protocol.
               // Using a ProtocolVisitor over a block that has a top-level class
               // is API misuse.
-              expect(try self.sut.walkContent(content)).to(throwAssertion())
+              expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
             }
           }
 
@@ -249,7 +254,7 @@ final class ProtocolVisitorSpec: QuickSpec {
               // The ProtocolVisitor is only meant to be used over a single protocol.
               // Using a ProtocolVisitor over a block that has a top-level enum
               // is API misuse.
-              expect(try self.sut.walkContent(content)).to(throwAssertion())
+              expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
             }
           }
         }
@@ -263,7 +268,7 @@ final class ProtocolVisitorSpec: QuickSpec {
             // The ProtocolVisitor is only meant to be used over a single protocol.
             // Using a ProtocolVisitor over a block that has a top-level class
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
 
@@ -276,7 +281,7 @@ final class ProtocolVisitorSpec: QuickSpec {
             // The ProtocolVisitor is only meant to be used over a single protocol.
             // Using a ProtocolVisitor over a block that has a top-level class
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
 
@@ -289,7 +294,7 @@ final class ProtocolVisitorSpec: QuickSpec {
             // The ProtocolVisitor is only meant to be used over a single protocol.
             // Using a ProtocolVisitor over a block that has a top-level enum
             // is API misuse.
-            expect(try self.sut.walkContent(content)).to(throwAssertion())
+            expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
           }
         }
       }

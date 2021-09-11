@@ -41,7 +41,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
   public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
 
     guard !hasFinishedParsingExtension else {
-      assertionFailure("Encountered more than one top-level extension. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
+      assertionFailureOrPostNotification("Encountered more than one top-level extension. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
       return .skipChildren
     }
 
@@ -90,7 +90,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
 
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
     // We've encountered a protocol declaration, which can only be defined at the top-level. Something is wrong.
-    assertionFailure("Encountered a protocol. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
+    assertionFailureOrPostNotification("Encountered a protocol. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
     return .skipChildren
   }
 
@@ -119,7 +119,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
 
     } else {
       // We've encountered a class declaration before encountering an extension declaration. Something is wrong.
-      assertionFailure("Encountered a top-level declaration. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
+      assertionFailureOrPostNotification("Encountered a top-level declaration. This is a usage error: a single ExtensionVisitor instance should start walking only over a node of type `ExtensionDeclSyntax`")
     }
     return .skipChildren
   }
