@@ -184,6 +184,41 @@ final class TypeDescriptionSpec: QuickSpec {
     }
     """.data(using: .utf8)!
 
+  let closureTestCase = TypeDescription.closure(
+    arguments: [
+      .simple(name: "Foo"),
+      .optional(.simple(name: "Bar"))
+    ],
+    doesThrow: true,
+    returnType: .simple(name: "FooBar"))
+  let closureTestCaseData = """
+    {
+      "caseDescription": "closure",
+      "typeDescriptions": [
+        {
+          "caseDescription": "simple",
+          "text": "Foo",
+          "typeDescriptions": []
+        },
+        {
+          "caseDescription": "optional",
+          "typeDescription":
+          {
+            "caseDescription": "simple",
+            "text": "Bar",
+            "typeDescriptions": []
+          }
+        }
+      ],
+      "text": "throws",
+      "typeDescription": {
+        "caseDescription": "simple",
+        "text": "FooBar",
+        "typeDescriptions": []
+      }
+    }
+    """.data(using: .utf8)!
+
   let unknownTestCase = TypeDescription.unknown(text: "Foo")
   let unknownTestCaseData = """
     {
@@ -243,6 +278,12 @@ final class TypeDescriptionSpec: QuickSpec {
       context("that represents a tuple type") {
         it("decodes the encoded type description") {
           expect(try decoder.decode(TypeDescription.self, from: self.tupleTestCaseData)) == self.tupleTestCase
+        }
+      }
+
+      context("that represents a closure type") {
+        it("decodes the encoded type description") {
+          expect(try decoder.decode(TypeDescription.self, from: self.closureTestCaseData)) == self.closureTestCase
         }
       }
 
@@ -316,6 +357,12 @@ final class TypeDescriptionSpec: QuickSpec {
       context("utilizing a tuple type") {
         it("successfully decodes the data") {
           expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.tupleTestCase))) == self.tupleTestCase
+        }
+      }
+
+      context("utilizing a closure type") {
+        it("successfully decodes the data") {
+          expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.closureTestCase))) == self.closureTestCase
         }
       }
 
@@ -684,6 +731,51 @@ final class TypeDescriptionSpec: QuickSpec {
           expect(visitor?.classRestrictionIdentifier?.asSource) == "AnyObject"
         }
       }
+
+      context("when called on a TypeSyntax node representing a FunctionTypeSyntax") {
+        final class FunctionTypeSyntaxVisitor: SyntaxVisitor {
+          var functionIdentifier: TypeDescription?
+          // Note: ideally we'd visit a node of type FunctionTypeSyntax
+          // but there's no way to get a TypeSyntax from an object of that type.
+          override func visit(_ node: TypeAnnotationSyntax) -> SyntaxVisitorContinueKind {
+            functionIdentifier = node.type.as(TypeSyntax.self)?.typeDescription
+            return .skipChildren
+          }
+        }
+
+        context("on a function that does not throw") {
+          var visitor: FunctionTypeSyntaxVisitor!
+          beforeEach {
+            let content = """
+                var test: (Int, Double) -> String
+                """
+
+            visitor = FunctionTypeSyntaxVisitor()
+            try? visitor.walkContent(content)
+          }
+
+          it("Finds the type") {
+            expect(visitor?.functionIdentifier?.asSource) == "(Int, Double) -> String"
+          }
+        }
+
+        context("on a function that throws") {
+          var visitor: FunctionTypeSyntaxVisitor!
+          beforeEach {
+            let content = """
+                var test: (Int, Double) throws -> String
+                """
+
+            visitor = FunctionTypeSyntaxVisitor()
+            try? visitor.walkContent(content)
+          }
+
+          it("Finds that the type throws") {
+            expect(visitor?.functionIdentifier?.asSource) == "(Int, Double) throws -> String"
+          }
+        }
+      }
+
     }
 
     describe("asSource") {

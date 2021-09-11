@@ -42,6 +42,8 @@ public enum TypeDescription: Codable, Hashable {
   indirect case dictionary(key: TypeDescription, value: TypeDescription)
   /// A tuple. e.g. (Int, String)
   indirect case tuple([TypeDescription])
+  /// A closure. e.g. (Int, Double) throws -> String
+  indirect case closure(arguments: [TypeDescription], doesThrow: Bool, returnType: TypeDescription)
   /// A type that can't be represented by the above cases.
   case unknown(text: String)
 
@@ -74,7 +76,6 @@ public enum TypeDescription: Codable, Hashable {
    * Note that we do not yet support the following syntax types:
    * SomeTypeSyntax
    * MetatypeTypeSyntax
-   * FunctionTypeSyntax
    * AttributedTypeSyntax
    * UnknownTypeSyntax
    *
@@ -109,6 +110,8 @@ public enum TypeDescription: Codable, Hashable {
       return "Dictionary<\(key.asSource), \(value.asSource)>"
     case let .tuple(types):
       return "(\(types.map { $0.asSource }.joined(separator: ", ")))"
+    case let .closure(arguments, doesThrow, returnType):
+      return "(\(arguments.map { $0.asSource }.joined(separator: ", ")))\(doesThrow ? " throws" : "") -> \(returnType.asSource)"
     case let .unknown(text):
       return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -158,6 +161,12 @@ public enum TypeDescription: Codable, Hashable {
       let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
       self = .tuple(typeDescriptions)
 
+    case Self.closureDescription:
+      let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
+      let text = try values.decodeIfPresent(String.self, forKey: .text)
+      let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
+      self = .closure(arguments: typeDescriptions, doesThrow: text == "throws", returnType: typeDescription)
+
     default:
       throw CodingError.unknownCase
     }
@@ -186,11 +195,17 @@ public enum TypeDescription: Codable, Hashable {
     case let .dictionary(key, value):
       try container.encode(key, forKey: .dictionaryKey)
       try container.encode(value, forKey: .dictionaryValue)
+    case let .closure(arguments, doesThrow, returnType):
+      try container.encode(arguments, forKey: .typeDescriptions)
+      if doesThrow {
+        try container.encode("throws", forKey: .text)
+      }
+      try container.encode(returnType, forKey: .typeDescription)
     }
   }
 
   enum CodingKeys: String, CodingKey {
-    /// The value for this key is the case encoded as a string.
+    /// The value for this key is the case encoded as a String.
     case caseDescription
     /// The value for this key is an associated value of type String
     case text
@@ -226,6 +241,8 @@ public enum TypeDescription: Codable, Hashable {
       return Self.dictionaryDescription
     case .tuple:
       return Self.tupleDescription
+    case .closure:
+      return Self.closureDescription
     case .unknown:
       return Self.unknownDescription
     }
@@ -239,6 +256,7 @@ public enum TypeDescription: Codable, Hashable {
   private static let arrayDescription = "array"
   private static let dictionaryDescription = "dictionary"
   private static let tupleDescription = "tuple"
+  private static let closureDescription = "closure"
   private static let unknownDescription = "unknown"
 }
 
@@ -292,6 +310,12 @@ extension TypeSyntax {
       // A class restriction is the same as requiring inheriting from AnyObject:
       // https://forums.swift.org/t/class-only-protocols-class-vs-anyobject/11507/4
       return .simple(name: "AnyObject")
+
+    } else if let typeIdentifier = self.as(FunctionTypeSyntax.self) {
+      return .closure(
+        arguments: typeIdentifier.arguments.map { $0.type.typeDescription },
+        doesThrow: typeIdentifier.throwsOrRethrowsKeyword != nil,
+        returnType: typeIdentifier.returnType.typeDescription)
 
     } else {
       assertionFailure("TypeSyntax of unexpected type. Defaulting to `description`.")
