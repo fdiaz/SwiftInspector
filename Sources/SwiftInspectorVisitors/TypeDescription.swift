@@ -162,10 +162,10 @@ public enum TypeDescription: Codable, Hashable {
       self = .tuple(typeDescriptions)
 
     case Self.closureDescription:
-      let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
-      let text = try values.decodeIfPresent(String.self, forKey: .text)
-      let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
-      self = .closure(arguments: typeDescriptions, doesThrow: text == "throws", returnType: typeDescription)
+      let typeDescriptions = try values.decode([Self].self, forKey: .closureArguments)
+      let doesThrow = try values.decode(Bool.self, forKey: .closureThrows)
+      let typeDescription = try values.decode(Self.self, forKey: .closureReturn)
+      self = .closure(arguments: typeDescriptions, doesThrow: doesThrow, returnType: typeDescription)
 
     default:
       throw CodingError.unknownCase
@@ -196,11 +196,9 @@ public enum TypeDescription: Codable, Hashable {
       try container.encode(key, forKey: .dictionaryKey)
       try container.encode(value, forKey: .dictionaryValue)
     case let .closure(arguments, doesThrow, returnType):
-      try container.encode(arguments, forKey: .typeDescriptions)
-      if doesThrow {
-        try container.encode("throws", forKey: .text)
-      }
-      try container.encode(returnType, forKey: .typeDescription)
+      try container.encode(arguments, forKey: .closureArguments)
+      try container.encode(doesThrow, forKey: .closureThrows)
+      try container.encode(returnType, forKey: .closureReturn)
     }
   }
 
@@ -217,6 +215,12 @@ public enum TypeDescription: Codable, Hashable {
     case dictionaryKey
     /// The value for this key is a dictionary's value of type TypeDescription
     case dictionaryValue
+    /// The value for this key represents the list of types in a closure argument list and is of type [TypeDescription]
+    case closureArguments
+    /// The value for this key represents whether a closure `throws` and is of type Bool
+    case closureThrows
+    /// The value for this key represents the return type of a closure argument list and is of type TypeDescription
+    case closureReturn
   }
 
   public enum CodingError: Error {

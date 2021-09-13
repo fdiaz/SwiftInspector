@@ -194,7 +194,7 @@ final class TypeDescriptionSpec: QuickSpec {
   let closureTestCaseData = """
     {
       "caseDescription": "closure",
-      "typeDescriptions": [
+      "closureArguments": [
         {
           "caseDescription": "simple",
           "text": "Foo",
@@ -210,8 +210,8 @@ final class TypeDescriptionSpec: QuickSpec {
           }
         }
       ],
-      "text": "throws",
-      "typeDescription": {
+      "closureThrows": true,
+      "closureReturn": {
         "caseDescription": "simple",
         "text": "FooBar",
         "typeDescriptions": []
