@@ -77,13 +77,13 @@ public final class NestableTypeVisitor: SyntaxVisitor {
 
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
     // We've encountered a protocol declaration, which can only be defined at the top-level. Something is wrong.
-    assertionFailure("Encountered a protocol. This is a usage error: a single NestableTypeVisitor instance should start walking only over a nestable declaration syntax node")
+    assertionFailureOrPostNotification("Encountered a protocol. This is a usage error: a single NestableTypeVisitor instance should start walking only over a nestable declaration syntax node")
     return .skipChildren
   }
 
   public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
     // We've encountered an extension declaration, which can only be defined at the top-level. Something is wrong.
-    assertionFailure("Encountered an extension. This is a usage error: a single NestableTypeVisitor instance should start walking only over a nestable declaration syntax node")
+    assertionFailureOrPostNotification("Encountered an extension. This is a usage error: a single NestableTypeVisitor instance should start walking only over a nestable declaration syntax node")
     return .skipChildren
   }
 
@@ -92,7 +92,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
       !topLevelParsingTracker.hasFinishedParsing,
       let topLevelDeclarationName = topLevelDeclaration?.nestableInfo.name
     else {
-      assertionFailure("Encountered more than one top-level declaration. This is a usage error: a single NestableTypeVisitor instance should start walking only over a declaration syntax node")
+      assertionFailureOrPostNotification("Encountered more than one top-level declaration. This is a usage error: a single NestableTypeVisitor instance should start walking only over a declaration syntax node")
       return .skipChildren
     }
 
@@ -114,7 +114,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
   -> SyntaxVisitorContinueKind
   {
     guard !topLevelParsingTracker.hasFinishedParsing else {
-      assertionFailure("Encountered more than one top-level declaration. This is a usage error: a single NestableTypeVisitor instance should start walking only over a declaration syntax node")
+      assertionFailureOrPostNotification("Encountered more than one top-level declaration. This is a usage error: a single NestableTypeVisitor instance should start walking only over a declaration syntax node")
       return .skipChildren
     }
 
