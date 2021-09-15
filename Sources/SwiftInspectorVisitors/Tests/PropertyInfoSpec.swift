@@ -18,11 +18,11 @@ final class PropertyInfoParadigmSpec: QuickSpec {
     }
     """.data(using: .utf8)!
 
-  let definedConstantTestCase = PropertyInfo.Paradigm.definedConstant("Foo()")
+  let definedConstantTestCase = PropertyInfo.Paradigm.definedConstant("= Foo()")
   let definedConstantTestCaseData = """
     {
       "caseValue": 1,
-      "initializerDescription": "Foo()"
+      "initializerDescription": "= Foo()"
     }
     """.data(using: .utf8)!
 
@@ -33,11 +33,11 @@ final class PropertyInfoParadigmSpec: QuickSpec {
     }
     """.data(using: .utf8)!
 
-  let definedVariableTestCase = PropertyInfo.Paradigm.definedVariable("Foo()")
+  let definedVariableTestCase = PropertyInfo.Paradigm.definedVariable("= Foo()")
   let definedVariableTestCaseData = """
     {
       "caseValue": 3,
-      "initializerDescription": "Foo()"
+      "initializerDescription": "= Foo()"
     }
     """.data(using: .utf8)!
 
