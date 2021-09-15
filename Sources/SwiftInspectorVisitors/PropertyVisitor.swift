@@ -75,6 +75,11 @@ public final class PropertyVisitor: SyntaxVisitor {
 
   // MARK: Private
 
+  private enum PropertyType: String {
+    case constant = "let"
+    case variable = "var"
+  }
+
   private func findModifiers(from node: VariableDeclSyntax) -> PropertyInfo.Modifier {
     let modifiersString: [String]
     if let modifiersSyntaxList = node.modifiers {
@@ -128,5 +133,16 @@ public final class PropertyVisitor: SyntaxVisitor {
       return nil
     }
     return typeSyntax.typeDescription
+  }
+
+  private func findPropertyType(from node: VariableDeclSyntax) -> PropertyType {
+    if let type = PropertyType(rawValue: node.letOrVarKeyword.text) {
+      return type
+    }
+    else {
+      assertionFailure("Property must be either let or var. The Swift language has evolved if you hit this assertion.")
+      // Fail gracefully
+      return .variable
+    }
   }
 }
