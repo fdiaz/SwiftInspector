@@ -310,11 +310,11 @@ final class PropertyVisitorSpec: QuickSpec {
       }
 
       context("when the property is a defined variable property") {
-        let content = """
-        var foo = Foo()
-        """
-
         it("has expected paradigm") {
+          let content = """
+          var foo = Foo()
+          """
+
           try sut.walkContent(content)
           expect(sut.properties) == [
             PropertyInfo(
@@ -323,6 +323,23 @@ final class PropertyVisitorSpec: QuickSpec {
               modifiers: [.internal, .instance],
               paradigm: .definedVariable("= Foo()"))
           ]
+        }
+
+        context("initialized with a closure") {
+          let content = """
+          var foo = { Foo() }()
+          """
+
+          it("has expected paradigm") {
+            try sut.walkContent(content)
+            expect(sut.properties) == [
+              PropertyInfo(
+                name: "foo",
+                typeDescription: nil,
+                modifiers: [.internal, .instance],
+                paradigm: .definedVariable("= { Foo() }()"))
+            ]
+          }
         }
       }
 
