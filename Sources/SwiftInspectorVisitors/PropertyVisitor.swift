@@ -131,6 +131,23 @@ public final class PropertyVisitor: SyntaxVisitor {
 // MARK: - PropertyInfo
 
 public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
+  /// The name of the property
+  public let name: String
+  /// The type of the property if it's present
+  public let typeDescription: TypeDescription?
+  /// Modifier set for this type
+  public let modifiers: Modifier
+  /// The paradigm of this property, along with any associated data that cannot be reasonably represented statically.
+  public let paradigm: Paradigm
+
+  public var debugDescription: String {
+    "\(modifiers.rawValue) \(name) \(typeDescription?.asSource ?? "")"
+  }
+}
+
+// MARK: - PropertyInfo.Modifier
+
+extension PropertyInfo {
   public struct Modifier: Codable, Hashable, OptionSet {
     public let rawValue: Int
 
@@ -167,7 +184,11 @@ public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
       }
     }
   }
+}
 
+// MARK: - PropertyInfo.Paradigm
+
+extension PropertyInfo {
   public enum Paradigm {
     /// A `let` property with no `=`.
     case undefinedConstant
@@ -183,29 +204,4 @@ public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
     /// - Parameter codeBlockDesciption: A source-accurate description of the code block which computes the value.
     case computedVariable(_ codeBlockDesciption: String)
   }
-
-  /// The name of the property
-  public let name: String
-  /// The type of the property if it's present
-  public let typeDescription: TypeDescription?
-  /// Modifier set for this type
-  public let modifiers: Modifier
-  /// The paradigm of this property, along with any associated data that cannot be reasonably represented statically.
-  public let paradigm: Paradigm
-
-  public var debugDescription: String {
-    "\(modifiers.rawValue) \(name) \(typeDescription?.asSource ?? "")"
-  }
-}
-
-// MARK: - PropertyInfo.Modifier
-
-extension PropertyInfo {
-
-}
-
-// MARK: - PropertyInfo.Paradigm
-
-extension PropertyInfo {
-
 }
