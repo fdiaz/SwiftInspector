@@ -168,12 +168,30 @@ public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
     }
   }
 
+  public enum Paradigm {
+    /// A `let` property with no `=`.
+    case undefinedConstant
+    /// A `let` property with an `=`.
+    /// - Parameter initializerDescription: A source-accurate description of the initializer.
+    case definedConstant(_ initializerDescription: String)
+    /// A  `var` property with no `=`.
+    case undefinedVariable
+    /// A `var ` property with an `=`.
+    /// - Parameter initializerDescription: A source-accurate description of the initializer.
+    case definedVariable(_ initializerDescription: String)
+    /// A computed `var` property.
+    /// - Parameter codeBlockDesciption: A source-accurate description of the code block which computes the value.
+    case computedVariable(_ codeBlockDesciption: String)
+  }
+
   /// The name of the property
   public let name: String
   /// The type of the property if it's present
   public let typeDescription: TypeDescription?
   /// Modifier set for this type
   public let modifiers: Modifier
+  /// The paradigm of this property, along with any associated data that cannot be reasonably represented statically.
+  public let paradigm: Paradigm
 
   public var debugDescription: String {
     "\(modifiers.rawValue) \(name) \(typeDescription?.asSource ?? "")"
