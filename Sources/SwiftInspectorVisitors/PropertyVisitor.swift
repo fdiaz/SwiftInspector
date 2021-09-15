@@ -32,6 +32,7 @@ public final class PropertyVisitor: SyntaxVisitor {
 
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     let modifier = findModifiers(from: node)
+    let paradigm = findParamadigm(from: node)
 
     var lastFoundType: TypeDescription?
     node.bindings.reversed().forEach { binding in
@@ -45,8 +46,7 @@ public final class PropertyVisitor: SyntaxVisitor {
                             name: identifier.identifier.text,
                             typeDescription: lastFoundType,
                             modifiers: modifier,
-                            // TODO implement
-                            paradigm: .undefinedConstant))
+                            paradigm: paradigm))
       }
     }
 
@@ -133,6 +133,40 @@ public final class PropertyVisitor: SyntaxVisitor {
       return nil
     }
     return typeSyntax.typeDescription
+  }
+
+  private func findParamadigm(from node: VariableDeclSyntax) -> PropertyInfo.Paradigm {
+    switch findPropertyType(from: node) {
+    case .constant:
+      if let initializerDescription = findInitializerDescription(from: node.bindings) {
+        return .definedConstant(initializerDescription)
+      }
+      else {
+        return .undefinedConstant
+      }
+    case .variable:
+      if let initializerDescription = findInitializerDescription(from: node.bindings) {
+        return .definedVariable(initializerDescription)
+      }
+      else if let codeBlockDescription = findCodeBlockDescription(from: node.bindings) {
+        return .computedVariable(codeBlockDescription)
+      }
+      else {
+        return .undefinedVariable
+      }
+    }
+  }
+
+  private func findInitializerDescription(from node: PatternBindingListSyntax) -> String? {
+    let initializerClauseSyntaxes = node.compactMap { $0.initializer }
+    assert(initializerClauseSyntaxes.count <= 1, "A property should have at most one initializer.")
+    return initializerClauseSyntaxes.first?.description
+  }
+
+  private func findCodeBlockDescription(from node: PatternBindingListSyntax) -> String? {
+    let accessors = node.compactMap { $0.accessor }
+    assert(accessors.count <= 1, "A property should have at most one accessor.")
+    return accessors.first?.description
   }
 
   private func findPropertyType(from node: VariableDeclSyntax) -> PropertyType {
