@@ -49,11 +49,13 @@ final class PropertyVisitorSpec: QuickSpec {
             .init(
               name: "thing",
               typeDescription: .simple(name: "String"),
-              modifiers: [.public, .instance]),
+              modifiers: [.public, .instance],
+              paradigm: .undefinedVariable),
             .init(
               name: "foo",
               typeDescription: .simple(name: "Int"),
-              modifiers: [.public, .instance])
+              modifiers: [.public, .instance],
+              paradigm: .undefinedVariable)
           ]
           expect(sut.properties).to(contain(expected))
         }
@@ -64,15 +66,18 @@ final class PropertyVisitorSpec: QuickSpec {
             .init(
               name: "green",
               typeDescription: .simple(name: "Double"),
-              modifiers: [.internal, .instance]),
+              modifiers: [.internal, .instance],
+              paradigm: .undefinedConstant),
             .init(
               name: "red",
               typeDescription: .simple(name: "Double"),
-              modifiers: [.internal, .instance]),
+              modifiers: [.internal, .instance],
+              paradigm: .undefinedConstant),
             .init(
               name: "blue",
               typeDescription: .simple(name: "Double"),
-              modifiers: [.internal, .instance])
+              modifiers: [.internal, .instance],
+              paradigm: .undefinedConstant)
           ]
           expect(sut.properties).to(contain(expected))
         }
@@ -83,15 +88,18 @@ final class PropertyVisitorSpec: QuickSpec {
             .init(
               name: "seconds",
               typeDescription: .simple(name: "Int"),
-              modifiers: [.internal, .instance]),
+              modifiers: [.internal, .instance],
+              paradigm: .undefinedConstant),
             .init(
               name: "hours",
               typeDescription: .simple(name: "Double"),
-              modifiers: [.internal, .instance]),
+              modifiers: [.internal, .instance],
+              paradigm: .undefinedConstant),
             .init(
               name: "years",
               typeDescription: .simple(name: "Double"),
-              modifiers: [.internal, .instance])
+              modifiers: [.internal, .instance],
+              paradigm: .undefinedConstant)
           ]
           expect(sut.properties).to(contain(expected))
         }
@@ -108,7 +116,8 @@ final class PropertyVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeDescription: .simple(name: "String"),
-              modifiers: [.public, .static])
+              modifiers: [.public, .static],
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -124,7 +133,8 @@ final class PropertyVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeDescription: .simple(name: "String"),
-              modifiers: [.public, .static])
+              modifiers: [.public, .static],
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -140,7 +150,8 @@ final class PropertyVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeDescription: .simple(name: "String"),
-              modifiers: [.private, .static])
+              modifiers: [.private, .static],
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -156,7 +167,8 @@ final class PropertyVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeDescription: .simple(name: "String"),
-              modifiers: [.open, .privateSet, .instance])
+              modifiers: [.open, .privateSet, .instance],
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -172,7 +184,8 @@ final class PropertyVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeDescription: .simple(name: "String"),
-              modifiers: [.public, .internalSet, .instance])
+              modifiers: [.public, .internalSet, .instance],
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -188,7 +201,8 @@ final class PropertyVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeDescription: .simple(name: "String"),
-              modifiers: [.publicSet, .internal, .instance])
+              modifiers: [.publicSet, .internal, .instance],
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -204,7 +218,8 @@ final class PropertyVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeDescription: .simple(name: "String"),
-              modifiers: [.fileprivate, .static])
+              modifiers: [.fileprivate, .static],
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -220,7 +235,8 @@ final class PropertyVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeDescription: nil,
-              modifiers: [.private, .static])
+              modifiers: [.private, .static],
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -236,7 +252,8 @@ final class PropertyVisitorSpec: QuickSpec {
             PropertyInfo(
               name: "thing",
               typeDescription: nil,
-              modifiers: [.public, .instance])
+              modifiers: [.public, .instance],
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -267,7 +284,8 @@ final class PropertyVisitorSpec: QuickSpec {
             .init(
               name: "hex",
               typeDescription: .simple(name: "Int"),
-              modifiers: [.internal, .instance])
+              modifiers: [.internal, .instance],
+              paradigm: .undefinedConstant)
           ]
           expect(sut.properties).to(contain(expected))
         }
