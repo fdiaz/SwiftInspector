@@ -197,3 +197,15 @@ public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
     "\(modifiers.rawValue) \(name) \(typeDescription?.asSource ?? "")"
   }
 }
+
+// MARK: - PropertyInfo.Modifier
+
+extension PropertyInfo {
+
+}
+
+// MARK: - PropertyInfo.Paradigm
+
+extension PropertyInfo {
+
+}
