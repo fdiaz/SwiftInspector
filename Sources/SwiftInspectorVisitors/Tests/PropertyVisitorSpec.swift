@@ -258,6 +258,91 @@ final class PropertyVisitorSpec: QuickSpec {
         }
       }
 
+      context("when the property is an undefined constant property") {
+        let content = """
+        let foo: Foo
+        """
+
+        it("has expected paradigm") {
+          try sut.walkContent(content)
+          expect(sut.properties) == [
+            PropertyInfo(
+              name: "foo",
+              typeDescription: .simple(name: "Foo"),
+              modifiers: [.internal, .instance],
+              paradigm: .undefinedConstant)
+          ]
+        }
+      }
+
+      context("when the property is a defined constant property") {
+        let content = """
+        let foo = Foo()
+        """
+
+        it("has expected paradigm") {
+          try sut.walkContent(content)
+          expect(sut.properties) == [
+            PropertyInfo(
+              name: "foo",
+              typeDescription: nil,
+              modifiers: [.internal, .instance],
+              paradigm: .definedConstant("Foo()"))
+          ]
+        }
+      }
+
+      context("when the property is an undefined variable property") {
+        let content = """
+        var foo: Foo
+        """
+
+        it("has expected paradigm") {
+          try sut.walkContent(content)
+          expect(sut.properties) == [
+            PropertyInfo(
+              name: "foo",
+              typeDescription: .simple(name: "Foo"),
+              modifiers: [.internal, .instance],
+              paradigm: .undefinedVariable)
+          ]
+        }
+      }
+
+      context("when the property is a defined variable property") {
+        let content = """
+        var foo = Foo()
+        """
+
+        it("has expected paradigm") {
+          try sut.walkContent(content)
+          expect(sut.properties) == [
+            PropertyInfo(
+              name: "foo",
+              typeDescription: nil,
+              modifiers: [.internal, .instance],
+              paradigm: .definedVariable("Foo()"))
+          ]
+        }
+      }
+
+      context("when the property is a computed variable property") {
+        let content = """
+        var foo { Foo() }
+        """
+
+        it("has expected paradigm") {
+          try sut.walkContent(content)
+          expect(sut.properties) == [
+            PropertyInfo(
+              name: "foo",
+              typeDescription: nil,
+              modifiers: [.internal, .instance],
+              paradigm: .computedVariable("{ Foo() }"))
+          ]
+        }
+      }
+
       context("when there is a type declaration in content") {
         let content = """
         let hex: Int
