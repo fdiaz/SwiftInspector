@@ -69,10 +69,10 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "red",
               typeDescription: .simple(name: "Double"),
               modifiers: [.internal, .instance]),
-              .init(
-                name: "blue",
-                typeDescription: .simple(name: "Double"),
-                modifiers: [.internal, .instance])
+            .init(
+              name: "blue",
+              typeDescription: .simple(name: "Double"),
+              modifiers: [.internal, .instance])
           ]
           expect(sut.properties).to(contain(expected))
         }
