@@ -77,14 +77,84 @@ extension PropertyInfo {
     /// - Parameter codeBlockDesciption: A source-accurate description of the code block which computes the value.
     case computedVariable(_ codeBlockDesciption: String)
 
+    // MARK: Lifecycle
+
     public init(from decoder: Decoder) throws {
-      // TODO implement
-      fatalError()
+      let values = try decoder.container(keyedBy: CodingKeys.self)
+      let caseValue = try values.decode(Int.self, forKey: .caseValue)
+      switch caseValue {
+      case Self.undefinedConstantValue:
+        self = .undefinedConstant
+
+      case Self.definedConstantValue:
+        let initializerDescription = try values.decode(String.self, forKey: .initializerDescription)
+        self = .definedConstant(initializerDescription)
+
+      case Self.undefinedVariableValue:
+        self = .undefinedVariable
+
+      case Self.definedVariableValue:
+        let initializerDescription = try values.decode(String.self, forKey: .initializerDescription)
+        self = .definedVariable(initializerDescription)
+
+      case Self.computedVariableValue:
+        let codeBlockDesciption = try values.decode(String.self, forKey: .codeBlockDesciption)
+        self = .computedVariable(codeBlockDesciption)
+
+      default:
+        throw CodingError.unknownCase
+      }
     }
 
     public func encode(to encoder: Encoder) throws {
-      // TODO implement
-      fatalError()
+      var container = encoder.container(keyedBy: CodingKeys.self)
+      try container.encode(caseValue, forKey: .caseValue)
+      switch self {
+      case .undefinedConstant:
+        break
+      case .definedConstant(let initializerDescription):
+        try container.encode(initializerDescription, forKey: .initializerDescription)
+      case .undefinedVariable:
+        break
+      case .definedVariable(let initializerDescription):
+        try container.encode(initializerDescription, forKey: .initializerDescription)
+      case .computedVariable(let codeBlockDesciption):
+        try container.encode(codeBlockDesciption, forKey: .codeBlockDesciption)
+      }
+    }
+
+    // MARK: Public
+
+    public enum CodingError: Error {
+      case unknownCase
+    }
+
+    // MARK: Private
+
+    private enum CodingKeys: String, CodingKey {
+      /// The value for this key is a numerical value for the case.
+      case caseValue
+      /// The value for this key is a source-accurate description of the initializer encoded as a string, if one exists for this case.
+      case initializerDescription
+      /// The value for this key is a source-accurate description of the computation code block encoded as a string, if one exists for this
+      /// case.
+      case codeBlockDesciption
+    }
+
+    private static let undefinedConstantValue = 0
+    private static let definedConstantValue = 1
+    private static let undefinedVariableValue = 2
+    private static let definedVariableValue = 3
+    private static let computedVariableValue = 4
+
+    private var caseValue: Int {
+      switch self {
+      case .undefinedConstant: return Self.undefinedConstantValue
+      case .definedConstant: return Self.definedConstantValue
+      case .undefinedVariable: return Self.undefinedVariableValue
+      case .definedVariable: return Self.definedVariableValue
+      case .computedVariable: return Self.computedVariableValue
+      }
     }
   }
 }
