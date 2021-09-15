@@ -44,7 +44,9 @@ public final class PropertyVisitor: SyntaxVisitor {
         properties.append(.init(
                             name: identifier.identifier.text,
                             typeDescription: lastFoundType,
-                            modifiers: modifier))
+                            modifiers: modifier,
+                            // TODO implement
+                            paradigm: .undefinedConstant))
       }
     }
 
@@ -189,7 +191,7 @@ extension PropertyInfo {
 // MARK: - PropertyInfo.Paradigm
 
 extension PropertyInfo {
-  public enum Paradigm {
+  public enum Paradigm: Codable, Hashable {
     /// A `let` property with no `=`.
     case undefinedConstant
     /// A `let` property with an `=`.
@@ -203,5 +205,15 @@ extension PropertyInfo {
     /// A computed `var` property.
     /// - Parameter codeBlockDesciption: A source-accurate description of the code block which computes the value.
     case computedVariable(_ codeBlockDesciption: String)
+
+    public init(from decoder: Decoder) throws {
+      // TODO implement
+      fatalError()
+    }
+
+    public func encode(to encoder: Encoder) throws {
+      // TODO implement
+      fatalError()
+    }
   }
 }
