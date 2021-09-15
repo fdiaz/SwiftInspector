@@ -274,13 +274,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
         it("does not detect properties within type declaration") {
           try sut.walkContent(content)
-          let notExpected: [PropertyInfo] = [
-            .init(
-              name: "timestamp",
-              typeDescription: .simple(name: "Int"),
-              modifiers: [.internal, .instance])
-          ]
-          expect(sut.properties).notTo(contain(notExpected))
+          expect(sut.properties.map(\.name)).notTo(contain("timestamp"))
         }
       }
 
