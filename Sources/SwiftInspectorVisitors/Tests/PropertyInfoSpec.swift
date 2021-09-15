@@ -87,6 +87,19 @@ final class PropertyInfoParadigmSpec: QuickSpec {
             == self.computedVariableTestCase
         }
       }
+
+      context("that is garabage") {
+        let testData = """
+          {
+            "caseValue": -1,
+          }
+          """.data(using: .utf8)!
+
+        it("throws an error") {
+          expect(try decoder.decode(PropertyInfo.Paradigm.self, from: testData))
+            .to(throwError(PropertyInfo.Paradigm.CodingError.unknownCase))
+        }
+      }
     }
 
     describe("When decoding a PropertyInfo.Paradigm data created with the current library version") {
