@@ -276,11 +276,12 @@ final class PropertyVisitorSpec: QuickSpec {
       }
 
       context("when the property is a defined constant property") {
-        let content = """
-        let foo = Foo()
-        """
 
         it("has expected paradigm") {
+          let content = """
+          let foo = Foo()
+          """
+
           try sut.walkContent(content)
           expect(sut.properties) == [
             PropertyInfo(
@@ -289,6 +290,23 @@ final class PropertyVisitorSpec: QuickSpec {
               modifiers: [.internal, .instance],
               paradigm: .definedConstant("= Foo()"))
           ]
+        }
+
+        context("that is malformed") {
+          let content = """
+          let foo = Foo() = Foo()
+          """
+
+          it("creates a paradigm without asserting") {
+            try sut.walkContent(content)
+            expect(sut.properties) == [
+              PropertyInfo(
+                name: "foo",
+                typeDescription: nil,
+                modifiers: [.internal, .instance],
+                paradigm: .definedConstant("= Foo() = Foo()"))
+            ]
+          }
         }
       }
 
