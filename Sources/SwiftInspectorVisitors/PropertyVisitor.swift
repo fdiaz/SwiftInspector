@@ -154,6 +154,11 @@ public final class PropertyVisitor: SyntaxVisitor {
       else if let codeBlockDescription = patternBindingListVisitor.codeBlockDescription {
         return .computedVariable(codeBlockDescription)
       }
+      else if let protocolRequirement = patternBindingListVisitor.protocolRequirement {
+        switch protocolRequirement {
+        case .gettable: return .protocolGetter
+        }
+      }
       else {
         return .undefinedVariable
       }
@@ -176,10 +181,15 @@ public final class PropertyVisitor: SyntaxVisitor {
 
 private final class PatternBindingListVisitor: SyntaxVisitor {
 
+  enum ProtocolRequirement {
+    case gettable
+  }
+
   /// A source-accurate description of the code block for a computed property, if one exists. Outer `{` and `}` are not included.
   private(set) var codeBlockDescription: String?
   /// A source-accurate description of initializer clause of a property. The `=` is not included.
   private(set) var initializerDescription: String?
+  private(set) var protocolRequirement: ProtocolRequirement?
 
   public override func visit(_ node: CodeBlockItemListSyntax) -> SyntaxVisitorContinueKind {
     codeBlockDescription = node.withoutTrivia().description
@@ -188,6 +198,11 @@ private final class PatternBindingListVisitor: SyntaxVisitor {
 
   public override func visit(_ node: InitializerClauseSyntax) -> SyntaxVisitorContinueKind {
     initializerDescription = node.withEqual(nil).description
+    return .skipChildren
+  }
+
+  public override func visit(_ node: AccessorDeclSyntax) -> SyntaxVisitorContinueKind {
+    if node.accessorKind.text == "get" { protocolRequirement = .gettable }
     return .skipChildren
   }
 }
