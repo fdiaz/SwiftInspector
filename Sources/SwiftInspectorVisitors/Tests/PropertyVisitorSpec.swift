@@ -336,6 +336,30 @@ final class PropertyVisitorSpec: QuickSpec {
         }
       }
 
+      context("when the property is part of a protocol definition") {
+        context("and is only gettable") {
+          let content = """
+          var foo: Foo { get }
+          """
+
+          it("is treated as an undefined variable") {
+            try sut.walkContent(content)
+            expect(sut.properties.first?.paradigm).to(equal(.undefinedVariable))
+          }
+        }
+
+        context("and is gettable and settable") {
+          let content = """
+          var foo: Foo { get set }
+          """
+
+          it("is not found") {
+            try sut.walkContent(content)
+            expect(sut.properties).to(beEmpty())
+          }
+        }
+      }
+
       context("when there is a type declaration in content") {
         let content = """
         let hex: Int
