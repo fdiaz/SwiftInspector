@@ -67,15 +67,17 @@ extension PropertyInfo {
     case undefinedConstant
     /// A `let` property with an `=`.
     /// - Parameter initializerDescription: A source-accurate description of the initializer.
+    /// - Important: The initializer description does not include the equal sign.
     case definedConstant(_ initializerDescription: String)
     /// A  `var` property with no `=`.
     case undefinedVariable
     /// A `var ` property with an `=`.
     /// - Parameter initializerDescription: A source-accurate description of the initializer.
+    /// - Important: The initializer description does not include the equal sign.
     case definedVariable(_ initializerDescription: String)
     /// A computed `var` property.
     /// - Parameter codeBlockDescription: A source-accurate description of the code block which computes the value
-    /// - Important: The code block description does not include the opening/closing brackets
+    /// - Important: The code block description does not include the opening/closing braces.
     case computedVariable(_ codeBlockDescription: String)
 
     // MARK: Lifecycle
