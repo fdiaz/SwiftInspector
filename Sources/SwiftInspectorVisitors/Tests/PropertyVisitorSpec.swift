@@ -342,9 +342,9 @@ final class PropertyVisitorSpec: QuickSpec {
           var foo: Foo { get }
           """
 
-          it("is treated as an undefined variable") {
+          it("has expected paradigm") {
             try sut.walkContent(content)
-            expect(sut.properties.first?.paradigm).to(equal(.undefinedVariable))
+            expect(sut.properties.first?.paradigm).to(equal(.protocolGetter))
           }
         }
 
@@ -353,6 +353,7 @@ final class PropertyVisitorSpec: QuickSpec {
           var foo: Foo { get set }
           """
 
+          // We will figure out how to implement this when we need it.
           it("is not found") {
             try sut.walkContent(content)
             expect(sut.properties).to(beEmpty())
