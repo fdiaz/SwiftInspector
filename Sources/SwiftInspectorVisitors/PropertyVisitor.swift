@@ -136,44 +136,28 @@ public final class PropertyVisitor: SyntaxVisitor {
   }
 
   private func findParadigm(from node: VariableDeclSyntax) -> PropertyInfo.Paradigm {
+    let patternBindingListVisitor = PatternBindingListVisitor()
+    patternBindingListVisitor.walk(node.bindings)
+
     switch findPropertyType(from: node) {
     case .constant:
-      if let initializerDescription = findInitializerDescription(from: node.bindings) {
+      if let initializerDescription = patternBindingListVisitor.initializerDescription {
         return .definedConstant(initializerDescription)
       }
       else {
         return .undefinedConstant
       }
     case .variable:
-      if let initializerDescription = findInitializerDescription(from: node.bindings) {
+      if let initializerDescription = patternBindingListVisitor.initializerDescription {
         return .definedVariable(initializerDescription)
       }
-      else if let codeBlockDescription = findCodeBlockDescription(from: node.bindings) {
+      else if let codeBlockDescription = patternBindingListVisitor.codeBlockDescription {
         return .computedVariable(codeBlockDescription)
       }
       else {
         return .undefinedVariable
       }
     }
-  }
-
-  private func findInitializerDescription(from node: PatternBindingListSyntax) -> String? {
-    let initializerClauseSyntaxes = node.compactMap { $0.initializer?.withEqual(nil) }
-    assert(initializerClauseSyntaxes.count <= 1, "A property should have at most one initializer.")
-    return initializerClauseSyntaxes.first?.description
-  }
-
-  private func findCodeBlockDescription(from node: PatternBindingListSyntax) -> String? {
-    guard
-      let patternBindingSyntax = node.children.first?.as(PatternBindingSyntax.self),
-      let codeBlockSyntax = patternBindingSyntax.children.compactMap({ $0.as(CodeBlockSyntax.self) }).first,
-      let codeBlockList = codeBlockSyntax.children
-        .compactMap({ $0.as(CodeBlockItemListSyntax.self) })
-        .first
-    else {
-      return nil
-    }
-    return codeBlockList.withoutTrivia().description
   }
 
   private func findPropertyType(from node: VariableDeclSyntax) -> PropertyType {
@@ -185,5 +169,25 @@ public final class PropertyVisitor: SyntaxVisitor {
       // Fail gracefully
       return .variable
     }
+  }
+}
+
+// MARK: - PatternBindingListVisitor
+
+private final class PatternBindingListVisitor: SyntaxVisitor {
+
+  /// A source-accurate description of the code block for a computed property, if one exists. Outer `{` and `}` are not included.
+  private(set) var codeBlockDescription: String?
+  /// A source-accurate description of initializer clause of a property. The `=` is not included.
+  private(set) var initializerDescription: String?
+
+  public override func visit(_ node: CodeBlockItemListSyntax) -> SyntaxVisitorContinueKind {
+    codeBlockDescription = node.withoutTrivia().description
+    return .skipChildren
+  }
+
+  public override func visit(_ node: InitializerClauseSyntax) -> SyntaxVisitorContinueKind {
+    initializerDescription = node.withEqual(nil).description
+    return .skipChildren
   }
 }
