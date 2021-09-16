@@ -32,6 +32,7 @@ public final class PropertyVisitor: SyntaxVisitor {
 
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     let modifier = findModifiers(from: node)
+    let paradigm = findParamadigm(from: node)
 
     var lastFoundType: TypeDescription?
     node.bindings.reversed().forEach { binding in
@@ -44,7 +45,8 @@ public final class PropertyVisitor: SyntaxVisitor {
         properties.append(.init(
                             name: identifier.identifier.text,
                             typeDescription: lastFoundType,
-                            modifiers: modifier))
+                            modifiers: modifier,
+                            paradigm: paradigm))
       }
     }
 
@@ -73,24 +75,30 @@ public final class PropertyVisitor: SyntaxVisitor {
 
   // MARK: Private
 
+  private enum PropertyType: String {
+    case constant = "let"
+    case variable = "var"
+  }
+
   private func findModifiers(from node: VariableDeclSyntax) -> PropertyInfo.Modifier {
-    let modifiersString: [String] = node.children
-      .compactMap { $0.as(ModifierListSyntax.self) }
-      .reduce(into: []) { result, syntax in
-        let modifiers: [String] = syntax.children
-          .compactMap { $0.as(DeclModifierSyntax.self) }
-          .map { modifierSyntax in
-            if
-              let leftParen = modifierSyntax.detailLeftParen,
-              let detail = modifierSyntax.detail,
-              let rightParen = modifierSyntax.detailRightParen
-            {
-              return modifierSyntax.name.text + leftParen.text + detail.text + rightParen.text
-            }
-            return modifierSyntax.name.text
+    let modifiersString: [String]
+    if let modifiersSyntaxList = node.modifiers {
+      modifiersString = modifiersSyntaxList.children
+        .compactMap { $0.as(DeclModifierSyntax.self) }
+        .map { modifierSyntax in
+          if
+            let leftParen = modifierSyntax.detailLeftParen,
+            let detail = modifierSyntax.detail,
+            let rightParen = modifierSyntax.detailRightParen
+          {
+            return modifierSyntax.name.text + leftParen.text + detail.text + rightParen.text
           }
-        result.append(contentsOf: modifiers)
-      }
+          return modifierSyntax.name.text
+        }
+    }
+    else {
+      modifiersString = []
+    }
 
     var modifier = modifiersString.reduce(PropertyInfo.Modifier()) { result, stringValue in
       let modifier = PropertyInfo.Modifier(stringValue: stringValue)
@@ -126,56 +134,49 @@ public final class PropertyVisitor: SyntaxVisitor {
     }
     return typeSyntax.typeDescription
   }
-}
 
-// MARK: - PropertyInfo
-
-public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
-  public struct Modifier: Codable, Hashable, OptionSet {
-    public let rawValue: Int
-
-    // general accessors
-    public static let `open` = Modifier(rawValue: 1 << 0)
-    public static let `internal` = Modifier(rawValue: 1 << 1)
-    public static let `public` = Modifier(rawValue: 1 << 2)
-    public static let `private` = Modifier(rawValue: 1 << 3)
-    public static let `fileprivate` = Modifier(rawValue: 1 << 4)
-    // set accessors
-    public static let privateSet = Modifier(rawValue: 1 << 5)
-    public static let internalSet = Modifier(rawValue: 1 << 6)
-    public static let publicSet = Modifier(rawValue: 1 << 7)
-    // access control
-    public static let `instance` = Modifier(rawValue: 1 << 8)
-    public static let `static` = Modifier(rawValue: 1 << 9)
-
-    public init(rawValue: Int)  {
-      self.rawValue = rawValue
-    }
-
-    public init(stringValue: String) {
-      switch stringValue {
-      case "open": self = .open
-      case "public": self = .public
-      case "private": self = .private
-      case "fileprivate": self = .fileprivate
-      case "private(set)": self = .privateSet
-      case "internal(set)": self = .internalSet
-      case "public(set)": self = .publicSet
-      case "internal": self = .internal
-      case "static": self = .static
-      default: self = []
+  private func findParamadigm(from node: VariableDeclSyntax) -> PropertyInfo.Paradigm {
+    switch findPropertyType(from: node) {
+    case .constant:
+      if let initializerDescription = findInitializerDescription(from: node.bindings) {
+        return .definedConstant(initializerDescription)
+      }
+      else {
+        return .undefinedConstant
+      }
+    case .variable:
+      if let initializerDescription = findInitializerDescription(from: node.bindings) {
+        return .definedVariable(initializerDescription)
+      }
+      else if let codeBlockDescription = findCodeBlockDescription(from: node.bindings) {
+        return .computedVariable(codeBlockDescription)
+      }
+      else {
+        return .undefinedVariable
       }
     }
   }
 
-  /// The name of the property
-  public let name: String
-  /// The type of the property if it's present
-  public let typeDescription: TypeDescription?
-  /// Modifier set for this type
-  public let modifiers: Modifier
+  private func findInitializerDescription(from node: PatternBindingListSyntax) -> String? {
+    let initializerClauseSyntaxes = node.compactMap { $0.initializer }
+    assert(initializerClauseSyntaxes.count <= 1, "A property should have at most one initializer.")
+    return initializerClauseSyntaxes.first?.description
+  }
 
-  public var debugDescription: String {
-    "\(modifiers.rawValue) \(name) \(typeDescription?.asSource ?? "")"
+  private func findCodeBlockDescription(from node: PatternBindingListSyntax) -> String? {
+    let accessors = node.compactMap { $0.accessor }
+    assert(accessors.count <= 1, "A property should have at most one accessor.")
+    return accessors.first?.description
+  }
+
+  private func findPropertyType(from node: VariableDeclSyntax) -> PropertyType {
+    if let type = PropertyType(rawValue: node.letOrVarKeyword.text) {
+      return type
+    }
+    else {
+      assertionFailure("Property must be either let or var. The Swift language has evolved if you hit this assertion.")
+      // Fail gracefully
+      return .variable
+    }
   }
 }
