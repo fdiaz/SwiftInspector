@@ -49,6 +49,13 @@ final class PropertyInfoParadigmSpec: QuickSpec {
     }
     """.data(using: .utf8)!
 
+  let protocolGetterTestCase = PropertyInfo.Paradigm.protocolGetter
+  let protocolGetterTestCaseData = """
+    {
+      "caseValue": 5
+    }
+    """.data(using: .utf8)!
+
   override func spec() {
     describe("When decoding previously persisted PropertyInfo.Paradigm data") {
       let decoder = JSONDecoder()
@@ -81,10 +88,17 @@ final class PropertyInfoParadigmSpec: QuickSpec {
         }
       }
 
-      context("that represents a computed property property") {
+      context("that represents a computed variable property") {
         it("decodes the encoded paradigm") {
           expect(try decoder.decode(PropertyInfo.Paradigm.self, from: self.computedVariableTestCaseData))
             == self.computedVariableTestCase
+        }
+      }
+
+      context("that represents a protocol getter property") {
+        it("decodes the encoded paradigm") {
+          expect(try decoder.decode(PropertyInfo.Paradigm.self, from: self.protocolGetterTestCaseData))
+            == self.protocolGetterTestCase
         }
       }
 
@@ -138,6 +152,13 @@ final class PropertyInfoParadigmSpec: QuickSpec {
         it("successfully decodes the data") {
           expect(try decoder.decode(PropertyInfo.Paradigm.self, from: try encoder.encode(self.computedVariableTestCase)))
             == self.computedVariableTestCase
+        }
+      }
+
+      context("utilizing a protocol getter") {
+        it("successfully decodes the data") {
+          expect(try decoder.decode(PropertyInfo.Paradigm.self, from: try encoder.encode(self.protocolGetterTestCase)))
+            == self.protocolGetterTestCase
         }
       }
     }

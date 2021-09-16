@@ -79,6 +79,8 @@ extension PropertyInfo {
     /// - Parameter codeBlockDescription: A source-accurate description of the code block which computes the value
     /// - Important: The code block description does not include the opening/closing braces.
     case computedVariable(_ codeBlockDescription: String)
+    /// A property on a protocol that is only gettable.
+    case protocolGetter
 
     // MARK: Lifecycle
 
@@ -104,6 +106,9 @@ extension PropertyInfo {
         let codeBlockDesciption = try values.decode(String.self, forKey: .codeBlockDesciption)
         self = .computedVariable(codeBlockDesciption)
 
+      case Self.protocolGetterValue:
+        self = .protocolGetter
+
       default:
         throw CodingError.unknownCase
       }
@@ -123,6 +128,8 @@ extension PropertyInfo {
         try container.encode(initializerDescription, forKey: .initializerDescription)
       case .computedVariable(let codeBlockDesciption):
         try container.encode(codeBlockDesciption, forKey: .codeBlockDesciption)
+      case .protocolGetter:
+        break
       }
     }
 
@@ -149,6 +156,7 @@ extension PropertyInfo {
     private static let undefinedVariableValue = 2
     private static let definedVariableValue = 3
     private static let computedVariableValue = 4
+    private static let protocolGetterValue = 5
 
     private var caseValue: Int {
       switch self {
@@ -157,6 +165,7 @@ extension PropertyInfo {
       case .undefinedVariable: return Self.undefinedVariableValue
       case .definedVariable: return Self.definedVariableValue
       case .computedVariable: return Self.computedVariableValue
+      case .protocolGetter: return Self.protocolGetterValue
       }
     }
   }
