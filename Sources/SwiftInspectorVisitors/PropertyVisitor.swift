@@ -152,6 +152,12 @@ public final class PropertyVisitor: SyntaxVisitor {
       let codeBlockDescription = patternBindingListVisitor.codeBlockDescription
       let protocolRequirement = patternBindingListVisitor.protocolRequirement
 
+      assert([
+        initializerDescription as Any?,
+        codeBlockDescription as Any?,
+        protocolRequirement as Any?,
+      ].compactMap { $0 }.count >= 1, "We never expect a property to have more than one of these details")
+
       if let initializerDescription = initializerDescription {
         return .definedVariable(initializerDescription)
       }
