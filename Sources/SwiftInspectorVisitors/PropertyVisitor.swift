@@ -148,13 +148,17 @@ public final class PropertyVisitor: SyntaxVisitor {
         return .undefinedConstant
       }
     case .variable:
-      if let initializerDescription = patternBindingListVisitor.initializerDescription {
+      let initializerDescription = patternBindingListVisitor.initializerDescription
+      let codeBlockDescription = patternBindingListVisitor.codeBlockDescription
+      let protocolRequirement = patternBindingListVisitor.protocolRequirement
+
+      if let initializerDescription = initializerDescription {
         return .definedVariable(initializerDescription)
       }
-      else if let codeBlockDescription = patternBindingListVisitor.codeBlockDescription {
+      else if let codeBlockDescription = codeBlockDescription {
         return .computedVariable(codeBlockDescription)
       }
-      else if let protocolRequirement = patternBindingListVisitor.protocolRequirement {
+      else if let protocolRequirement = protocolRequirement {
         switch protocolRequirement {
         case .gettable: return .protocolGetter
         }
