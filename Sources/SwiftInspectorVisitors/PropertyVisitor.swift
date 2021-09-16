@@ -158,7 +158,7 @@ public final class PropertyVisitor: SyntaxVisitor {
   }
 
   private func findInitializerDescription(from node: PatternBindingListSyntax) -> String? {
-    let initializerClauseSyntaxes = node.compactMap { $0.initializer }
+    let initializerClauseSyntaxes = node.compactMap { $0.initializer?.withEqual(nil) }
     assert(initializerClauseSyntaxes.count <= 1, "A property should have at most one initializer.")
     return initializerClauseSyntaxes.first?.description
   }

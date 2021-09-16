@@ -117,7 +117,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "thing",
               typeDescription: .simple(name: "String"),
               modifiers: [.public, .static],
-              paradigm: .definedVariable("= \"Hello, World\""))
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -134,7 +134,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "thing",
               typeDescription: .simple(name: "String"),
               modifiers: [.public, .static],
-              paradigm: .definedVariable("= \"Hello, World\""))
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -151,7 +151,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "thing",
               typeDescription: .simple(name: "String"),
               modifiers: [.private, .static],
-              paradigm: .definedVariable("= \"Hello, World\""))
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -168,7 +168,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "thing",
               typeDescription: .simple(name: "String"),
               modifiers: [.open, .privateSet, .instance],
-              paradigm: .definedVariable("= \"Hello, World\""))
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -185,7 +185,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "thing",
               typeDescription: .simple(name: "String"),
               modifiers: [.public, .internalSet, .instance],
-              paradigm: .definedVariable("= \"Hello, World\""))
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -202,7 +202,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "thing",
               typeDescription: .simple(name: "String"),
               modifiers: [.publicSet, .internal, .instance],
-              paradigm: .definedVariable("= \"Hello, World\""))
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -219,7 +219,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "thing",
               typeDescription: .simple(name: "String"),
               modifiers: [.fileprivate, .static],
-              paradigm: .definedVariable("= \"Hello, World\""))
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -236,7 +236,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "thing",
               typeDescription: nil,
               modifiers: [.private, .static],
-              paradigm: .definedVariable("= \"Hello, World\""))
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -253,7 +253,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "thing",
               typeDescription: nil,
               modifiers: [.public, .instance],
-              paradigm: .definedVariable("= \"Hello, World\""))
+              paradigm: .definedVariable("\"Hello, World\""))
           ]
         }
       }
@@ -288,7 +288,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "foo",
               typeDescription: nil,
               modifiers: [.internal, .instance],
-              paradigm: .definedConstant("= Foo()"))
+              paradigm: .definedConstant("Foo()"))
           ]
         }
 
@@ -304,7 +304,7 @@ final class PropertyVisitorSpec: QuickSpec {
                 name: "foo",
                 typeDescription: nil,
                 modifiers: [.internal, .instance],
-                paradigm: .definedConstant("= Foo() = Foo()"))
+                paradigm: .definedConstant("Foo() = Foo()"))
             ]
           }
         }
@@ -339,7 +339,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "foo",
               typeDescription: nil,
               modifiers: [.internal, .instance],
-              paradigm: .definedVariable("= Foo()"))
+              paradigm: .definedVariable("Foo()"))
           ]
         }
 
@@ -355,7 +355,7 @@ final class PropertyVisitorSpec: QuickSpec {
                 name: "foo",
                 typeDescription: nil,
                 modifiers: [.internal, .instance],
-                paradigm: .definedVariable("= { Foo() }()"))
+                paradigm: .definedVariable("{ Foo() }()"))
             ]
           }
         }

@@ -14,7 +14,7 @@ public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
   public let paradigm: Paradigm
 
   public var debugDescription: String {
-    "\(modifiers.rawValue) \(name) \(typeDescription?.asSource ?? "")"
+    "\(modifiers.rawValue) \(name) \(typeDescription?.asSource ?? "") \(paradigm)"
   }
 }
 
