@@ -373,7 +373,7 @@ final class PropertyVisitorSpec: QuickSpec {
               name: "foo",
               typeDescription: nil,
               modifiers: [.internal, .instance],
-              paradigm: .computedVariable("{ Foo() }"))
+              paradigm: .computedVariable("Foo()"))
           ]
         }
       }
