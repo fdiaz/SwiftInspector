@@ -74,8 +74,9 @@ extension PropertyInfo {
     /// - Parameter initializerDescription: A source-accurate description of the initializer.
     case definedVariable(_ initializerDescription: String)
     /// A computed `var` property.
-    /// - Parameter codeBlockDesciption: A source-accurate description of the code block which computes the value.
-    case computedVariable(_ codeBlockDesciption: String)
+    /// - Parameter codeBlockDescription: A source-accurate description of the code block which computes the value
+    /// - Important: The code block description does not include the opening/closing brackets
+    case computedVariable(_ codeBlockDescription: String)
 
     // MARK: Lifecycle
 

@@ -168,7 +168,7 @@ public final class PropertyVisitor: SyntaxVisitor {
       let patternBindingSyntax = node.children.first?.as(PatternBindingSyntax.self),
       let codeBlockSyntax = patternBindingSyntax.children.compactMap({ $0.as(CodeBlockSyntax.self) }).first,
       let codeBlockList = codeBlockSyntax.children
-        .compactMap ({ $0.as(CodeBlockItemListSyntax.self) })
+        .compactMap({ $0.as(CodeBlockItemListSyntax.self) })
         .first
     else {
       return nil
