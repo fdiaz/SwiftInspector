@@ -32,7 +32,7 @@ public final class PropertyVisitor: SyntaxVisitor {
 
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     let modifier = findModifiers(from: node)
-    let paradigm = findParamadigm(from: node)
+    let paradigm = findParadigm(from: node)
 
     var lastFoundType: TypeDescription?
     node.bindings.reversed().forEach { binding in
@@ -135,7 +135,7 @@ public final class PropertyVisitor: SyntaxVisitor {
     return typeSyntax.typeDescription
   }
 
-  private func findParamadigm(from node: VariableDeclSyntax) -> PropertyInfo.Paradigm {
+  private func findParadigm(from node: VariableDeclSyntax) -> PropertyInfo.Paradigm {
     switch findPropertyType(from: node) {
     case .constant:
       if let initializerDescription = findInitializerDescription(from: node.bindings) {
@@ -158,15 +158,22 @@ public final class PropertyVisitor: SyntaxVisitor {
   }
 
   private func findInitializerDescription(from node: PatternBindingListSyntax) -> String? {
-    let initializerClauseSyntaxes = node.compactMap { $0.initializer }
+    let initializerClauseSyntaxes = node.compactMap { $0.initializer?.withEqual(nil) }
     assert(initializerClauseSyntaxes.count <= 1, "A property should have at most one initializer.")
     return initializerClauseSyntaxes.first?.description
   }
 
   private func findCodeBlockDescription(from node: PatternBindingListSyntax) -> String? {
-    let accessors = node.compactMap { $0.accessor }
-    assert(accessors.count <= 1, "A property should have at most one accessor.")
-    return accessors.first?.description
+    guard
+      let patternBindingSyntax = node.children.first?.as(PatternBindingSyntax.self),
+      let codeBlockSyntax = patternBindingSyntax.children.compactMap({ $0.as(CodeBlockSyntax.self) }).first,
+      let codeBlockList = codeBlockSyntax.children
+        .compactMap({ $0.as(CodeBlockItemListSyntax.self) })
+        .first
+    else {
+      return nil
+    }
+    return codeBlockList.withoutTrivia().description
   }
 
   private func findPropertyType(from node: VariableDeclSyntax) -> PropertyType {
