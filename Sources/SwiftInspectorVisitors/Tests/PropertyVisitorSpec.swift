@@ -265,13 +265,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
         it("has expected paradigm") {
           try sut.walkContent(content)
-          expect(sut.properties) == [
-            PropertyInfo(
-              name: "foo",
-              typeDescription: .simple(name: "Foo"),
-              modifiers: [.internal, .instance],
-              paradigm: .undefinedConstant)
-          ]
+          expect(sut.properties.first?.paradigm).to(equal(.undefinedConstant))
         }
       }
 
@@ -283,13 +277,7 @@ final class PropertyVisitorSpec: QuickSpec {
           """
 
           try sut.walkContent(content)
-          expect(sut.properties) == [
-            PropertyInfo(
-              name: "foo",
-              typeDescription: nil,
-              modifiers: [.internal, .instance],
-              paradigm: .definedConstant("Foo()"))
-          ]
+          expect(sut.properties.first?.paradigm).to(equal(.definedConstant("Foo()")))
         }
 
         context("that is malformed") {
@@ -299,13 +287,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
           it("creates a paradigm without asserting") {
             try sut.walkContent(content)
-            expect(sut.properties) == [
-              PropertyInfo(
-                name: "foo",
-                typeDescription: nil,
-                modifiers: [.internal, .instance],
-                paradigm: .definedConstant("Foo() = Foo()"))
-            ]
+            expect(sut.properties.first?.paradigm).to(equal(.definedConstant("Foo() = Foo()")))
           }
         }
       }
@@ -317,13 +299,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
         it("has expected paradigm") {
           try sut.walkContent(content)
-          expect(sut.properties) == [
-            PropertyInfo(
-              name: "foo",
-              typeDescription: .simple(name: "Foo"),
-              modifiers: [.internal, .instance],
-              paradigm: .undefinedVariable)
-          ]
+          expect(sut.properties.first?.paradigm).to(equal(.undefinedVariable))
         }
       }
 
@@ -334,13 +310,7 @@ final class PropertyVisitorSpec: QuickSpec {
           """
 
           try sut.walkContent(content)
-          expect(sut.properties) == [
-            PropertyInfo(
-              name: "foo",
-              typeDescription: nil,
-              modifiers: [.internal, .instance],
-              paradigm: .definedVariable("Foo()"))
-          ]
+          expect(sut.properties.first?.paradigm).to(equal(.definedVariable("Foo()")))
         }
 
         context("initialized with a closure") {
@@ -350,13 +320,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
           it("has expected paradigm") {
             try sut.walkContent(content)
-            expect(sut.properties) == [
-              PropertyInfo(
-                name: "foo",
-                typeDescription: nil,
-                modifiers: [.internal, .instance],
-                paradigm: .definedVariable("{ Foo() }()"))
-            ]
+            expect(sut.properties.first?.paradigm).to(equal(.definedVariable("{ Foo() }()")))
           }
         }
       }
@@ -368,13 +332,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
         it("has expected paradigm") {
           try sut.walkContent(content)
-          expect(sut.properties) == [
-            PropertyInfo(
-              name: "foo",
-              typeDescription: nil,
-              modifiers: [.internal, .instance],
-              paradigm: .computedVariable("Foo()"))
-          ]
+          expect(sut.properties.first?.paradigm).to(equal(.computedVariable("Foo()")))
         }
       }
 
