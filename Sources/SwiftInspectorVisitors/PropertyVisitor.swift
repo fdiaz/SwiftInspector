@@ -152,10 +152,6 @@ public final class PropertyVisitor: SyntaxVisitor {
       let codeBlockDescription = patternBindingListVisitor.codeBlockDescription
       let protocolRequirement = patternBindingListVisitor.protocolRequirement
 
-      assert(
-        patternBindingListVisitor.validateExtractedData(),
-        "The data extracted from the pattern binding does not match our expectations")
-
       if let initializerDescription = initializerDescription {
         return .definedVariable(initializerDescription)
       }
@@ -212,14 +208,5 @@ private final class PatternBindingListVisitor: SyntaxVisitor {
   public override func visit(_ node: AccessorDeclSyntax) -> SyntaxVisitorContinueKind {
     if node.accessorKind.text == "get" { protocolRequirement = .gettable }
     return .skipChildren
-  }
-
-  func validateExtractedData() -> Bool {
-    let extractedData: [Any?] = [
-      initializerDescription,
-      codeBlockDescription,
-      protocolRequirement,
-    ]
-    return extractedData.compactMap { $0 }.count <= 1
   }
 }
