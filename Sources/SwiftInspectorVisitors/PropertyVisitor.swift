@@ -156,7 +156,7 @@ public final class PropertyVisitor: SyntaxVisitor {
         initializerDescription as Any?,
         codeBlockDescription as Any?,
         protocolRequirement as Any?,
-      ].compactMap { $0 }.count >= 1, "We never expect a property to have more than one of these details")
+      ].compactMap { $0 }.count <= 1, "We never expect a property to have more than one of these details")
 
       if let initializerDescription = initializerDescription {
         return .definedVariable(initializerDescription)
