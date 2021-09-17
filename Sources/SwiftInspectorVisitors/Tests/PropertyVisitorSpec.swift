@@ -366,10 +366,9 @@ final class PropertyVisitorSpec: QuickSpec {
           }
           """
 
-          // We will figure out how to implement this when we need it.
-          it("is not found") {
+          it("has expected paradigm") {
             try protocolVisitor.walkContent(content)
-            expect(sut.properties).to(beEmpty())
+            expect(sut.properties.first?.paradigm).to(equal(.protocolGetterAndSetter))
           }
         }
       }
