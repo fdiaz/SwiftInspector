@@ -348,7 +348,9 @@ final class PropertyVisitorSpec: QuickSpec {
 
         context("and is only gettable") {
           let content = """
-          var foo: Foo { get }
+          protocol MyProtocol {
+            var foo: Foo { get }
+          }
           """
 
           fit("has expected paradigm") {
@@ -359,7 +361,9 @@ final class PropertyVisitorSpec: QuickSpec {
 
         context("and is gettable and settable") {
           let content = """
-          var foo: Foo { get set }
+          protocol MyProtocol {
+            var foo: Foo { get set }
+          }
           """
 
           // We will figure out how to implement this when we need it.
