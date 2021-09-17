@@ -353,7 +353,7 @@ final class PropertyVisitorSpec: QuickSpec {
           }
           """
 
-          fit("has expected paradigm") {
+          it("has expected paradigm") {
             try protocolVisitor.walkContent(content)
             expect(sut.properties.first?.paradigm).to(equal(.protocolGetter))
           }
