@@ -100,6 +100,8 @@ extension PropertyInfo {
     case computedVariable(_ codeBlockDescription: String)
     /// A property on a protocol that is only gettable.
     case protocolGetter
+    /// A property on a protocol that is gettable and settable.
+    case protocolGetterAndSetter
 
     // MARK: Lifecycle
 
@@ -128,6 +130,9 @@ extension PropertyInfo {
       case Self.protocolGetterValue:
         self = .protocolGetter
 
+      case Self.protocolGetterAndSetterValue:
+        self = .protocolGetterAndSetter
+
       default:
         throw CodingError.unknownCase
       }
@@ -148,6 +153,8 @@ extension PropertyInfo {
       case .computedVariable(let codeBlockDesciption):
         try container.encode(codeBlockDesciption, forKey: .codeBlockDesciption)
       case .protocolGetter:
+        break
+      case .protocolGetterAndSetter:
         break
       }
     }
@@ -176,6 +183,7 @@ extension PropertyInfo {
     private static let definedVariableValue = 3
     private static let computedVariableValue = 4
     private static let protocolGetterValue = 5
+    private static let protocolGetterAndSetterValue = 6
 
     private var caseValue: Int {
       switch self {
@@ -185,6 +193,7 @@ extension PropertyInfo {
       case .definedVariable: return Self.definedVariableValue
       case .computedVariable: return Self.computedVariableValue
       case .protocolGetter: return Self.protocolGetterValue
+      case .protocolGetterAndSetter: return Self.protocolGetterAndSetterValue
       }
     }
   }
