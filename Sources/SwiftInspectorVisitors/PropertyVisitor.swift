@@ -140,8 +140,7 @@ public final class PropertyVisitor: SyntaxVisitor {
     patternBindingListVisitor.walk(node.bindings)
 
     assert(
-      patternBindingListVisitor.validateExtractedData(),
-      "The data extracted from the pattern binding does not match our expectations")
+      patternBindingListVisitor.validateExtractedData(), "The data extracted from the pattern binding does not match our expectations")
 
     switch findPropertyType(from: node) {
     case .constant:
