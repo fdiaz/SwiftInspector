@@ -139,6 +139,10 @@ public final class PropertyVisitor: SyntaxVisitor {
     let patternBindingListVisitor = PatternBindingListVisitor()
     patternBindingListVisitor.walk(node.bindings)
 
+    assert(
+      patternBindingListVisitor.validateExtractedData(),
+      "The data extracted from the pattern binding does not match our expectations")
+
     switch findPropertyType(from: node) {
     case .constant:
       if let initializerDescription = patternBindingListVisitor.initializerDescription {
@@ -148,25 +152,19 @@ public final class PropertyVisitor: SyntaxVisitor {
         return .undefinedConstant
       }
     case .variable:
-      let initializerDescription = patternBindingListVisitor.initializerDescription
-      let codeBlockDescription = patternBindingListVisitor.codeBlockDescription
-      let protocolRequirement = patternBindingListVisitor.protocolRequirement
-
-      assert(
-        patternBindingListVisitor.validateExtractedData(),
-        "The data extracted from the pattern binding does not match our expectations")
-
-      if let initializerDescription = initializerDescription {
+      if let initializerDescription = patternBindingListVisitor.initializerDescription {
         return .definedVariable(initializerDescription)
       }
-      else if let codeBlockDescription = codeBlockDescription {
+      else if let codeBlockDescription = patternBindingListVisitor.codeBlockDescription {
         return .computedVariable(codeBlockDescription)
       }
-      else if let protocolRequirement = protocolRequirement {
-        switch protocolRequirement {
-        case .gettable: return .protocolGetter
-        }
+      else if patternBindingListVisitor.protocolRequirements == .gettableAndSettable {
+        return .protocolGetterAndSetter
       }
+      else if patternBindingListVisitor.protocolRequirements == .gettable {
+        return .protocolGetter
+      }
+      // It is not possible for a property in a protocol to only be settable.
       else {
         return .undefinedVariable
       }
@@ -189,15 +187,21 @@ public final class PropertyVisitor: SyntaxVisitor {
 
 private final class PatternBindingListVisitor: SyntaxVisitor {
 
-  enum ProtocolRequirement {
-    case gettable
+  struct ProtocolRequirements: OptionSet {
+    let rawValue: Int
+
+    static let gettable = ProtocolRequirements(rawValue: 1 << 0)
+    static let settable = ProtocolRequirements(rawValue: 1 << 1)
+
+    static let gettableAndSettable: ProtocolRequirements = [.gettable, .settable]
   }
 
   /// A source-accurate description of the code block for a computed property, if one exists. Outer `{` and `}` are not included.
   private(set) var codeBlockDescription: String?
   /// A source-accurate description of initializer clause of a property. The `=` is not included.
   private(set) var initializerDescription: String?
-  private(set) var protocolRequirement: ProtocolRequirement?
+  /// The protocol requirements for this property.
+  private(set) var protocolRequirements: ProtocolRequirements = []
 
   public override func visit(_ node: CodeBlockItemListSyntax) -> SyntaxVisitorContinueKind {
     codeBlockDescription = node.withoutTrivia().description
@@ -210,16 +214,19 @@ private final class PatternBindingListVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: AccessorDeclSyntax) -> SyntaxVisitorContinueKind {
-    if node.accessorKind.text == "get" { protocolRequirement = .gettable }
+    if node.accessorKind.text == "get" { protocolRequirements.insert(.gettable) }
+    if node.accessorKind.text == "set" { protocolRequirements.insert(.settable) }
     return .skipChildren
   }
 
+  /// Return `true` if the extracted data matches our expectations; otherwise, returns `false`.
   func validateExtractedData() -> Bool {
-    let extractedData: [Any?] = [
-      initializerDescription,
-      codeBlockDescription,
-      protocolRequirement,
+    // We expect only one of these to be present.
+    let isPresentForExtractedElements: [Bool] = [
+      initializerDescription != nil,
+      codeBlockDescription != nil,
+      !protocolRequirements.isEmpty,
     ]
-    return extractedData.compactMap { $0 }.count <= 1
+    return isPresentForExtractedElements.filter { $0 }.count <= 1
   }
 }
