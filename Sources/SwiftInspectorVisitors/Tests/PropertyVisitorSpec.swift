@@ -22,10 +22,13 @@
 
 import Foundation
 import SwiftInspectorTestHelpers
+import SwiftSyntax
 import Quick
 import Nimble
 
 @testable import SwiftInspectorVisitors
+
+// MARK: - PropertyVisitorSpec
 
 final class PropertyVisitorSpec: QuickSpec {
   override func spec() {
@@ -336,6 +339,40 @@ final class PropertyVisitorSpec: QuickSpec {
         }
       }
 
+      context("when the property is part of a protocol definition") {
+        var protocolVisitor: TestProtocolVisitor!
+
+        beforeEach {
+          protocolVisitor = TestProtocolVisitor(propertyVisitor: sut)
+        }
+
+        context("and is only gettable") {
+          let content = """
+          protocol MyProtocol {
+            var foo: Foo { get }
+          }
+          """
+
+          it("has expected paradigm") {
+            try protocolVisitor.walkContent(content)
+            expect(sut.properties.first?.paradigm).to(equal(.protocolGetter))
+          }
+        }
+
+        context("and is gettable and settable") {
+          let content = """
+          protocol MyProtocol {
+            var foo: Foo { get set }
+          }
+          """
+
+          it("has expected paradigm") {
+            try protocolVisitor.walkContent(content)
+            expect(sut.properties.first?.paradigm).to(equal(.protocolGetterAndSetter))
+          }
+        }
+      }
+
       context("when there is a type declaration in content") {
         let content = """
         let hex: Int
@@ -376,4 +413,20 @@ final class PropertyVisitorSpec: QuickSpec {
 
     }
   }
+}
+
+// MARK: - TestProtocolVisitor
+
+private final class TestProtocolVisitor: SyntaxVisitor {
+
+  init(propertyVisitor: PropertyVisitor) {
+    self.propertyVisitor = propertyVisitor
+  }
+
+  override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
+    propertyVisitor.walk(node)
+    return .skipChildren
+  }
+
+  private let propertyVisitor: PropertyVisitor
 }

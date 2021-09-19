@@ -1,5 +1,24 @@
 // Created by Michael Bachand on 9/15/21.
-// Copyright © 2021 Airbnb Inc. All rights reserved.
+//
+// Distributed under the MIT License
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 // MARK: - PropertyInfo
 
@@ -79,6 +98,10 @@ extension PropertyInfo {
     /// - Parameter codeBlockDescription: A source-accurate description of the code block which computes the value
     /// - Important: The code block description does not include the opening/closing braces.
     case computedVariable(_ codeBlockDescription: String)
+    /// A property on a protocol that is only gettable.
+    case protocolGetter
+    /// A property on a protocol that is gettable and settable.
+    case protocolGetterAndSetter
 
     // MARK: Lifecycle
 
@@ -104,6 +127,12 @@ extension PropertyInfo {
         let codeBlockDesciption = try values.decode(String.self, forKey: .codeBlockDesciption)
         self = .computedVariable(codeBlockDesciption)
 
+      case Self.protocolGetterValue:
+        self = .protocolGetter
+
+      case Self.protocolGetterAndSetterValue:
+        self = .protocolGetterAndSetter
+
       default:
         throw CodingError.unknownCase
       }
@@ -123,6 +152,10 @@ extension PropertyInfo {
         try container.encode(initializerDescription, forKey: .initializerDescription)
       case .computedVariable(let codeBlockDesciption):
         try container.encode(codeBlockDesciption, forKey: .codeBlockDesciption)
+      case .protocolGetter:
+        break
+      case .protocolGetterAndSetter:
+        break
       }
     }
 
@@ -149,6 +182,8 @@ extension PropertyInfo {
     private static let undefinedVariableValue = 2
     private static let definedVariableValue = 3
     private static let computedVariableValue = 4
+    private static let protocolGetterValue = 5
+    private static let protocolGetterAndSetterValue = 6
 
     private var caseValue: Int {
       switch self {
@@ -157,6 +192,8 @@ extension PropertyInfo {
       case .undefinedVariable: return Self.undefinedVariableValue
       case .definedVariable: return Self.definedVariableValue
       case .computedVariable: return Self.computedVariableValue
+      case .protocolGetter: return Self.protocolGetterValue
+      case .protocolGetterAndSetter: return Self.protocolGetterAndSetterValue
       }
     }
   }
