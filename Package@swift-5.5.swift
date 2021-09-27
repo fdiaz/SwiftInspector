@@ -15,10 +15,10 @@ let package = Package(
     .library(name: "SwiftInspectorTestHelpers", targets: ["SwiftInspectorTestHelpers"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.3.1")),
+    .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
     .package(name: "SwiftSyntax", url: "https://github.com/apple/swift-syntax.git", .exact("0.50500.0")),
     .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.0.1")),
-    .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "3.0.0")),
+    .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")),
   ],
   targets: [
     .executableTarget(
