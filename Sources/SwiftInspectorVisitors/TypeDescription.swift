@@ -36,6 +36,8 @@ public enum TypeDescription: Codable, Hashable {
   indirect case optional(TypeDescription)
   /// An implicitly unwrapped optional type. eg. Int!
   indirect case implicitlyUnwrappedOptional(TypeDescription)
+  /// A type identifier with a specifier or attributes. e.g. `inout Int` or `@autoclosure () -> Void`
+  indirect case attributed(TypeDescription, specifier: String?, attributes: [String]?)
   /// An array. e.g. [Int]
   indirect case array(element: TypeDescription)
   /// A dictionary. e.g. [Int: String]
@@ -76,7 +78,6 @@ public enum TypeDescription: Codable, Hashable {
    * Note that we do not yet support the following syntax types:
    * SomeTypeSyntax
    * MetatypeTypeSyntax
-   * AttributedTypeSyntax
    * UnknownTypeSyntax
    *
    * We will likely need to add these types at some point in the future.
@@ -103,6 +104,24 @@ public enum TypeDescription: Codable, Hashable {
         return "\(parentType.asSource).\(name)"
       } else {
         return "\(parentType.asSource).\(name)<\(generics.map { $0.asSource }.joined(separator: ", "))>"
+      }
+    case let .attributed(type, specifier: specifier, attributes: attributes):
+      func attributesFromList(_ attributes: [String]) -> String {
+        attributes
+          .map { "@\($0)" }
+          .joined(separator: " ")
+      }
+      switch (specifier, attributes) {
+      case let (.some(specifier), .none):
+        return "\(specifier) \(type.asSource)"
+      case let (.none, .some(attributes)):
+        return "\(attributesFromList(attributes)) \(type.asSource)"
+      case let (.some(specifier), .some(attributes)):
+        // This case likely represents an error.
+        return "\(specifier) \(attributesFromList(attributes)) \(type.asSource)"
+      case (.none, .none):
+        // This case likely represents an error.
+        return type.asSource
       }
     case let .array(element):
       return "Array<\(element.asSource)>"
@@ -148,6 +167,12 @@ public enum TypeDescription: Codable, Hashable {
       let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
       self = .composition(typeDescriptions)
 
+    case Self.attributedDescription:
+      let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
+      let specifier = try values.decodeIfPresent(String.self, forKey: .specifier)
+      let attributes = try values.decodeIfPresent([String].self, forKey: .attributes)
+      self = .attributed(typeDescription, specifier: specifier, attributes: attributes)
+
     case Self.arrayDescription:
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
       self = .array(element: typeDescription)
@@ -188,6 +213,10 @@ public enum TypeDescription: Codable, Hashable {
     case let .tuple(types),
          let .composition(types):
       try container.encode(types, forKey: .typeDescriptions)
+    case let .attributed(type, specifier: specifier, attributes: attributes):
+      try container.encode(type, forKey: .typeDescription)
+      try container.encodeIfPresent(specifier, forKey: .specifier)
+      try container.encodeIfPresent(attributes, forKey: .attributes)
     case let .nested(name, parentType, generics):
       try container.encode(name, forKey: .text)
       try container.encode(parentType, forKey: .typeDescription)
@@ -211,6 +240,10 @@ public enum TypeDescription: Codable, Hashable {
     case typeDescription
     /// The value for this key is the associated value of type [TypeDescription]
     case typeDescriptions
+    /// The value for this key is the specifier on an attributed type of type String
+    case specifier
+    /// The value for this key is the attributes on an attributed type of type [String]
+    case attributes
     /// The value for this key is a dictionary's key of type TypeDescription
     case dictionaryKey
     /// The value for this key is a dictionary's value of type TypeDescription
@@ -239,6 +272,8 @@ public enum TypeDescription: Codable, Hashable {
       return Self.optionalDescription
     case .simple:
       return Self.simpleDescription
+    case .attributed:
+      return Self.attributedDescription
     case .array:
       return Self.arrayDescription
     case .dictionary:
@@ -257,6 +292,7 @@ public enum TypeDescription: Codable, Hashable {
   private static let compositionDescription = "composition"
   private static let optionalDescription = "optional"
   private static let implicitlyUnwrappedOptionalDescription = "implicitlyUnwrappedOptional"
+  private static let attributedDescription = "attributed"
   private static let arrayDescription = "array"
   private static let dictionaryDescription = "dictionary"
   private static let tupleDescription = "tuple"
@@ -267,9 +303,8 @@ public enum TypeDescription: Codable, Hashable {
 extension TypeSyntax {
 
   /// Returns the type description for the receiver.
-  /// - Warning: Do not call on a type syntax node of type `ClassRestrictionTypeSyntax`,
-  ///            `SomeTypeSyntax`, `MetatypeTypeSyntax`, `FunctionTypeSyntax`,
-  ///            `AttributedTypeSyntax`, or `UnknownTypeSyntax`
+  /// - Warning: Do not call on a type syntax node of type `SomeTypeSyntax`,
+  ///            `MetatypeTypeSyntax`, or `UnknownTypeSyntax`
   var typeDescription: TypeDescription {
     if let typeIdentifier = self.as(SimpleTypeIdentifierSyntax.self) {
       let genericTypeVisitor = GenericArgumentVisitor()
@@ -298,6 +333,14 @@ extension TypeSyntax {
 
     } else if let typeIdentifier = self.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
       return .implicitlyUnwrappedOptional(typeIdentifier.wrappedType.typeDescription)
+
+    } else if let typeIdentifier = self.as(AttributedTypeSyntax.self) {
+      return .attributed(
+        typeIdentifier.baseType.typeDescription,
+        specifier: typeIdentifier.specifier?.text,
+        attributes: typeIdentifier.attributes?.compactMap {
+          $0.as(AttributeSyntax.self)?.attributeName.text
+        })
 
     } else if let typeIdentifier = self.as(ArrayTypeSyntax.self) {
       return .array(element: typeIdentifier.elementType.typeDescription)
