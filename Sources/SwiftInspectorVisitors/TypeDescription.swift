@@ -38,6 +38,8 @@ public enum TypeDescription: Codable, Hashable {
   indirect case implicitlyUnwrappedOptional(TypeDescription)
   /// An opaque type that conforms to a protocol. e.g. some Equatable
   indirect case some(TypeDescription)
+  /// A meta type. e.g. `Int.Type` or `Equatable.Protocol`
+  indirect case metatype(TypeDescription, isType: Bool)
   /// A type identifier with a specifier or attributes. e.g. `inout Int` or `@autoclosure () -> Void`
   indirect case attributed(TypeDescription, specifier: String?, attributes: [String]?)
   /// An array. e.g. [Int]
@@ -76,15 +78,6 @@ public enum TypeDescription: Codable, Hashable {
     .nested(name: name, parentType: parentType, generics: [])
   }
 
-  /*
-   * Note that we do not yet support the following syntax types:
-   * MetatypeTypeSyntax
-   * UnknownTypeSyntax
-   *
-   * We will likely need to add these types at some point in the future.
-   * We’ll Get There™
-   */
-
   /// A canonical representation of this type that can be used as source code.
   public var asSource: String {
     switch self {
@@ -106,9 +99,11 @@ public enum TypeDescription: Codable, Hashable {
       } else {
         return "\(parentType.asSource).\(name)<\(generics.map { $0.asSource }.joined(separator: ", "))>"
       }
+    case let .metatype(type, isType):
+      return "\(type.asSource).\(isType ? "Type" : "Protocol")"
     case let .some(type):
       return "some \(type.asSource)"
-    case let .attributed(type, specifier: specifier, attributes: attributes):
+    case let .attributed(type, specifier, attributes):
       func attributesFromList(_ attributes: [String]) -> String {
         attributes
           .map { "@\($0)" }
@@ -174,6 +169,11 @@ public enum TypeDescription: Codable, Hashable {
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
       self = .some(typeDescription)
 
+    case Self.metatypeDescription:
+      let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
+      let isType = try values.decode(Bool.self, forKey: .isType)
+      self = .metatype(typeDescription, isType: isType)
+
     case Self.attributedDescription:
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
       let specifier = try values.decodeIfPresent(String.self, forKey: .specifier)
@@ -221,6 +221,9 @@ public enum TypeDescription: Codable, Hashable {
     case let .tuple(types),
          let .composition(types):
       try container.encode(types, forKey: .typeDescriptions)
+    case let .metatype(type, isType):
+      try container.encode(type, forKey: .typeDescription)
+      try container.encode(isType, forKey: .isType)
     case let .attributed(type, specifier: specifier, attributes: attributes):
       try container.encode(type, forKey: .typeDescription)
       try container.encodeIfPresent(specifier, forKey: .specifier)
@@ -248,6 +251,8 @@ public enum TypeDescription: Codable, Hashable {
     case typeDescription
     /// The value for this key is the associated value of type [TypeDescription]
     case typeDescriptions
+    /// The value for this key represents whether a metatype is a Type (as opposed to a Protocol) and is of type Bool
+    case isType
     /// The value for this key is the specifier on an attributed type of type String
     case specifier
     /// The value for this key is the attributes on an attributed type of type [String]
@@ -282,6 +287,8 @@ public enum TypeDescription: Codable, Hashable {
       return Self.simpleDescription
     case .some:
       return Self.someDescription
+    case .metatype:
+      return Self.metatypeDescription
     case .attributed:
       return Self.attributedDescription
     case .array:
@@ -303,6 +310,7 @@ public enum TypeDescription: Codable, Hashable {
   private static let optionalDescription = "optional"
   private static let implicitlyUnwrappedOptionalDescription = "implicitlyUnwrappedOptional"
   private static let someDescription = "some"
+  private static let metatypeDescription = "metatype"
   private static let attributedDescription = "attributed"
   private static let arrayDescription = "array"
   private static let dictionaryDescription = "dictionary"
@@ -314,8 +322,6 @@ public enum TypeDescription: Codable, Hashable {
 extension TypeSyntax {
 
   /// Returns the type description for the receiver.
-  /// - Warning: Do not call on a type syntax node of type `MetatypeTypeSyntax`
-  ///            or `UnknownTypeSyntax`
   var typeDescription: TypeDescription {
     if let typeIdentifier = self.as(SimpleTypeIdentifierSyntax.self) {
       let genericTypeVisitor = GenericArgumentVisitor()
@@ -348,6 +354,11 @@ extension TypeSyntax {
     } else if let typeIdentifier = self.as(SomeTypeSyntax.self) {
       return .some(typeIdentifier.baseType.typeDescription)
 
+    } else if let typeIdentifier = self.as(MetatypeTypeSyntax.self) {
+      return .metatype(
+        typeIdentifier.baseType.typeDescription,
+        isType: typeIdentifier.typeOrProtocol.text == "Type")
+
     } else if let typeIdentifier = self.as(AttributedTypeSyntax.self) {
       return .attributed(
         typeIdentifier.baseType.typeDescription,
@@ -379,7 +390,7 @@ extension TypeSyntax {
         returnType: typeIdentifier.returnType.typeDescription)
 
     } else {
-      assertionFailureOrPostNotification("TypeSyntax of unexpected type. Defaulting to `description`.")
+      assertionFailureOrPostNotification("TypeSyntax of unknown type. Defaulting to `description`.")
       // The description is a source-accurate description of this node,
       // so it is a reasonable fallback.
       return .unknown(text: description)

@@ -126,6 +126,21 @@ final class TypeDescriptionSpec: QuickSpec {
     }
     """.data(using: .utf8)!
 
+  let metatypeTestCase = TypeDescription.metatype(
+    .simple(name: "Foo"),
+    isType: false)
+  let metatypeTestCaseData = """
+    {
+      "caseDescription": "metatype",
+      "typeDescription": {
+        "caseDescription": "simple",
+        "text": "Foo",
+        "typeDescriptions": []
+      },
+      "isType": false
+    }
+    """.data(using: .utf8)!
+
   let someTestCase = TypeDescription.some(
     .simple(name: "Foo"))
   let someTestCaseData = """
@@ -293,6 +308,12 @@ final class TypeDescriptionSpec: QuickSpec {
         }
       }
 
+      context("that represents a metatype") {
+        it("decodes the encoded type description") {
+          expect(try decoder.decode(TypeDescription.self, from: self.metatypeTestCaseData)) == self.metatypeTestCase
+        }
+      }
+
       context("that represents a some-restricted type") {
         it("decodes the encoded type description") {
           expect(try decoder.decode(TypeDescription.self, from: self.someTestCaseData)) == self.someTestCase
@@ -381,6 +402,12 @@ final class TypeDescriptionSpec: QuickSpec {
       context("utilizing a composition type") {
         it("successfully decodes the data") {
           expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.compositionTestCase))) == self.compositionTestCase
+        }
+      }
+
+      context("utilizing a metatype") {
+        it("successfully decodes the data") {
+          expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.metatypeTestCase))) == self.metatypeTestCase
         }
       }
 
@@ -600,6 +627,47 @@ final class TypeDescriptionSpec: QuickSpec {
 
         it("Finds the type") {
           expect(visitor?.implictlyUnwrappedOptionalTypeIdentifier?.asSource) == "Int!"
+        }
+      }
+
+      context("when called on a TypeSyntax node representing a MetatypeTypeSyntax") {
+        final class MetatypeTypeSyntaxVisitor: SyntaxVisitor {
+          var metatypeTypeIdentifier: TypeDescription?
+          override func visit(_ node: MetatypeTypeSyntax) -> SyntaxVisitorContinueKind {
+            metatypeTypeIdentifier = TypeSyntax(node).typeDescription
+            return .skipChildren
+          }
+        }
+
+        var visitor: MetatypeTypeSyntaxVisitor!
+        context("that represents a type") {
+          beforeEach {
+            let content = """
+            let metatype: Int.Type
+            """
+
+            visitor = MetatypeTypeSyntaxVisitor()
+            try? visitor.walkContent(content)
+          }
+
+          it("Finds the type") {
+            expect(visitor.metatypeTypeIdentifier?.asSource) == "Int.Type"
+          }
+        }
+
+        context("that represents a protocol") {
+          beforeEach {
+            let content = """
+            let metatype: Equatable.Protocol
+            """
+
+            visitor = MetatypeTypeSyntaxVisitor()
+            try? visitor.walkContent(content)
+          }
+
+          it("Finds the type") {
+            expect(visitor.metatypeTypeIdentifier?.asSource) == "Equatable.Protocol"
+          }
         }
       }
 
