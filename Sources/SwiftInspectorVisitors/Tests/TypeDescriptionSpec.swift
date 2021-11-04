@@ -126,6 +126,19 @@ final class TypeDescriptionSpec: QuickSpec {
     }
     """.data(using: .utf8)!
 
+  let someTestCase = TypeDescription.some(
+    .simple(name: "Foo"))
+  let someTestCaseData = """
+    {
+      "caseDescription": "some",
+      "typeDescription": {
+        "caseDescription": "simple",
+        "text": "Foo",
+        "typeDescriptions": []
+      },
+    }
+    """.data(using: .utf8)!
+
   let attributedTestCase = TypeDescription.attributed(
     .simple(name: "Foo"),
     specifier: "inout",
@@ -280,6 +293,12 @@ final class TypeDescriptionSpec: QuickSpec {
         }
       }
 
+      context("that represents a some-restricted type") {
+        it("decodes the encoded type description") {
+          expect(try decoder.decode(TypeDescription.self, from: self.someTestCaseData)) == self.someTestCase
+        }
+      }
+
       context("that represents an attributed type") {
         it("decodes the encoded type description") {
           expect(try decoder.decode(TypeDescription.self, from: self.attributedTestCaseData)) == self.attributedTestCase
@@ -362,6 +381,12 @@ final class TypeDescriptionSpec: QuickSpec {
       context("utilizing a composition type") {
         it("successfully decodes the data") {
           expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.compositionTestCase))) == self.compositionTestCase
+        }
+      }
+
+      context("utilizing a some-restricted type") {
+        it("successfully decodes the data") {
+          expect(try decoder.decode(TypeDescription.self, from: try encoder.encode(self.someTestCase))) == self.someTestCase
         }
       }
 
@@ -575,6 +600,30 @@ final class TypeDescriptionSpec: QuickSpec {
 
         it("Finds the type") {
           expect(visitor?.implictlyUnwrappedOptionalTypeIdentifier?.asSource) == "Int!"
+        }
+      }
+
+      context("when called on a TypeSyntax node representing a SomeTypeSyntax") {
+        final class SomeTypeSyntaxVisitor: SyntaxVisitor {
+          var someTypeIdentifier: TypeDescription?
+          override func visit(_ node: SomeTypeSyntax) -> SyntaxVisitorContinueKind {
+            someTypeIdentifier = TypeSyntax(node).typeDescription
+            return .skipChildren
+          }
+        }
+
+        var visitor: SomeTypeSyntaxVisitor!
+        beforeEach {
+          let content = """
+            func makeSomething() -> some Equatable { "" }
+            """
+
+          visitor = SomeTypeSyntaxVisitor()
+          try? visitor.walkContent(content)
+        }
+
+        it("Finds the type") {
+          expect(visitor.someTypeIdentifier?.asSource) == "some Equatable"
         }
       }
 

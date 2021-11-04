@@ -34,8 +34,10 @@ public enum TypeDescription: Codable, Hashable {
   indirect case composition([TypeDescription])
   /// An optional type. e.g. Int?
   indirect case optional(TypeDescription)
-  /// An implicitly unwrapped optional type. eg. Int!
+  /// An implicitly unwrapped optional type. e.g. Int!
   indirect case implicitlyUnwrappedOptional(TypeDescription)
+  /// An opaque type that conforms to a protocol. e.g. some Equatable
+  indirect case some(TypeDescription)
   /// A type identifier with a specifier or attributes. e.g. `inout Int` or `@autoclosure () -> Void`
   indirect case attributed(TypeDescription, specifier: String?, attributes: [String]?)
   /// An array. e.g. [Int]
@@ -76,7 +78,6 @@ public enum TypeDescription: Codable, Hashable {
 
   /*
    * Note that we do not yet support the following syntax types:
-   * SomeTypeSyntax
    * MetatypeTypeSyntax
    * UnknownTypeSyntax
    *
@@ -105,6 +106,8 @@ public enum TypeDescription: Codable, Hashable {
       } else {
         return "\(parentType.asSource).\(name)<\(generics.map { $0.asSource }.joined(separator: ", "))>"
       }
+    case let .some(type):
+      return "some \(type.asSource)"
     case let .attributed(type, specifier: specifier, attributes: attributes):
       func attributesFromList(_ attributes: [String]) -> String {
         attributes
@@ -167,6 +170,10 @@ public enum TypeDescription: Codable, Hashable {
       let typeDescriptions = try values.decode([Self].self, forKey: .typeDescriptions)
       self = .composition(typeDescriptions)
 
+    case Self.someDescription:
+      let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
+      self = .some(typeDescription)
+
     case Self.attributedDescription:
       let typeDescription = try values.decode(Self.self, forKey: .typeDescription)
       let specifier = try values.decodeIfPresent(String.self, forKey: .specifier)
@@ -208,7 +215,8 @@ public enum TypeDescription: Codable, Hashable {
       try container.encode(text, forKey: .text)
     case let .optional(type),
          let .implicitlyUnwrappedOptional(type),
-         let .array(type):
+         let .array(type),
+         let .some(type):
       try container.encode(type, forKey: .typeDescription)
     case let .tuple(types),
          let .composition(types):
@@ -272,6 +280,8 @@ public enum TypeDescription: Codable, Hashable {
       return Self.optionalDescription
     case .simple:
       return Self.simpleDescription
+    case .some:
+      return Self.someDescription
     case .attributed:
       return Self.attributedDescription
     case .array:
@@ -292,6 +302,7 @@ public enum TypeDescription: Codable, Hashable {
   private static let compositionDescription = "composition"
   private static let optionalDescription = "optional"
   private static let implicitlyUnwrappedOptionalDescription = "implicitlyUnwrappedOptional"
+  private static let someDescription = "some"
   private static let attributedDescription = "attributed"
   private static let arrayDescription = "array"
   private static let dictionaryDescription = "dictionary"
@@ -303,8 +314,8 @@ public enum TypeDescription: Codable, Hashable {
 extension TypeSyntax {
 
   /// Returns the type description for the receiver.
-  /// - Warning: Do not call on a type syntax node of type `SomeTypeSyntax`,
-  ///            `MetatypeTypeSyntax`, or `UnknownTypeSyntax`
+  /// - Warning: Do not call on a type syntax node of type `MetatypeTypeSyntax`
+  ///            or `UnknownTypeSyntax`
   var typeDescription: TypeDescription {
     if let typeIdentifier = self.as(SimpleTypeIdentifierSyntax.self) {
       let genericTypeVisitor = GenericArgumentVisitor()
@@ -333,6 +344,9 @@ extension TypeSyntax {
 
     } else if let typeIdentifier = self.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
       return .implicitlyUnwrappedOptional(typeIdentifier.wrappedType.typeDescription)
+
+    } else if let typeIdentifier = self.as(SomeTypeSyntax.self) {
+      return .some(typeIdentifier.baseType.typeDescription)
 
     } else if let typeIdentifier = self.as(AttributedTypeSyntax.self) {
       return .attributed(
