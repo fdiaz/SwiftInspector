@@ -116,6 +116,12 @@ public enum TypeDescription: Codable, Hashable {
         return "\(attributesFromList(attributes)) \(type.asSource)"
       case let (.some(specifier), .some(attributes)):
         // This case likely represents an error.
+        // We are unaware of type reference that compiles with both a specifier and attributes.
+        // The Swift reference manual specifies that attributes come before the specifier,
+        // however code that puts an attribute first does not parse as AttributedTypeSyntax.
+        // Only code where the specifier comes before the attribute parses as an AttributedTypeSyntax.
+        // As a result, we construct this source with the specifier first.
+        // Reference manual: https://docs.swift.org/swift-book/ReferenceManual/Types.html#grammar_type
         return "\(specifier) \(attributesFromList(attributes)) \(type.asSource)"
       case (.none, .none):
         // This case likely represents an error.
