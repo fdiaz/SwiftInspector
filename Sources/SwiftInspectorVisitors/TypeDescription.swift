@@ -124,8 +124,7 @@ public enum TypeDescription: Codable, Hashable {
         // Reference manual: https://docs.swift.org/swift-book/ReferenceManual/Types.html#grammar_type
         return "\(specifier) \(attributesFromList(attributes)) \(type.asSource)"
       case (.none, .none):
-        // This case represents an error and is unreachable because never store an attributed type with neither a specifier nor attributes.
-        assertionFailureOrPostNotification("Creating source for an attributed type with no attributes or specifiers")
+        // This case represents an error that has previously caused an assertion.
         return type.asSource
       }
     case let .array(element):
@@ -373,13 +372,11 @@ extension TypeSyntax {
       }
       if specifier == nil && attributes == nil {
         assertionFailureOrPostNotification("Encountered an attributed type with no attributes or specifiers")
-        return typeIdentifier.baseType.typeDescription
-      } else {
-        return .attributed(
-          typeIdentifier.baseType.typeDescription,
-          specifier: specifier,
-          attributes: attributes)
       }
+      return .attributed(
+        typeIdentifier.baseType.typeDescription,
+        specifier: specifier,
+        attributes: attributes)
 
     } else if let typeIdentifier = self.as(ArrayTypeSyntax.self) {
       return .array(element: typeIdentifier.elementType.typeDescription)
