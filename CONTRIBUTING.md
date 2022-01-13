@@ -18,7 +18,7 @@ For any change you make, we ask you to also **add corresponding unit tests**.
 
 ### Structure of SwiftInspector
 
-SwiftInspector is divided into three main parts:
+SwiftInspector is divided into four main parts:
 
 #### SwiftInspector
 
