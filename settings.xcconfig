@@ -1,6 +1,0 @@
-// For Quick to work with the generated Xcode project.
-// See https://github.com/Quick/Quick/issues/707 for more.
-CLANG_ENABLE_MODULES = YES;
-// For Nimble to work in Xcode 12.5.
-// See https://developer.apple.com/documentation/xcode-release-notes/xcode-12_5-release-notes for more
-ENABLE_TESTING_SEARCH_PATHS = YES;

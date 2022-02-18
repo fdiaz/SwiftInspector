@@ -3,12 +3,6 @@ bindir ?= $(prefix)/bin
 xcode_path ?= $(shell xcode-select -p)
 xcode_toolchain ?= $(xcode_path)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx
 
-.PHONY: develop
-develop:
-	swift package generate-xcodeproj --xcconfig-overrides settings.xcconfig
-	(killall -9 Xcode && sleep 0.25) || true # Kills Xcode and waits for the process to terminate if Xcode is open.
-	open SwiftInspector.xcodeproj 
-
 .PHONY: build
 build:
 	swift build -c release
