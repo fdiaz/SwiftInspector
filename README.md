@@ -28,11 +28,7 @@ $ make install
 
 ## Develop
 
-If you want to contribute to this project, please take a look at our [CONTRIBUTING](CONTRIBUTING.md) guidelines. To generate and open the project in Xcode run:
-
-```
-$ make develop
-```
+If you want to contribute to this project, please take a look at our [CONTRIBUTING](CONTRIBUTING.md) guidelines. To open the project in Xcode, open the `Package.swift` file at the root of the repo.
 
 ## Default branch
 The default branch of this repository is `main`. Between the initial commit and [75bd9f4

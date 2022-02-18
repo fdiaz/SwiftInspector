@@ -25,7 +25,8 @@ let package = Package(
       name: "SwiftInspector",
       dependencies: [
         "SwiftInspectorCommands",
-    ]),
+      ],
+      linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "$DT_TOOLCHAIN_DIR/usr/lib/swift/macosx"])]),
 
     .target(
       name: "SwiftInspectorCommands",
@@ -40,7 +41,9 @@ let package = Package(
         "SwiftInspectorTestHelpers",
         "Nimble",
         "Quick",
-    ], path: "Sources/SwiftInspectorCommands/Tests"),
+      ],
+      path: "Sources/SwiftInspectorCommands/Tests",
+      linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "$DT_TOOLCHAIN_DIR/usr/lib/swift/macosx"])]),
 
     .target(
       name: "SwiftInspectorAnalyzers",
@@ -57,7 +60,9 @@ let package = Package(
         "SwiftInspectorVisitors",
         "Nimble",
         "Quick",
-    ], path: "Sources/SwiftInspectorAnalyzers/Tests"),
+      ],
+      path: "Sources/SwiftInspectorAnalyzers/Tests",
+      linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "$DT_TOOLCHAIN_DIR/usr/lib/swift/macosx"])]),
 
     .target(
       name: "SwiftInspectorTestHelpers",
@@ -82,6 +87,8 @@ let package = Package(
         "SwiftInspectorVisitors",
         "Nimble",
         "Quick",
-    ], path: "Sources/SwiftInspectorVisitors/Tests"),
+      ],
+      path: "Sources/SwiftInspectorVisitors/Tests",
+      linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "$DT_TOOLCHAIN_DIR/usr/lib/swift/macosx"])]),
   ]
 )
