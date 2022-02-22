@@ -1,9 +1,5 @@
 coverage:
   status:
-    # PRs only
-    patch:
-      default:
-        threshold: 0.25%
     project:
       default:
         threshold: 0.25%
