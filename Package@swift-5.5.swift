@@ -74,7 +74,9 @@ let package = Package(
         "SwiftInspectorTestHelpers",
         "Nimble",
         "Quick",
-    ], path: "Sources/SwiftInspectorTestHelpers/Tests"),
+      ],
+      path: "Sources/SwiftInspectorTestHelpers/Tests",
+      linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "$DT_TOOLCHAIN_DIR/usr/lib/swift/macosx"])]),
 
     .target(
       name: "SwiftInspectorVisitors",
