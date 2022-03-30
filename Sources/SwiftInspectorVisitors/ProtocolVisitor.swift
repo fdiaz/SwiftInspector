@@ -35,7 +35,8 @@ public final class ProtocolVisitor: SyntaxVisitor {
       genericRequirements: genericRequirements ?? [],
       modifiers: modifiers ?? .init(),
       innerTypealiases: typealiases,
-      properties: properties)
+      properties: properties,
+      functionDeclarations: functionDeclarations)
   }
 
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
@@ -114,6 +115,16 @@ public final class ProtocolVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
+  public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
+    let visitor = FunctionDeclarationVisitor()
+    visitor.walk(node)
+    let functions = visitor.functionDeclarations
+    functionDeclarations.append(contentsOf: functions)
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+  }
+
   // MARK: Private
 
   private var hasFinishedParsingProtocol = false
@@ -124,6 +135,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
   private var associatedtypes: [AssociatedtypeInfo] = []
   private var typealiases: [TypealiasInfo] = []
   private var properties: [PropertyInfo] = []
+  private var functionDeclarations: [FunctionDeclarationInfo] = []
   private var parentType: TypeDescription?
 }
 
@@ -135,4 +147,5 @@ public struct ProtocolInfo: Codable, Hashable {
   public let modifiers: Set<String>
   public let innerTypealiases: [TypealiasInfo]
   public let properties: [PropertyInfo]
+  public let functionDeclarations: [FunctionDeclarationInfo]
 }

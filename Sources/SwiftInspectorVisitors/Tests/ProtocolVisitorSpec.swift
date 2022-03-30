@@ -213,6 +213,21 @@ final class ProtocolVisitorSpec: QuickSpec {
               expect(protocolInfo?.properties.last?.name) == "bar"
             }
           }
+
+          context("with a function") {
+            it("finds the function") {
+              let content = """
+                public protocol SomeProtocol {
+                 func some() -> Int
+                }
+                """
+
+              try self.sut.walkContent(content)
+
+              let protocolInfo = self.sut.protocolInfo
+              expect(protocolInfo?.functionDeclarations.first?.name) == "some"
+            }
+          }
         }
 
         context("visiting a code block with multiple top-level declarations") {
