@@ -77,6 +77,14 @@ final class FileVisitorSpec: QuickSpec {
               }
 
               typealias SortableSet<Element: Hashable & Comparable> = Set<Element>
+
+              func foo() -> String {
+                "Bar"
+              }
+
+              func bar() -> String {
+                "Foo"
+              }
               """
 
           try? self.sut.walkContent(content)
@@ -269,6 +277,12 @@ final class FileVisitorSpec: QuickSpec {
               && $0.genericParameters.first?.inheritsFrom?.asSource == "Hashable & Comparable"
           }
           expect(matching.count) == 1
+        }
+
+        it("finds the free functions") {
+          let functionNames = self.sut.fileInfo.freeFunctions.map(\.name)
+          expect(functionNames).to(contain("foo"))
+          expect(functionNames).to(contain("bar"))
         }
       }
     }

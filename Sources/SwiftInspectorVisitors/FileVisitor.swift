@@ -55,6 +55,13 @@ public final class FileVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
+  public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
+    let visitor = FunctionDeclarationVisitor()
+    visitor.walk(node)
+    fileInfo.appendFreeFunctions(visitor.functionDeclarations)
+    return .skipChildren
+  }
+
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
     visitNestableDeclaration(node: node)
   }
@@ -119,6 +126,7 @@ public struct FileInfo: Codable, Hashable {
   public private(set) var enums = [EnumInfo]()
   public private(set) var extensions = [ExtensionInfo]()
   public private(set) var typealiases = [TypealiasInfo]()
+  public private(set) var freeFunctions = [FunctionDeclarationInfo]()
 
   mutating func appendImports(_ imports: [ImportStatement]) {
     self.imports += imports
@@ -140,5 +148,8 @@ public struct FileInfo: Codable, Hashable {
   }
   mutating func appendTypealiases(_ typealiases: [TypealiasInfo]) {
     self.typealiases += typealiases
+  }
+  mutating func appendFreeFunctions(_ functionDeclarations: [FunctionDeclarationInfo]) {
+    freeFunctions.append(contentsOf: functionDeclarations)
   }
 }
