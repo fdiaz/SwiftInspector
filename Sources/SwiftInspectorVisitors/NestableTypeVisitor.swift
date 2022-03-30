@@ -159,6 +159,10 @@ public final class NestableTypeVisitor: SyntaxVisitor {
         genericRequirementVisitor.walk(genericWhereClause)
       }
 
+      let visitor = FunctionDeclarationVisitor()
+      visitor.walk(node)
+      let functionDeclarations = visitor.functionDeclarations
+
       let propertyVisitor = PropertyVisitor()
       propertyVisitor.walk(node.members)
 
@@ -170,7 +174,8 @@ public final class NestableTypeVisitor: SyntaxVisitor {
           modifiers: Set(declarationModifierVisitor.modifiers),
           genericParameters: genericParameterVisitor.genericParameters,
           genericRequirements: genericRequirementVisitor.genericRequirements,
-          properties: propertyVisitor.properties))
+          properties: propertyVisitor.properties,
+          functionDeclarations: functionDeclarations))
 
       return .visitChildren
     }
