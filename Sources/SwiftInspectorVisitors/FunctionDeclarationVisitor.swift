@@ -25,4 +25,5 @@ fileprivate final class FunctionSignatureVisitor: SyntaxVisitor {
 public struct FunctionDeclarationInfo: Codable, Hashable {
   public let name: String
   public let returnType: TypeDescription?
+  // TODO: Add parameters and argument labels
 }

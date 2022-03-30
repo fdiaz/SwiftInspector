@@ -164,6 +164,7 @@ final class ExtensionVisitorSpec: QuickSpec {
               func some() -> Int {
                 1
               }
+            }
             """
 
           try? self.sut.walkContent(content)

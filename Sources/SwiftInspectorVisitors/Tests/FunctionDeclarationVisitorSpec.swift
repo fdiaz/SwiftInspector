@@ -33,7 +33,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
       }
 
-      context("a function with a return value") {
+      context("a function without a return value") {
         beforeEach {
           let content = """
             func printWithoutCounting(string: String) {
@@ -75,7 +75,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         it("finds the function name") {
           expect(self.sut.functionDeclarations.first?.name) == "minMax"
         }
-        it("sets the return type as nil") {
+        it("finds the tuple return value") {
           expect(self.sut.functionDeclarations.first?.returnType) == .tuple([.simple(name: "Int"), .simple(name: "Int")])
         }
 
@@ -105,7 +105,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
           try? self.sut.walkContent(content)
         }
 
-        it("finds the correct amount of functions") {
+        it("finds the correct number of functions") {
           expect(self.sut.functionDeclarations.count) == 2
         }
         it("finds the first function") {
