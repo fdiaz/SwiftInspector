@@ -160,7 +160,10 @@ final class ExtensionVisitorSpec: QuickSpec {
               }
 
               typealias TestClassTypeAlias = TestClass
-            }
+
+              func some() -> Int {
+                1
+              }
             """
 
           try? self.sut.walkContent(content)
@@ -301,6 +304,11 @@ final class ExtensionVisitorSpec: QuickSpec {
               && $0.initializer?.asSource == "TestClass"
           }
           expect(matching.count) == 1
+        }
+
+        it("finds the function") {
+          let functionDeclaration = self.sut.extensionInfo?.functionDeclarations.first
+          expect(functionDeclaration?.name) == "some"
         }
       }
 
