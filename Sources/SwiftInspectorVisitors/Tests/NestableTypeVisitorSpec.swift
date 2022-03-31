@@ -149,13 +149,36 @@ final class NestableTypeVisitorSpec: QuickSpec {
               expect(typealiasInfo?.initializer?.asSource) == "String"
             }
           }
+
+          context("with a function") {
+            beforeEach {
+              let content = """
+                public class SomeClass {
+                  func myString() -> String {
+                    ""
+                  }
+                }
+                """
+
+              try? self.sut.walkContent(content)
+            }
+
+            it("finds the function") {
+              let info = self.sut.classes.first?.functionDeclarations.first
+              expect(info?.name) == "myString"
+            }
+          }
         }
 
         context("that is a struct") {
           context("with no conformance") {
             beforeEach {
               let content = """
-                public struct SomeStruct {}
+                public struct SomeStruct {
+                  func myString() -> String {
+                    ""
+                  }
+                }
                 """
 
               try? self.sut.walkContent(content)
@@ -174,6 +197,11 @@ final class NestableTypeVisitorSpec: QuickSpec {
 
             it("does not find an enum") {
               expect(self.sut.enums.count) == 0
+            }
+
+            it("finds the function") {
+              let info = self.sut.structs.first?.functionDeclarations.first
+              expect(info?.name) == "myString"
             }
           }
 
@@ -262,7 +290,11 @@ final class NestableTypeVisitorSpec: QuickSpec {
           context("with no conformance") {
             beforeEach {
               let content = """
-              public enum SomeEnum {}
+              public enum SomeEnum {
+                func myString() -> String {
+                  ""
+                }
+              }
               """
 
               try? self.sut.walkContent(content)
@@ -281,6 +313,11 @@ final class NestableTypeVisitorSpec: QuickSpec {
 
             it("does not find a struct") {
               expect(self.sut.structs.count) == 0
+            }
+
+            it("finds the function") {
+              let info = self.sut.enums.first?.functionDeclarations.first
+              expect(info?.name) == "myString"
             }
           }
 
