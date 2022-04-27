@@ -26,18 +26,6 @@ jobs:
       env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   
-  build-5-4:
-    runs-on: self-hosted
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Select Xcode 12
-      run: xcversion select 12.5
-
-    - name: Run tests
-      run: swift test
-
   build-5-5:
     runs-on: self-hosted
 
