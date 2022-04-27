@@ -9,8 +9,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Select Xcode 13 beta 5
-      run: xcversion select 13.0
+    - name: Select Xcode 13.3
+      run: xcversion select 13.3
 
     - name: Build project
       run: swift build
@@ -34,6 +34,18 @@ jobs:
 
     - name: Select Xcode 12
       run: xcversion select 12.5
+
+    - name: Run tests
+      run: swift test
+
+  build-5-5:
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Select Xcode 13
+      run: xcversion select 13.0
 
     - name: Run tests
       run: swift test
