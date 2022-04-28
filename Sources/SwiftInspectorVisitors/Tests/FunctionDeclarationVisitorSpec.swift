@@ -152,7 +152,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
       }
 
-      context("function with no external parameter label") {
+      context("function with no argument label") {
         beforeEach {
           let content = """
             func print(_ string: String) {
@@ -171,7 +171,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
       }
 
-      context("function with custom external parameter label") {
+      context("function with an argument label that differs from the parameter name") {
         beforeEach {
           let content = """
             func append(argumentLabelName parameterName: String) {
