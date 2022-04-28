@@ -136,6 +136,22 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
       }
 
+      context("function with no parameters") {
+        beforeEach {
+          let content = """
+            func helloWorld() {
+                print("Hello, world!")
+            }
+            """
+
+          try? self.sut.walkContent(content)
+        }
+
+        it("finds no arguments") {
+          expect(self.sut.functionDeclarations.first?.arguments).to(beNil())
+        }
+      }
+
       context("function with no external parameter label") {
         beforeEach {
           let content = """
