@@ -1,4 +1,4 @@
-// swift-tools-version:5.4
+// swift-tools-version:5.6
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
   name: "SwiftInspector",
   platforms: [
-    .macOS(.v10_13)
+    .macOS(.v12)
   ],
   products: [
     .executable(name: "swiftinspector", targets: ["SwiftInspector"]),
@@ -16,7 +16,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
-    .package(name: "SwiftSyntax", url: "https://github.com/apple/swift-syntax.git", .exact("0.50400.0")),
+    .package(url: "https://github.com/apple/swift-syntax.git", exact: "0.50600.1"),
     .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.0.1")),
     .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")),
   ],
@@ -33,7 +33,7 @@ let package = Package(
       dependencies: [
         "SwiftInspectorAnalyzers",
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
-      ], exclude: ["Tests"]),
+    ], exclude: ["Tests"]),
     .testTarget(
       name: "SwiftInspectorCommandsTests",
       dependencies: [
@@ -48,7 +48,8 @@ let package = Package(
     .target(
       name: "SwiftInspectorAnalyzers",
       dependencies: [
-        "SwiftSyntax",
+        .product(name: "SwiftSyntax", package: "swift-syntax"),
+        .product(name: "SwiftSyntaxParser", package: "swift-syntax"),
         "SwiftInspectorVisitors",
       ],
       exclude: ["Tests"]),
@@ -66,7 +67,10 @@ let package = Package(
 
     .target(
       name: "SwiftInspectorTestHelpers",
-      dependencies: ["SwiftSyntax"],
+      dependencies: [
+        .product(name: "SwiftSyntax", package: "swift-syntax"),
+        .product(name: "SwiftSyntaxParser", package: "swift-syntax"),
+      ],
       exclude: ["Tests"]),
     .testTarget(
       name: "SwiftInspectorTestHelpersTests",
@@ -80,7 +84,9 @@ let package = Package(
 
     .target(
       name: "SwiftInspectorVisitors",
-      dependencies: ["SwiftSyntax"],
+      dependencies: [
+        .product(name: "SwiftSyntax", package: "swift-syntax"),
+      ],
       exclude: ["Tests"]),
     .testTarget(
       name: "SwiftInspectorVisitorsTests",

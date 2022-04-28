@@ -24,6 +24,7 @@
 
 import Foundation
 import SwiftSyntax
+import SwiftSyntaxParser
 
 extension SyntaxVisitor {
   /// Walks the visitor along the content's syntax.
