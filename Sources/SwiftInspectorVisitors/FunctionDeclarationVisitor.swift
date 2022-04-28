@@ -46,6 +46,7 @@ public struct FunctionDeclarationInfo: Codable, Hashable {
   public let arguments: [ArgumentInfo]?
   public let returnType: TypeDescription?
 
+  /// A convenience for creating a selector string that can be reference in Objective-C code.
   public var selectorName: String {
     "\(name)(\((arguments ?? []).map { "\($0.argumentLabelName):" }.joined()))"
   }
