@@ -29,7 +29,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
           expect(self.sut.functionDeclarations.first?.name) == "greet"
         }
         it("finds the function parameter") {
-          expect(self.sut.functionDeclarations.first?.arguments?.first?.externalLabel) == "person"
+          expect(self.sut.functionDeclarations.first?.arguments?.first?.argumentLabelName) == "person"
           expect(self.sut.functionDeclarations.first?.arguments?.first?.type) == .simple(name: "String")
         }
         it("finds the return type") {
@@ -52,7 +52,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
           expect(self.sut.functionDeclarations.first?.name) == "printWithoutCounting"
         }
         it("finds the function parameter") {
-          expect(self.sut.functionDeclarations.first?.arguments?.first?.externalLabel) == "string"
+          expect(self.sut.functionDeclarations.first?.arguments?.first?.argumentLabelName) == "string"
           expect(self.sut.functionDeclarations.first?.arguments?.first?.type) == .simple(name: "String")
         }
         it("sets the return type as nil") {
@@ -84,7 +84,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
           expect(self.sut.functionDeclarations.first?.name) == "minMax"
         }
         it("finds the function parameter") {
-          expect(self.sut.functionDeclarations.first?.arguments?.first?.externalLabel) == "array"
+          expect(self.sut.functionDeclarations.first?.arguments?.first?.argumentLabelName) == "array"
           expect(self.sut.functionDeclarations.first?.arguments?.first?.type) == .array(element: .simple(name: "Int"))
         }
         it("finds the tuple return value") {
@@ -123,14 +123,14 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         it("finds the first function") {
           let firstFunction = self.sut.functionDeclarations.first
           expect(firstFunction?.name) == "minMax"
-          expect(firstFunction?.arguments?.first?.externalLabel) == "array"
+          expect(firstFunction?.arguments?.first?.argumentLabelName) == "array"
           expect(firstFunction?.arguments?.first?.type) == .array(element: .simple(name: "Int"))
           expect(firstFunction?.returnType) == .tuple([.simple(name: "Int"), .simple(name: "Int")])
         }
         it("finds the last function") {
           let lastFunction = self.sut.functionDeclarations.last
           expect(lastFunction?.name) == "printWithoutCounting"
-          expect(lastFunction?.arguments?.first?.externalLabel) == "string"
+          expect(lastFunction?.arguments?.first?.argumentLabelName) == "string"
           expect(lastFunction?.arguments?.first?.type) == .simple(name: "String")
           expect(lastFunction?.returnType).to(beNil())
         }
@@ -148,7 +148,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
 
         it("finds the parameter label") {
-          expect(self.sut.functionDeclarations.first?.arguments?.first?.externalLabel) == "_"
+          expect(self.sut.functionDeclarations.first?.arguments?.first?.argumentLabelName) == "_"
         }
         it("calculates the selectorName") {
           expect(self.sut.functionDeclarations.first?.selectorName) == "print(_:)"
@@ -158,7 +158,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
       context("function with custom external parameter label") {
         beforeEach {
           let content = """
-            func append(externalLabel label: String) {
+            func append(argumentLabelName parameterName: String) {
               // ...
             }
             """
@@ -167,17 +167,17 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
 
         it("finds the parameter label") {
-          expect(self.sut.functionDeclarations.first?.arguments?.first?.externalLabel) == "externalLabel"
+          expect(self.sut.functionDeclarations.first?.arguments?.first?.argumentLabelName) == "argumentLabelName"
         }
         it("calculates the selectorName") {
-          expect(self.sut.functionDeclarations.first?.selectorName) == "append(externalLabel:)"
+          expect(self.sut.functionDeclarations.first?.selectorName) == "append(argumentLabelName:)"
         }
       }
 
       context("function with multiple parameters") {
         beforeEach {
           let content = """
-            func append(externalLabel label: String, type: TypeDescription) {
+            func append(argumentLabelName parameterName: String, type: TypeDescription) {
               // ...
             }
             """
@@ -189,11 +189,11 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
           expect(self.sut.functionDeclarations.first?.arguments?.count) == 2
         }
         it("finds the parameter labels") {
-          expect(self.sut.functionDeclarations.first?.arguments?.first?.externalLabel) == "externalLabel"
-          expect(self.sut.functionDeclarations.first?.arguments?.last?.externalLabel) == "type"
+          expect(self.sut.functionDeclarations.first?.arguments?.first?.argumentLabelName) == "argumentLabelName"
+          expect(self.sut.functionDeclarations.first?.arguments?.last?.argumentLabelName) == "type"
         }
         it("calculates the selectorName") {
-          expect(self.sut.functionDeclarations.first?.selectorName) == "append(externalLabel:type:)"
+          expect(self.sut.functionDeclarations.first?.selectorName) == "append(argumentLabelName:type:)"
         }
       }
     }
