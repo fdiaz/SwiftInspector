@@ -62,11 +62,7 @@ private final class TypeLocationSyntaxVisitor: SyntaxVisitor {
   }
 
   override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    #if swift(>=5.5)
     processLocatedType(name: node.identifier.text, keywordToken: node.classOrActorKeyword, for: node)
-    #else
-    processLocatedType(name: node.identifier.text, keywordToken: node.classKeyword, for: node)
-    #endif
     return .visitChildren
   }
 

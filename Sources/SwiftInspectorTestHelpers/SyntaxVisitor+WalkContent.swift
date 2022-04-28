@@ -24,9 +24,7 @@
 
 import Foundation
 import SwiftSyntax
-#if canImport(SwiftSyntaxParser)
 import SwiftSyntaxParser
-#endif
 
 extension SyntaxVisitor {
   /// Walks the visitor along the content's syntax.

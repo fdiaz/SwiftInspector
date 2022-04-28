@@ -24,9 +24,7 @@
 
 import Foundation
 import SwiftSyntax
-#if canImport(SwiftSyntaxParser)
 import SwiftSyntaxParser
-#endif
 
 /// A type that knows how to return a source file syntax given a file URL
 public final class CachedSyntaxTree {
