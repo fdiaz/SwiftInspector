@@ -10,6 +10,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
   override func spec() {
     beforeEach {
       self.sut = FunctionDeclarationVisitor()
+      AssertionFailure.postNotification = true
     }
 
     describe("visit(_:)") {
@@ -223,6 +224,82 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
           expect(self.sut.functionDeclarations.first?.selectorName) == "append(argumentLabelName:type:)"
         }
       }
+
+      context("visiting a code block with a class declaration") {
+        it("asserts") {
+          let content = """
+            final class Test {
+              func test() {}
+            }
+            """
+
+          // The FunctionDeclarationVisitor is only meant to be used over a single function declaration.
+          // Using a FunctionDeclarationVisitor over a block that has a class declaration
+          // is API misuse.
+          expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
+        }
+      }
+
+      context("visiting a code block with a struct declaration") {
+        it("asserts") {
+          let content = """
+            struct Test {
+              func test() {}
+            }
+            """
+
+          // The FunctionDeclarationVisitor is only meant to be used over a single function declaration.
+          // Using a FunctionDeclarationVisitor over a block that has a struct declaration
+          // is API misuse.
+          expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
+        }
+      }
+
+      context("visiting a code block with a enum declaration") {
+        it("asserts") {
+          let content = """
+            enum Test {
+              func test() {}
+            }
+            """
+
+          // The FunctionDeclarationVisitor is only meant to be used over a single function declaration.
+          // Using a FunctionDeclarationVisitor over a block that has an enum declaration
+          // is API misuse.
+          expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
+        }
+      }
+
+      context("visiting a code block with a protocol declaration") {
+        it("asserts") {
+          let content = """
+            protocol Test {
+              func test()
+            }
+            """
+
+          // The FunctionDeclarationVisitor is only meant to be used over a single function declaration.
+          // Using a FunctionDeclarationVisitor over a block that has a protocol declaration
+          // is API misuse.
+          expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
+        }
+      }
+
+      context("visiting a code block with an extension declaration") {
+        it("asserts") {
+          let content = """
+            extension Test {
+              func test()
+            }
+            """
+
+          // The FunctionDeclarationVisitor is only meant to be used over a single function declaration.
+          // Using a FunctionDeclarationVisitor over a block that has an extension declaration
+          // is API misuse.
+          expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
+        }
+      }
+
     }
   }
 }

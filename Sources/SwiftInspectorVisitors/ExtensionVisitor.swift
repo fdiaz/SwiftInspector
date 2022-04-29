@@ -60,19 +60,13 @@ public final class ExtensionVisitor: SyntaxVisitor {
       declarationModifierVisitor.walk(modifiers)
     }
 
-    let propertyVisitor = PropertyVisitor()
-    propertyVisitor.walk(node.members)
-
-    let functionDeclarationVisitor = FunctionDeclarationVisitor()
-    functionDeclarationVisitor.walk(node)
-
     extensionInfo = ExtensionInfo(
       typeDescription: node.extendedType.typeDescription,
       inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
       genericRequirements: genericRequirementVisitor.genericRequirements,
       modifiers: declarationModifierVisitor.modifiers,
-      properties: propertyVisitor.properties,
-      functionDeclarations: functionDeclarationVisitor.functionDeclarations)
+      properties: [],
+      functionDeclarations: [])
     return .visitChildren
   }
 
@@ -108,6 +102,26 @@ public final class ExtensionVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
+  public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
+    let propertyVisitor = PropertyVisitor()
+    propertyVisitor.walk(node)
+
+    extensionInfo?.properties.append(contentsOf: propertyVisitor.properties)
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+  }
+
+  public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
+    let functionDeclarationVisitor = FunctionDeclarationVisitor()
+    functionDeclarationVisitor.walk(node)
+
+    extensionInfo?.functionDeclarations.append(contentsOf: functionDeclarationVisitor.functionDeclarations)
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+  }
+
   // MARK: Private
 
   private func visitNestableDeclaration<DeclSyntax: NestableDeclSyntax>(node: DeclSyntax) -> SyntaxVisitorContinueKind {
@@ -133,9 +147,9 @@ public final class ExtensionVisitor: SyntaxVisitor {
 
 public struct ExtensionInfo: Codable, Hashable {
   public let typeDescription: TypeDescription
-  public private(set) var inheritsFromTypes: [TypeDescription]
-  public private(set) var genericRequirements: [GenericRequirement]
+  public let inheritsFromTypes: [TypeDescription]
+  public let genericRequirements: [GenericRequirement]
   public let modifiers: Modifiers
-  public let properties: [PropertyInfo]
-  public let functionDeclarations: [FunctionDeclarationInfo]
+  public fileprivate(set) var properties: [PropertyInfo]
+  public fileprivate(set) var functionDeclarations: [FunctionDeclarationInfo]
 }
