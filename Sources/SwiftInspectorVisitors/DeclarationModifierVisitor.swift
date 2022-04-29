@@ -29,8 +29,17 @@ final class DeclarationModifierVisitor: SyntaxVisitor {
 
   private(set) var modifiers = [String]()
 
-  override func visit(_ node: DeclModifierSyntax) -> SyntaxVisitorContinueKind {
-    modifiers.append(node.name.text)
+  public override func visit(_ node: DeclModifierSyntax) -> SyntaxVisitorContinueKind {
+    if
+      let leftParen = node.detailLeftParen,
+      let detail = node.detail,
+      let rightParen = node.detailRightParen
+    {
+      modifiers.append(node.name.text + leftParen.text + detail.text + rightParen.text)
+    } else {
+      modifiers.append(node.name.text)
+    }
+
     return .skipChildren
   }
 

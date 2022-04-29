@@ -7,7 +7,7 @@ public final class FunctionDeclarationVisitor: SyntaxVisitor {
     let functionSignatureVisitor = FunctionSignatureVisitor()
     functionSignatureVisitor.walk(node)
 
-    let modifiersVisitor = ModifierDeclarationVisitor()
+    let modifiersVisitor = DeclarationModifierVisitor()
     modifiersVisitor.walk(node)
 
     let info = FunctionDeclarationInfo(
