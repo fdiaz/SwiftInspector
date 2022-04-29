@@ -29,8 +29,8 @@ public struct NestableTypeInfo: Codable, Hashable {
   public let modifiers: Set<String>
   public let genericParameters: [GenericParameter]
   public let genericRequirements: [GenericRequirement]
-  public let properties: [PropertyInfo]
-  public let functionDeclarations: [FunctionDeclarationInfo]
+  public internal(set) var properties: [PropertyInfo]
+  public internal(set) var functionDeclarations: [FunctionDeclarationInfo]
 }
 
 public typealias ClassInfo = NestableTypeInfo
