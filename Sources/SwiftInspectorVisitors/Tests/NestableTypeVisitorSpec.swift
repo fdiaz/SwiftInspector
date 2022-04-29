@@ -1168,7 +1168,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
             """
 
         // The NestableTypeVisitor is only meant to be used over a single nestable type.
-        // Using a NestableTypeVisitor over a block that has an free variable
+        // Using a NestableTypeVisitor over a block that has a free variable
         // is API misuse.
         expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
       }
