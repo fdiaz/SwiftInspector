@@ -28,53 +28,12 @@ public struct PropertyInfo: Codable, Hashable, CustomDebugStringConvertible {
   /// The type of the property if it's present
   public let typeDescription: TypeDescription?
   /// Modifier set for this type
-  public let modifiers: Modifier
+  public let modifiers: Modifiers
   /// The paradigm of this property, along with any associated data that cannot be reasonably represented statically.
   public let paradigm: Paradigm
 
   public var debugDescription: String {
     "\(modifiers.rawValue) \(name) \(typeDescription?.asSource ?? "") \(paradigm)"
-  }
-}
-
-// MARK: - PropertyInfo.Modifier
-
-extension PropertyInfo {
-  public struct Modifier: Codable, Hashable, OptionSet {
-    public let rawValue: Int
-
-    // general accessors
-    public static let `open` = Modifier(rawValue: 1 << 0)
-    public static let `internal` = Modifier(rawValue: 1 << 1)
-    public static let `public` = Modifier(rawValue: 1 << 2)
-    public static let `private` = Modifier(rawValue: 1 << 3)
-    public static let `fileprivate` = Modifier(rawValue: 1 << 4)
-    // set accessors
-    public static let privateSet = Modifier(rawValue: 1 << 5)
-    public static let internalSet = Modifier(rawValue: 1 << 6)
-    public static let publicSet = Modifier(rawValue: 1 << 7)
-    // access control
-    public static let `instance` = Modifier(rawValue: 1 << 8)
-    public static let `static` = Modifier(rawValue: 1 << 9)
-
-    public init(rawValue: Int)  {
-      self.rawValue = rawValue
-    }
-
-    public init(stringValue: String) {
-      switch stringValue {
-      case "open": self = .open
-      case "public": self = .public
-      case "private": self = .private
-      case "fileprivate": self = .fileprivate
-      case "private(set)": self = .privateSet
-      case "internal(set)": self = .internalSet
-      case "public(set)": self = .publicSet
-      case "internal": self = .internal
-      case "static": self = .static
-      default: self = []
-      }
-    }
   }
 }
 

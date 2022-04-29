@@ -74,8 +74,7 @@ final class TypealiasVisitorSpec: QuickSpec {
         }
 
         it("finds the typealias CountableClosedRange's modifiers") {
-          expect(associatedTypeNameToInfoMap?["CountableClosedRange"]?.modifiers.count) == 1
-          expect(associatedTypeNameToInfoMap?["CountableClosedRange"]?.modifiers.contains("public")).to(beTrue())
+          expect(associatedTypeNameToInfoMap?["CountableClosedRange"]?.modifiers) == [.public]
         }
       }
     }

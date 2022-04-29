@@ -3,9 +3,17 @@ import SwiftSyntax
 public final class FunctionDeclarationVisitor: SyntaxVisitor {
   public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
     let name = node.identifier.withoutTrivia().description
+
     let functionSignatureVisitor = FunctionSignatureVisitor()
     functionSignatureVisitor.walk(node)
+
+    let modifiersVisitor = DeclarationModifierVisitor()
+    if let modifiers = node.modifiers {
+      modifiersVisitor.walk(modifiers)
+    }
+
     let info = FunctionDeclarationInfo(
+      modifiers: modifiersVisitor.modifiers,
       name: name,
       arguments: functionSignatureVisitor.arguments,
       returnType: functionSignatureVisitor.returnType)
@@ -67,6 +75,7 @@ fileprivate final class FunctionSignatureVisitor: SyntaxVisitor {
 }
 
 public struct FunctionDeclarationInfo: Codable, Hashable {
+  public let modifiers: Modifiers
   public let name: String
   public let arguments: [ArgumentInfo]?
   public let returnType: TypeDescription?

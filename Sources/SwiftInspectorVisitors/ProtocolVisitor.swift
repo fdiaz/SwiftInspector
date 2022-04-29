@@ -33,7 +33,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
       associatedTypes: associatedtypes,
       inheritsFromTypes: inheritsFromTypes ?? [],
       genericRequirements: genericRequirements ?? [],
-      modifiers: modifiers ?? .init(),
+      modifiers: modifiers ?? [],
       innerTypealiases: typealiases,
       properties: properties,
       functionDeclarations: functionDeclarations)
@@ -63,7 +63,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
     let declarationModifierVisitor = DeclarationModifierVisitor()
     if let modifiers = node.modifiers {
       declarationModifierVisitor.walk(modifiers)
-      self.modifiers = .init(declarationModifierVisitor.modifiers)
+      self.modifiers = declarationModifierVisitor.modifiers
     }
 
     return .visitChildren
@@ -129,7 +129,7 @@ public final class ProtocolVisitor: SyntaxVisitor {
 
   private var hasFinishedParsingProtocol = false
   private var name: String?
-  private var modifiers: Set<String>?
+  private var modifiers: Modifiers?
   private var inheritsFromTypes: [TypeDescription]?
   private var genericRequirements: [GenericRequirement]?
   private var associatedtypes: [AssociatedtypeInfo] = []
@@ -144,7 +144,7 @@ public struct ProtocolInfo: Codable, Hashable {
   public let associatedTypes: [AssociatedtypeInfo]
   public let inheritsFromTypes: [TypeDescription]
   public let genericRequirements: [GenericRequirement]
-  public let modifiers: Set<String>
+  public let modifiers: Modifiers
   public let innerTypealiases: [TypealiasInfo]
   public let properties: [PropertyInfo]
   public let functionDeclarations: [FunctionDeclarationInfo]

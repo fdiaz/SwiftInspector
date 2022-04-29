@@ -196,7 +196,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
           name: node.identifier.text,
           inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
           parentType: parentType,
-          modifiers: Set(declarationModifierVisitor.modifiers),
+          modifiers: declarationModifierVisitor.modifiers,
           genericParameters: genericParameterVisitor.genericParameters,
           genericRequirements: genericRequirementVisitor.genericRequirements,
           properties: [],

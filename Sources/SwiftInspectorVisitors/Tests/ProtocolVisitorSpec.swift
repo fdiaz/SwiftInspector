@@ -65,7 +65,7 @@ final class ProtocolVisitorSpec: QuickSpec {
           }
 
           it("finds the modifiers") {
-            expect(self.sut.protocolInfo?.modifiers) == .init(["public"])
+            expect(self.sut.protocolInfo?.modifiers) == [.public]
           }
         }
 

@@ -85,46 +85,29 @@ public final class PropertyVisitor: SyntaxVisitor {
     case variable = "var"
   }
 
-  private func findModifiers(from node: VariableDeclSyntax) -> PropertyInfo.Modifier {
-    let modifiersString: [String]
-    if let modifiersSyntaxList = node.modifiers {
-      modifiersString = modifiersSyntaxList.children
-        .compactMap { $0.as(DeclModifierSyntax.self) }
-        .map { modifierSyntax in
-          if
-            let leftParen = modifierSyntax.detailLeftParen,
-            let detail = modifierSyntax.detail,
-            let rightParen = modifierSyntax.detailRightParen
-          {
-            return modifierSyntax.name.text + leftParen.text + detail.text + rightParen.text
-          }
-          return modifierSyntax.name.text
-        }
-    }
-    else {
-      modifiersString = []
+  private func findModifiers(from node: VariableDeclSyntax) -> Modifiers {
+    let modifiersVisitor = DeclarationModifierVisitor()
+    if let modifiers = node.modifiers {
+      modifiersVisitor.walk(modifiers)
     }
 
-    var modifier = modifiersString.reduce(PropertyInfo.Modifier()) { result, stringValue in
-      let modifier = PropertyInfo.Modifier(stringValue: stringValue)
-      return result.union(modifier)
-    }
+    var modifiers = modifiersVisitor.modifiers
 
     // If there are no explicit modifiers, this is an internal property
-    if !modifier.contains(.open) &&
-        !modifier.contains(.public) &&
-        !modifier.contains(.fileprivate) &&
-        !modifier.contains(.private)
+    if !modifiers.contains(.open) &&
+        !modifiers.contains(.public) &&
+        !modifiers.contains(.fileprivate) &&
+        !modifiers.contains(.private)
     {
-      modifier = modifier.union(.internal)
+      modifiers = modifiers.union(.internal)
     }
 
     // If the variable isn't static, it's an instance variable
-    if !modifier.contains(.static) {
-      modifier = modifier.union(.instance)
+    if !modifiers.contains(.static) {
+      modifiers = modifiers.union(.instance)
     }
 
-    return modifier
+    return modifiers
   }
 
   private func findTypeDescription(from node: TypeAnnotationSyntax?) -> TypeDescription? {
