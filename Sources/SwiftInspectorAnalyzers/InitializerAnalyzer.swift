@@ -23,6 +23,7 @@
 // SOFTWARE.
 
 import Foundation
+import SwiftInspectorVisitors
 import SwiftSyntax
 
 public final class InitializerAnalyzer: Analyzer {
@@ -101,7 +102,7 @@ public final class InitializerAnalyzer: Analyzer {
     return .init(name: name, typeNames: typeNames)
   }
 
-  private func findModifiers(from node: InitializerDeclSyntax) -> InitializerStatement.Modifier {
+  private func findModifiers(from node: InitializerDeclSyntax) -> Modifiers {
     let modifiersString: [String] = node.children
       .compactMap { $0.as(ModifierListSyntax.self) }
       .reduce(into: []) { result, syntax in
@@ -111,8 +112,8 @@ public final class InitializerAnalyzer: Analyzer {
         result.append(contentsOf: modifiers)
       }
 
-    var modifier = modifiersString.reduce(InitializerStatement.Modifier()) { result, stringValue in
-      let modifier = InitializerStatement.Modifier(stringValue: stringValue)
+    var modifier = modifiersString.reduce(Modifiers()) { result, stringValue in
+      let modifier = Modifiers(stringValue: stringValue)
       return result.union(modifier)
     }
 
@@ -133,7 +134,7 @@ public final class InitializerAnalyzer: Analyzer {
 public struct InitializerStatement: Equatable {
   public let typeName: String
   public let parameters: [Parameter]
-  public let modifiers: Modifier
+  public let modifiers: Modifiers
 
 
   public struct Parameter: Equatable {
@@ -156,28 +157,6 @@ public struct InitializerStatement: Equatable {
     public init(name: String, typeName: String) {
       self.name = name
       self.typeNames = [typeName]
-    }
-  }
-
-  public struct Modifier: Equatable, OptionSet  {
-    public let rawValue: Int
-
-    public static let designated = Modifier(rawValue: 1 << 0)
-    public static let convenience = Modifier(rawValue: 1 << 1)
-    public static let override = Modifier(rawValue: 1 << 2)
-    public static let required = Modifier(rawValue: 1 << 3)
-
-    public init(rawValue: Int)  {
-      self.rawValue = rawValue
-    }
-
-    public init(stringValue: String) {
-      switch stringValue {
-      case "convenience": self = .convenience
-      case "override": self = .override
-      case "required": self = .required
-      default: self = []
-      }
     }
   }
 }
