@@ -26,7 +26,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
 
         it("finds the modifiers") {
-          expect(self.sut.functionDeclarations.first?.modifiers) == ["fileprivate"]
+          expect(self.sut.functionDeclarations.first?.modifiers) == Modifiers.fileprivate
         }
         it("finds the function name") {
           expect(self.sut.functionDeclarations.first?.name) == "greet"
@@ -87,7 +87,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
 
         it("finds the modifiers") {
-          expect(self.sut.functionDeclarations.first?.modifiers) == ["internal"]
+          expect(self.sut.functionDeclarations.first?.modifiers) == Modifiers.internal
         }
         it("finds the function name") {
           expect(self.sut.functionDeclarations.first?.name) == "minMax"
@@ -131,7 +131,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
         it("finds the first function") {
           let firstFunction = self.sut.functionDeclarations.first
-          expect(firstFunction?.modifiers) == ["public"]
+          expect(firstFunction?.modifiers) == Modifiers.public
           expect(firstFunction?.name) == "minMax"
           expect(firstFunction?.arguments?.first?.argumentLabelName) == "array"
           expect(firstFunction?.arguments?.first?.type) == .array(element: .simple(name: "Int"))
@@ -139,7 +139,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
         it("finds the last function") {
           let lastFunction = self.sut.functionDeclarations.last
-          expect(lastFunction?.modifiers) == ["private", "static"]
+          expect(lastFunction?.modifiers) == [.private, .static]
           expect(lastFunction?.name) == "printWithoutCounting"
           expect(lastFunction?.arguments?.first?.argumentLabelName) == "string"
           expect(lastFunction?.arguments?.first?.type) == .simple(name: "String")

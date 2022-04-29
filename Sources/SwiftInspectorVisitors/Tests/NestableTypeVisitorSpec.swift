@@ -431,7 +431,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               $0.name == "FooClass"
                 && $0.inheritsFromTypes.map { $0.asSource } == []
                 && $0.parentType?.asSource == nil
-                && $0.modifiers.contains("public")
+                && $0.modifiers == [.public]
             }
 
             expect(matching.count) == 1
@@ -442,7 +442,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               $0.name == "FooClass"
                 && $0.inheritsFromTypes.map { $0.asSource } == []
                 && $0.parentType?.asSource == "FooClass"
-                && $0.modifiers.contains("internal")
+                && $0.modifiers == [.internal]
             }
 
             expect(matching.count) == 1
@@ -535,7 +535,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               $0.name == "FooStruct"
                 && $0.inheritsFromTypes.map { $0.asSource } == []
                 && $0.parentType?.asSource == nil
-                && $0.modifiers == .init(["public"])
+                && $0.modifiers == [.public]
             }
 
             expect(matching.count) == 1
@@ -546,7 +546,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               $0.name == "BarFooStruct"
                 && $0.inheritsFromTypes.map { $0.asSource } == ["Equatable"]
                 && $0.parentType?.asSource == "FooStruct"
-                && $0.modifiers == .init(["internal"])
+                && $0.modifiers == [.internal]
             }
 
             expect(matching.count) == 1
@@ -629,7 +629,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               $0.name == "FooEnum"
                 && $0.inheritsFromTypes.map { $0.asSource } == []
                 && $0.parentType?.asSource == nil
-                && $0.modifiers.contains("public")
+                && $0.modifiers == [.public]
             }
             expect(matching.count) == 1
           }
@@ -639,7 +639,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
               $0.name == "BarFooEnum"
                 && $0.inheritsFromTypes.map { $0.asSource } == ["Equatable"]
                 && $0.parentType?.asSource == "FooEnum"
-                && $0.modifiers.contains("internal")
+                && $0.modifiers == [.internal]
             }
             expect(matching.count) == 1
           }

@@ -27,7 +27,11 @@ import SwiftSyntax
 
 final class DeclarationModifierVisitor: SyntaxVisitor {
 
-  private(set) var modifiers = [String]()
+  public var modifiers: Modifiers {
+    rawModifiers.reduce(Modifiers()) { partialResult, nextStringModifier in
+      partialResult.union(Modifiers(stringValue: nextStringModifier))
+    }
+  }
 
   public override func visit(_ node: DeclModifierSyntax) -> SyntaxVisitorContinueKind {
     if
@@ -35,12 +39,16 @@ final class DeclarationModifierVisitor: SyntaxVisitor {
       let detail = node.detail,
       let rightParen = node.detailRightParen
     {
-      modifiers.append(node.name.text + leftParen.text + detail.text + rightParen.text)
+      rawModifiers.append(node.name.text + leftParen.text + detail.text + rightParen.text)
     } else {
-      modifiers.append(node.name.text)
+      rawModifiers.append(node.name.text)
     }
 
     return .skipChildren
   }
+
+  // MARK: Private
+
+  private var rawModifiers = [String]()
 
 }

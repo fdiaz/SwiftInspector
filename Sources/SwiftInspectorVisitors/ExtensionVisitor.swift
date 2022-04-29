@@ -70,7 +70,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
       typeDescription: node.extendedType.typeDescription,
       inheritsFromTypes: typeInheritanceVisitor.inheritsFromTypes,
       genericRequirements: genericRequirementVisitor.genericRequirements,
-      modifiers: .init(declarationModifierVisitor.modifiers),
+      modifiers: declarationModifierVisitor.modifiers,
       properties: propertyVisitor.properties,
       functionDeclarations: functionDeclarationVisitor.functionDeclarations)
     return .visitChildren
@@ -135,7 +135,7 @@ public struct ExtensionInfo: Codable, Hashable {
   public let typeDescription: TypeDescription
   public private(set) var inheritsFromTypes: [TypeDescription]
   public private(set) var genericRequirements: [GenericRequirement]
-  public let modifiers: Set<String>
+  public let modifiers: Modifiers
   public let properties: [PropertyInfo]
   public let functionDeclarations: [FunctionDeclarationInfo]
 }

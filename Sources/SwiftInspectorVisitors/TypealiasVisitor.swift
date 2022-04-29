@@ -56,7 +56,7 @@ public final class TypealiasVisitor: SyntaxVisitor {
         genericParameters: genericTypeVisitor.genericParameters,
         initializer: node.initializer?.value.typeDescription,
         genericRequirements: genericRequirementVisitor.genericRequirements,
-        modifiers: .init(declarationModifierVisitor.modifiers),
+        modifiers: declarationModifierVisitor.modifiers,
         parentType: parentType))
 
     return .skipChildren
@@ -72,6 +72,6 @@ public struct TypealiasInfo: Codable, Hashable {
   public let genericParameters: [GenericParameter]
   public let initializer: TypeDescription?
   public let genericRequirements: [GenericRequirement]
-  public let modifiers: Set<String>
+  public let modifiers: Modifiers
   public let parentType: TypeDescription?
 }

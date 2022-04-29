@@ -175,7 +175,7 @@ final class ExtensionVisitorSpec: QuickSpec {
         }
 
         it("finds extension's modifiers") {
-          expect(self.sut.extensionInfo?.modifiers) == .init(["public"])
+          expect(self.sut.extensionInfo?.modifiers) == [.public]
         }
 
         it("finds Array.TestStruct") {
