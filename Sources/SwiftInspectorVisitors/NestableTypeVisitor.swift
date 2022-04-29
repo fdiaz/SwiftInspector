@@ -160,7 +160,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
       }
 
       let visitor = FunctionDeclarationVisitor()
-      visitor.walk(node)
+      visitor.walk(node.members)
       let functionDeclarations = visitor.functionDeclarations
 
       let propertyVisitor = PropertyVisitor()
