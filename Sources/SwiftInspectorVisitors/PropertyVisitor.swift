@@ -82,7 +82,9 @@ public final class PropertyVisitor: SyntaxVisitor {
 
   private func findModifiers(from node: VariableDeclSyntax) -> PropertyInfo.Modifier {
     let modifiersVisitor = DeclarationModifierVisitor()
-    modifiersVisitor.walk(node)
+    if let modifiers = node.modifiers {
+      modifiersVisitor.walk(modifiers)
+    }
 
     var modifier = modifiersVisitor.modifiers.reduce(PropertyInfo.Modifier()) { result, stringValue in
       let modifier = PropertyInfo.Modifier(stringValue: stringValue)
