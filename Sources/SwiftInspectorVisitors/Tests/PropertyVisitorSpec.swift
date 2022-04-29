@@ -37,6 +37,7 @@ final class PropertyVisitorSpec: QuickSpec {
 
       beforeEach {
         sut = PropertyVisitor()
+        AssertionFailure.postNotification = true
       }
 
       context("when there are multiple properties on the same line") {
@@ -373,44 +374,80 @@ final class PropertyVisitorSpec: QuickSpec {
         }
       }
 
-      context("when there is a type declaration in content") {
-        let content = """
-        let hex: Int
-        final class FakeClass {
-          let timestamp: Int
-        }
-        struct FakeStruct {
-          let timestamp: Int
-        }
-        enum FakeEnum {
-          var timestamp: Int { 0 }
-        }
-        protocol FakeProtocol {
-          var timestamp: Int { get }
-        }
-        extension FakeProtocol {
-          var timestamp: Int { 0 }
-        }
-        """
+      context("visiting a code block with a class declaration") {
+        it("asserts") {
+          let content = """
+            final class Test {
+              let test = 0
+            }
+            """
 
-        it("detect properties outside the type declaration") {
-          try sut.walkContent(content)
-          let expected: [PropertyInfo] = [
-            .init(
-              name: "hex",
-              typeDescription: .simple(name: "Int"),
-              modifiers: [.internal, .instance],
-              paradigm: .undefinedConstant)
-          ]
-          expect(sut.properties).to(contain(expected))
-        }
-
-        it("does not detect properties within type declaration") {
-          try sut.walkContent(content)
-          expect(sut.properties.map(\.name)).notTo(contain("timestamp"))
+          // The PropertyVisitor is only meant to be used over a single property declaration.
+          // Using a PropertyVisitor over a block that has a class declaration
+          // is API misuse.
+          expect(try sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
         }
       }
 
+      context("visiting a code block with a struct declaration") {
+        it("asserts") {
+          let content = """
+            struct Test {
+              let test = 0
+            }
+            """
+
+          // The PropertyVisitor is only meant to be used over a single property declaration.
+          // Using a PropertyVisitor over a block that has a struct declaration
+          // is API misuse.
+          expect(try sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
+        }
+      }
+
+      context("visiting a code block with a enum declaration") {
+        it("asserts") {
+          let content = """
+            enum Test {
+              var test: Int { 0 }
+            }
+            """
+
+          // The PropertyVisitor is only meant to be used over a single property declaration.
+          // Using a PropertyVisitor over a block that has an enum declaration
+          // is API misuse.
+          expect(try sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
+        }
+      }
+
+      context("visiting a code block with a protocol declaration") {
+        it("asserts") {
+          let content = """
+            protocol Test {
+              var test: Int { get }
+            }
+            """
+
+          // The PropertyVisitor is only meant to be used over a single property declaration.
+          // Using a PropertyVisitor over a block that has a protocol declaration
+          // is API misuse.
+          expect(try sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
+        }
+      }
+
+      context("visiting a code block with an extension declaration") {
+        it("asserts") {
+          let content = """
+            extension Test {
+              var test: Int { 0 }
+            }
+            """
+
+          // The PropertyVisitor is only meant to be used over a single property declaration.
+          // Using a PropertyVisitor over a block that has an extension declaration
+          // is API misuse.
+          expect(try sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
+        }
+      }
     }
   }
 }

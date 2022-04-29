@@ -106,6 +106,38 @@ public final class NestableTypeVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
+  public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
+    guard let topLevelDeclaration = topLevelDeclaration else {
+      assertionFailureOrPostNotification("Encountered a variable declaration. This is a usage error: a single NestableTypeVisitor instance should start walking only over a nestable declaration syntax node")
+      return .skipChildren
+    }
+
+    let visitor = PropertyVisitor()
+    visitor.walk(node)
+
+    self.topLevelDeclaration = topLevelDeclaration
+      .withAdditionalProperties(visitor.properties)
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+  }
+
+  public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
+    guard let topLevelDeclaration = topLevelDeclaration else {
+      assertionFailureOrPostNotification("Encountered a function declaration. This is a usage error: a single NestableTypeVisitor instance should start walking only over a nestable declaration syntax node")
+      return .skipChildren
+    }
+
+    let visitor = FunctionDeclarationVisitor()
+    visitor.walk(node)
+
+    self.topLevelDeclaration = topLevelDeclaration
+      .withAdditionalFunctions(visitor.functionDeclarations)
+
+    // We don't need to visit children because our visitor just did that for us.
+    return .skipChildren
+  }
+
   // MARK: Private
 
   private func visitNestableDeclaration<DeclSyntax: NestableDeclSyntax>(
@@ -159,13 +191,6 @@ public final class NestableTypeVisitor: SyntaxVisitor {
         genericRequirementVisitor.walk(genericWhereClause)
       }
 
-      let visitor = FunctionDeclarationVisitor()
-      visitor.walk(node)
-      let functionDeclarations = visitor.functionDeclarations
-
-      let propertyVisitor = PropertyVisitor()
-      propertyVisitor.walk(node.members)
-
       topLevelDeclaration = topLevelDeclarationCreator(
         .init(
           name: node.identifier.text,
@@ -174,8 +199,8 @@ public final class NestableTypeVisitor: SyntaxVisitor {
           modifiers: Set(declarationModifierVisitor.modifiers),
           genericParameters: genericParameterVisitor.genericParameters,
           genericRequirements: genericRequirementVisitor.genericRequirements,
-          properties: propertyVisitor.properties,
-          functionDeclarations: functionDeclarations))
+          properties: [],
+          functionDeclarations: []))
 
       return .visitChildren
     }
@@ -235,6 +260,31 @@ private enum TopLevelDeclaration {
     case .topLevelClass,
          .topLevelStruct:
       return nil
+    }
+  }
+
+  func withAdditionalProperties(_ properties: [PropertyInfo]) -> Self {
+    var nestableInfo = self.nestableInfo
+    nestableInfo.properties += properties
+    return topLevelDeclarationCreator(nestableInfo)
+  }
+
+  func withAdditionalFunctions(_ functions: [FunctionDeclarationInfo]) -> Self {
+    var nestableInfo = self.nestableInfo
+    nestableInfo.functionDeclarations += functions
+    return topLevelDeclarationCreator(nestableInfo)
+  }
+
+  // MARK: Private
+
+  private var topLevelDeclarationCreator: (NestableTypeInfo) -> TopLevelDeclaration {
+    switch self {
+    case .topLevelClass:
+      return { .topLevelClass($0) }
+    case .topLevelEnum:
+      return { .topLevelEnum($0) }
+    case .topLevelStruct:
+      return { .topLevelStruct($0) }
     }
   }
 }

@@ -13,6 +13,31 @@ public final class FunctionDeclarationVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
+  public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+    assertionFailureOrPostNotification("Encountered a class declaration. This is a usage error: a single FunctionDeclarationVisitor instance should start walking only over a function declaration node")
+    return .skipChildren
+  }
+
+  public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
+    assertionFailureOrPostNotification("Encountered a struct declaration. This is a usage error: a single FunctionDeclarationVisitor instance should start walking only over a function declaration node")
+    return .skipChildren
+  }
+
+  public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
+    assertionFailureOrPostNotification("Encountered an enum declaration. This is a usage error: a single FunctionDeclarationVisitor instance should start walking only over a function declaration node")
+    return .skipChildren
+  }
+
+  public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
+    assertionFailureOrPostNotification("Encountered a protocol declaration. This is a usage error: a single FunctionDeclarationVisitor instance should start walking only over a function declaration node")
+    return .skipChildren
+  }
+
+  public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
+    assertionFailureOrPostNotification("Encountered an extension declaration. This is a usage error: a single FunctionDeclarationVisitor instance should start walking only over a function declaration node")
+    return .skipChildren
+  }
+
   public var functionDeclarations: [FunctionDeclarationInfo] = []
 }
 

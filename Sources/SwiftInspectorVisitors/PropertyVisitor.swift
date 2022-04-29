@@ -54,23 +54,28 @@ public final class PropertyVisitor: SyntaxVisitor {
   }
 
   public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-    .skipChildren
+    assertionFailureOrPostNotification("Encountered a class declaration. This is a usage error: a single PropertyVisitor instance should start walking only over a property declaration node")
+    return .skipChildren
   }
 
   public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-    .skipChildren
+    assertionFailureOrPostNotification("Encountered a struct declaration. This is a usage error: a single PropertyVisitor instance should start walking only over a property declaration node")
+    return .skipChildren
   }
 
   public override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-    .skipChildren
+    assertionFailureOrPostNotification("Encountered an enum declaration. This is a usage error: a single PropertyVisitor instance should start walking only over a property declaration node")
+    return .skipChildren
   }
 
   public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
-    .skipChildren
+    assertionFailureOrPostNotification("Encountered a protocol declaration. This is a usage error: a single PropertyVisitor instance should start walking only over a property declaration node")
+    return .skipChildren
   }
 
   public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
-    .skipChildren
+    assertionFailureOrPostNotification("Encountered an extension declaration. This is a usage error: a single PropertyVisitor instance should start walking only over a property declaration node")
+    return .skipChildren
   }
 
   // MARK: Private
