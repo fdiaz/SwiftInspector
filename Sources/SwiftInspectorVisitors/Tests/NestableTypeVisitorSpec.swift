@@ -916,6 +916,7 @@ final class NestableTypeVisitorSpec: QuickSpec {
                 }
                 public class FooFooClass {
                   let someFooFooClassProperty: Int = 2
+                  func someFooFooClassFunction() {}
                   public enum BarFooFooEnum {}
                 }
               }
@@ -929,6 +930,8 @@ final class NestableTypeVisitorSpec: QuickSpec {
             $0.name == "FooEnum"
               && $0.inheritsFromTypes.map { $0.asSource } == []
               && $0.parentType?.asSource == nil
+              && $0.properties.isEmpty
+              && $0.functionDeclarations.isEmpty
           }
           expect(matching.count) == 1
         }
@@ -1000,6 +1003,12 @@ final class NestableTypeVisitorSpec: QuickSpec {
           let fooFooClass = self.sut.classes.filter { $0.name == "FooFooClass" }
           let property = fooFooClass.first?.properties.first
           expect(property?.name) == "someFooFooClassProperty"
+        }
+
+        it("finds the function declared in FooEnum.FooFooClass") {
+          let fooFooClass = self.sut.classes.filter { $0.name == "FooFooClass" }
+          let function = fooFooClass.first?.functionDeclarations.first
+          expect(function?.name) == "someFooFooClassFunction"
         }
 
         it("does not find a property for FooEnum") {
