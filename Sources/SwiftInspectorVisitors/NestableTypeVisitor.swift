@@ -108,7 +108,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
 
   public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
     guard let topLevelDeclaration = topLevelDeclaration else {
-      // We don't have anything to update, so skip it.
+      assertionFailureOrPostNotification("Encountered a variable declaration. This is a usage error: a single NestableTypeVisitor instance should start walking only over a nestable declaration syntax node")
       return .skipChildren
     }
 
@@ -124,7 +124,7 @@ public final class NestableTypeVisitor: SyntaxVisitor {
 
   public override func visit(_ node: FunctionDeclSyntax) -> SyntaxVisitorContinueKind {
     guard let topLevelDeclaration = topLevelDeclaration else {
-      // We don't have anything to update, so skip it.
+      assertionFailureOrPostNotification("Encountered a function declaration. This is a usage error: a single NestableTypeVisitor instance should start walking only over a nestable declaration syntax node")
       return .skipChildren
     }
 

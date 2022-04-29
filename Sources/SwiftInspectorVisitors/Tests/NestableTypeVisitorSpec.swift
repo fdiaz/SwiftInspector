@@ -1152,6 +1152,32 @@ final class NestableTypeVisitorSpec: QuickSpec {
       }
     }
 
+    context("visiting a code block with a free variable declaration") {
+      it("asserts") {
+        let content = """
+            let test = 0
+            """
+
+        // The NestableTypeVisitor is only meant to be used over a single nestable type.
+        // Using a NestableTypeVisitor over a block that has an free variable
+        // is API misuse.
+        expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
+      }
+    }
+
+    context("visiting a code block with a free function declaration") {
+      it("asserts") {
+        let content = """
+            func test() {}
+            """
+
+        // The NestableTypeVisitor is only meant to be used over a single nestable type.
+        // Using a NestableTypeVisitor over a block that has an free function
+        // is API misuse.
+        expect(try self.sut.walkContent(content)).to(postNotifications(equal([AssertionFailure.notification])))
+      }
+    }
+
     context("visiting a code block with a protocol declaration") {
       it("asserts") {
         let content = """
