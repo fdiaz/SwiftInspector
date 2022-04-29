@@ -64,7 +64,7 @@ public final class ExtensionVisitor: SyntaxVisitor {
     propertyVisitor.walk(node.members)
 
     let functionDeclarationVisitor = FunctionDeclarationVisitor()
-    functionDeclarationVisitor.walk(node.members)
+    functionDeclarationVisitor.walk(node)
 
     extensionInfo = ExtensionInfo(
       typeDescription: node.extendedType.typeDescription,
