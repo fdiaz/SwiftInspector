@@ -16,7 +16,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
       context("a function with a return value") {
         beforeEach {
           let content = """
-            func greet(person: String) -> String {
+            fileprivate func greet(person: String) -> String {
                 let greeting = "Hello, " + person + "!"
                 return greeting
             }
@@ -25,6 +25,9 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
           try? self.sut.walkContent(content)
         }
 
+        it("finds the modifiers") {
+          expect(self.sut.functionDeclarations.first?.modifiers) == ["fileprivate"]
+        }
         it("finds the function name") {
           expect(self.sut.functionDeclarations.first?.name) == "greet"
         }
@@ -37,7 +40,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
       }
 
-      context("a function without a return value") {
+      context("a function without a return value and without modifiers") {
         beforeEach {
           let content = """
             func printWithoutCounting(string: String) {
@@ -48,6 +51,9 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
           try? self.sut.walkContent(content)
         }
 
+        it("finds no modifiers") {
+          expect(self.sut.functionDeclarations.first?.modifiers) == []
+        }
         it("finds the function name") {
           expect(self.sut.functionDeclarations.first?.name) == "printWithoutCounting"
         }
@@ -63,7 +69,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
       context("a function with multiple return values") {
         beforeEach {
           let content = """
-            func minMax(array: [Int]) -> (min: Int, max: Int) {
+            internal func minMax(array: [Int]) -> (min: Int, max: Int) {
                 var currentMin = array[0]
                 var currentMax = array[0]
                 for value in array[1..<array.count] {
@@ -80,6 +86,9 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
           try? self.sut.walkContent(content)
         }
 
+        it("finds the modifiers") {
+          expect(self.sut.functionDeclarations.first?.modifiers) == ["internal"]
+        }
         it("finds the function name") {
           expect(self.sut.functionDeclarations.first?.name) == "minMax"
         }
@@ -96,7 +105,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
       context("multiple functions") {
         beforeEach {
           let content = """
-            func minMax(array: [Int]) -> (min: Int, max: Int) {
+            public func minMax(array: [Int]) -> (min: Int, max: Int) {
                 var currentMin = array[0]
                 var currentMax = array[0]
                 for value in array[1..<array.count] {
@@ -109,7 +118,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
                 return (currentMin, currentMax)
             }
 
-            func printWithoutCounting(string: String) {
+            private static func printWithoutCounting(string: String) {
                 let _ = printAndCount(string: string)
             }
             """
@@ -122,6 +131,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
         it("finds the first function") {
           let firstFunction = self.sut.functionDeclarations.first
+          expect(firstFunction?.modifiers) == ["public"]
           expect(firstFunction?.name) == "minMax"
           expect(firstFunction?.arguments?.first?.argumentLabelName) == "array"
           expect(firstFunction?.arguments?.first?.type) == .array(element: .simple(name: "Int"))
@@ -129,6 +139,7 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         }
         it("finds the last function") {
           let lastFunction = self.sut.functionDeclarations.last
+          expect(lastFunction?.modifiers) == ["private", "static"]
           expect(lastFunction?.name) == "printWithoutCounting"
           expect(lastFunction?.arguments?.first?.argumentLabelName) == "string"
           expect(lastFunction?.arguments?.first?.type) == .simple(name: "String")

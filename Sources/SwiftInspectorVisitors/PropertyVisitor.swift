@@ -81,26 +81,10 @@ public final class PropertyVisitor: SyntaxVisitor {
   }
 
   private func findModifiers(from node: VariableDeclSyntax) -> PropertyInfo.Modifier {
-    let modifiersString: [String]
-    if let modifiersSyntaxList = node.modifiers {
-      modifiersString = modifiersSyntaxList.children
-        .compactMap { $0.as(DeclModifierSyntax.self) }
-        .map { modifierSyntax in
-          if
-            let leftParen = modifierSyntax.detailLeftParen,
-            let detail = modifierSyntax.detail,
-            let rightParen = modifierSyntax.detailRightParen
-          {
-            return modifierSyntax.name.text + leftParen.text + detail.text + rightParen.text
-          }
-          return modifierSyntax.name.text
-        }
-    }
-    else {
-      modifiersString = []
-    }
+    let modifiersVisitor = ModifierDeclarationVisitor()
+    modifiersVisitor.walk(node)
 
-    var modifier = modifiersString.reduce(PropertyInfo.Modifier()) { result, stringValue in
+    var modifier = modifiersVisitor.modifiers.reduce(PropertyInfo.Modifier()) { result, stringValue in
       let modifier = PropertyInfo.Modifier(stringValue: stringValue)
       return result.union(modifier)
     }
