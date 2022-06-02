@@ -25,8 +25,9 @@ let package = Package(
       name: "SwiftInspector",
       dependencies: [
         "SwiftInspectorCommands",
+        "lib_InternalSwiftSyntaxParser",
       ],
-      linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "$DT_TOOLCHAIN_DIR/usr/lib/swift/macosx"])]),
+      linkerSettings: [.unsafeFlags(["-Xlinker", "-dead_strip_dylibs"])]),
 
     .target(
       name: "SwiftInspectorCommands",
@@ -98,5 +99,11 @@ let package = Package(
       ],
       path: "Sources/SwiftInspectorVisitors/Tests",
       linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "$DT_TOOLCHAIN_DIR/usr/lib/swift/macosx"])]),
+
+      .binaryTarget(
+          name: "lib_InternalSwiftSyntaxParser",
+          url: "https://github.com/keith/StaticInternalSwiftSyntaxParser/releases/download/5.6/lib_InternalSwiftSyntaxParser.xcframework.zip",
+          checksum: "88d748f76ec45880a8250438bd68e5d6ba716c8042f520998a438db87083ae9d"
+      ),
   ]
 )

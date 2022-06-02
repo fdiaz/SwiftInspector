@@ -5,7 +5,7 @@ xcode_toolchain ?= $(xcode_path)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swi
 
 .PHONY: build
 build:
-	swift build -c release
+	swift build -c release --arch arm64 --arch x86_64
 
 .PHONY: install
 install: build 
@@ -19,13 +19,8 @@ uninstall:
 clean:
 	rm -rf .build
 
-# Following https://www.smileykeith.com/2021/03/03/editing-rpaths/
 .PHONY: release
 release: build
-	mkdir -p bin lib
-	cp .build/release/swiftinspector bin
-	cp "$(xcode_toolchain)/lib_InternalSwiftSyntaxParser.dylib" "lib"
-	install_name_tool -delete_rpath @loader_path -delete_rpath $(xcode_toolchain) bin/swiftinspector
-	install_name_tool -add_rpath @executable_path/../lib bin/swiftinspector
-	zip swiftinspector.zip -r bin lib
-	rm -r bin lib
+	cp .build/apple/Products/Release/swiftinspector .
+	zip "swiftinspector-$(shell git rev-parse --short HEAD).zip" swiftinspector
+	rm swiftinspector
