@@ -5,7 +5,7 @@ xcode_toolchain ?= $(xcode_path)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swi
 
 .PHONY: build
 build:
-	swift build -c release --arch arm64 --arch x86_64
+	xcrun swift build -c release --arch arm64 --arch x86_64
 
 .PHONY: install
 install: build 
