@@ -4,13 +4,13 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: macos-12
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Select Xcode 13.3
-      run: xcversion select 13.3
+    - name: Select Xcode 13.3.1
+      run: xcversion select 13.3.1
 
     - name: Build project
       run: swift build
