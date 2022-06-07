@@ -15,7 +15,7 @@ This project is currently under development and can have breaking API changes.
 ## Requirements
 
 - Swift 5.6
-- Xcode 13.3+
+- Xcode 13.3.1
 
 ## Install
 
@@ -38,5 +38,3 @@ The default branch of this repository is `main`. Between the initial commit and 
 ## License
 
 [MIT](LICENSE)
-
-![Powered by MacStadium](img/macstadium.png)
