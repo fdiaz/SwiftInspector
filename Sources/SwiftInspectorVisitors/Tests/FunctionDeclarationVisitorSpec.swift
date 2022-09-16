@@ -175,8 +175,11 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
           try? self.sut.walkContent(content)
         }
 
-        it("finds the parameter label") {
+        it("finds the argument label") {
           expect(self.sut.functionDeclarations.first?.arguments?.first?.argumentLabelName) == "_"
+        }
+        it("finds the parameter name") {
+          expect(self.sut.functionDeclarations.first?.arguments?.first?.parameterName) == "string"
         }
         it("calculates the selectorName") {
           expect(self.sut.functionDeclarations.first?.selectorName) == "print(_:)"
@@ -200,12 +203,15 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         it("calculates the selectorName") {
           expect(self.sut.functionDeclarations.first?.selectorName) == "append(argumentLabelName:)"
         }
+        it("finds the parameter name") {
+          expect(self.sut.functionDeclarations.first?.arguments?.first?.parameterName) == "parameterName"
+        }
       }
 
       context("function with multiple parameters") {
         beforeEach {
           let content = """
-            func append(argumentLabelName parameterName: String, type: TypeDescription) {
+            func append(argumentLabelName parameterName: String, type secondParameterName: TypeDescription) {
               // ...
             }
             """
@@ -216,9 +222,13 @@ final class FunctionDeclarationVisitorSpec: QuickSpec {
         it("finds the correct number of parameters") {
           expect(self.sut.functionDeclarations.first?.arguments?.count) == 2
         }
-        it("finds the parameter labels") {
+        it("finds the argument labels") {
           expect(self.sut.functionDeclarations.first?.arguments?.first?.argumentLabelName) == "argumentLabelName"
           expect(self.sut.functionDeclarations.first?.arguments?.last?.argumentLabelName) == "type"
+        }
+        it("finds the parameter names") {
+          expect(self.sut.functionDeclarations.first?.arguments?.first?.parameterName) == "parameterName"
+          expect(self.sut.functionDeclarations.first?.arguments?.last?.parameterName) == "secondParameterName"
         }
         it("calculates the selectorName") {
           expect(self.sut.functionDeclarations.first?.selectorName) == "append(argumentLabelName:type:)"

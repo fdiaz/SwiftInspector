@@ -56,7 +56,9 @@ fileprivate final class FunctionSignatureVisitor: SyntaxVisitor {
       let type = node.type?.typeDescription
     else { return .skipChildren }
 
-    appendArgument(argumentLabelName: argumentLabelName, type: type)
+    let parameterName = node.secondName?.text
+
+    appendArgument(argumentLabelName: argumentLabelName, parameterName: parameterName, type: type)
     return .skipChildren
   }
   override func visit(_ node: ReturnClauseSyntax) -> SyntaxVisitorContinueKind {
@@ -64,9 +66,11 @@ fileprivate final class FunctionSignatureVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
-  fileprivate func appendArgument(argumentLabelName: String, type: TypeDescription) {
+  fileprivate func appendArgument(argumentLabelName: String, parameterName: String?, type: TypeDescription) {
     var arguments = self.arguments ?? []
-    arguments.append(.init(argumentLabelName: argumentLabelName, type: type))
+    // By default, parameters use their parameter name as their argument label
+    let param = parameterName ?? argumentLabelName
+    arguments.append(.init(argumentLabelName: argumentLabelName, parameterName: param, type: type))
     self.arguments = arguments
   }
 
@@ -87,6 +91,7 @@ public struct FunctionDeclarationInfo: Codable, Hashable {
 
   public struct ArgumentInfo: Codable, Hashable {
     public let argumentLabelName: String
+    public let parameterName: String
     public let type: TypeDescription
   }
 }
