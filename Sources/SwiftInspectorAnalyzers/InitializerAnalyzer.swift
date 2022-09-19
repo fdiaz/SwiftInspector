@@ -83,7 +83,7 @@ public final class InitializerAnalyzer: Analyzer {
 
   private func findParameter(from node: FunctionParameterSyntax) -> InitializerStatement.Parameter {
     let name: String
-    // If the initializer contains a different parameter and an argument label we want to check first
+    // If the initializer contains a different parameter name and an argument label we want to check first
     // for the parameter. e.g. init(some another: String) -- the parameter would be `another`
     if let secondName = node.secondName {
       name = secondName.text

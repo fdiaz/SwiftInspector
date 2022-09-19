@@ -15,7 +15,7 @@ public final class FunctionDeclarationVisitor: SyntaxVisitor {
     let info = FunctionDeclarationInfo(
       modifiers: modifiersVisitor.modifiers,
       name: name,
-      arguments: functionSignatureVisitor.arguments,
+      parameters: functionSignatureVisitor.parameters,
       returnType: functionSignatureVisitor.returnType)
     functionDeclarations.append(info)
     return .skipChildren
@@ -52,11 +52,13 @@ public final class FunctionDeclarationVisitor: SyntaxVisitor {
 fileprivate final class FunctionSignatureVisitor: SyntaxVisitor {
   override func visit(_ node: FunctionParameterSyntax) -> SyntaxVisitorContinueKind {
     guard
-      let argumentLabelName = node.firstName?.text,
+      let firstMember = node.firstName?.text,
       let type = node.type?.typeDescription
     else { return .skipChildren }
 
-    appendArgument(argumentLabelName: argumentLabelName, type: type)
+    let secondMember = node.secondName?.text
+
+    appendParameter(firstMember: firstMember, secondMember: secondMember, type: type)
     return .skipChildren
   }
   override func visit(_ node: ReturnClauseSyntax) -> SyntaxVisitorContinueKind {
@@ -64,29 +66,35 @@ fileprivate final class FunctionSignatureVisitor: SyntaxVisitor {
     return .skipChildren
   }
 
-  fileprivate func appendArgument(argumentLabelName: String, type: TypeDescription) {
-    var arguments = self.arguments ?? []
-    arguments.append(.init(argumentLabelName: argumentLabelName, type: type))
-    self.arguments = arguments
+  fileprivate func appendParameter(firstMember: String, secondMember: String?, type: TypeDescription) {
+    var parameters = self.parameters ?? []
+    // Each function parameter has both an argument label and a parameter name.
+    // The argument label is used when calling the function; each argument is written in the function call with its argument label before it.
+    // The parameter name is used in the implementation of the function. By default, parameters use their parameter name as their argument label.
+    let argumentLabel = firstMember
+    let parameterName = secondMember ?? firstMember
+    parameters.append(.init(argumentLabelName: argumentLabel, parameterName: parameterName, type: type))
+    self.parameters = parameters
   }
 
-  fileprivate var arguments: [FunctionDeclarationInfo.ArgumentInfo]?
+  fileprivate var parameters: [FunctionDeclarationInfo.ParameterInfo]?
   fileprivate var returnType: TypeDescription?
 }
 
 public struct FunctionDeclarationInfo: Codable, Hashable {
   public let modifiers: Modifiers
   public let name: String
-  public let arguments: [ArgumentInfo]?
+  public let parameters: [ParameterInfo]?
   public let returnType: TypeDescription?
 
   /// A convenience for creating a selector string that can be reference in Objective-C code.
   public var selectorName: String {
-    "\(name)(\((arguments ?? []).map { "\($0.argumentLabelName):" }.joined()))"
+    "\(name)(\((parameters ?? []).map { "\($0.argumentLabelName):" }.joined()))"
   }
 
-  public struct ArgumentInfo: Codable, Hashable {
+  public struct ParameterInfo: Codable, Hashable {
     public let argumentLabelName: String
+    public let parameterName: String
     public let type: TypeDescription
   }
 }
