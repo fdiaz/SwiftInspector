@@ -2,13 +2,13 @@
 
 ![](https://github.com/fdiaz/SwiftInspector/workflows/macOS/badge.svg) 
 [![codecov](https://codecov.io/gh/fdiaz/SwiftInspector/branch/main/graph/badge.svg)](https://codecov.io/gh/fdiaz/SwiftInspector)
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Project Status: Abandoned – Initial development has started, but there has not yet been a stable, usable release; the project has been abandoned and the author(s) do not intend on continuing development.](https://www.repostatus.org/badges/latest/abandoned.svg)](https://www.repostatus.org/#abandoned)
 
 `SwiftInspector` is a command line tool and set of SPM libraries built on top of [SwiftSyntax](https://github.com/apple/swift-syntax). `SwiftInspector` reliably finds usages of classes, protocols, properties, etc. in a codebase by analyzing the Swift [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree).
 
-## Disclaimer
+## Archived Project
 
-This project is currently under development and can have breaking API changes.
+This project is considered abandoned and has been archived.
 
 ---
 
